@@ -24,7 +24,7 @@ public class ChatRoom {
 	private String firstUser;
 	private String secondUser;
 	private String identifier;
-	//private List<ChatMessages> content; // ChatMessages의 리스트
+
 	private List<ChatMessages> content = new ArrayList<>(); // 초기화
 	private Date createdAt;
 

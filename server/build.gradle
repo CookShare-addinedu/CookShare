@@ -32,7 +32,22 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
+
+    //웹소캣
+    implementation 'org.springframework.boot:spring-boot-starter-websocket' // 웹소켓 의존성 추가
+
+
+
+    //log4jdbc
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+
+    // 스프링 부트 스타터 데이터 MongoDB
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
 }
+
+
+
 
 tasks.named('test') {
     useJUnitPlatform()
