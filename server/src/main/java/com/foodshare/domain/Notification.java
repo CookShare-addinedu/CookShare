@@ -1,4 +1,4 @@
-package com.example.foodshare.domain;
+package com.foodshare.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

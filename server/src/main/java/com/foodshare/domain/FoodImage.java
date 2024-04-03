@@ -1,4 +1,4 @@
-package com.example.foodshare.domain;
+package com.foodshare.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,27 +7,24 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "favorite_foods")
-public class FavoriteFood {
+@Table(name = "food_images")
+public class FoodImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "favorite_id")
-    private Long favoriteId;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    private User user;
+    @Column(name = "image_id")
+    private Long imageId;
 
     @ManyToOne
     @JoinColumn(name = "food_id", referencedColumnName = "food_id")
     private Food food;
 
-    @Column(name = "is_favorite")
-    private Boolean isFavorite;
+    @Column(name = "image_path")
+    private String imagePath;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -35,5 +32,4 @@ public class FavoriteFood {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    // Getters and Setters
 }

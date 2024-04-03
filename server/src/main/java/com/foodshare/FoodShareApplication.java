@@ -1,4 +1,4 @@
-package com.example.foodshare;
+package com.foodshare;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
