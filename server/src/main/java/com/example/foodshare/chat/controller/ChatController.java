@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 
 import com.example.foodshare.chat.dto.ChatMessageDTO;
 import com.example.foodshare.chat.service.ChatService;
-import com.example.foodshare.domain.ChatRoom;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +21,11 @@ public class ChatController {
 
 	@MessageMapping("/chat.sendMessage")
 	public void message(@Payload ChatMessageDTO message) {
-		ChatRoom chatRoom = chatService.addMessageToChatRoom(message.getChatRoomId(), message.getSender(),
-			message.getContent());
+		log.info("채팅 시작");
+		log.debug(message.toString());
 
-		System.out.println(message);
+		chatService.addMessageToChatRoom(message.getChatRoomId(), message.getSender(), message.getContent());
+
 		template.convertAndSend("/topic/public", message);
 	}
 

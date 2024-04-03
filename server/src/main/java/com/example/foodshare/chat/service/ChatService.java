@@ -18,23 +18,25 @@ public class ChatService {
 		chatRoom.setFirstUser(firstUserId);
 		chatRoom.setSecondUser(secondUserId);
 		chatRoom.setCreatedAt(new Date());
+
 		return chatRepository.save(chatRoom);
 	}
 
 	public ChatRoom addMessageToChatRoom(String chatRoomId, String sender, String messageContent) {
-		ChatRoom chatRoom = chatRepository.findById(chatRoomId).orElseGet(() -> {
+		ChatRoom chatRoom = chatRepository.findById(chatRoomId)
+			.orElseGet(() -> {
+				ChatRoom newChatRoom = new ChatRoom();
+				newChatRoom.setId(chatRoomId);
 
-			ChatRoom newChatRoom = new ChatRoom();
-			newChatRoom.setId(chatRoomId);
-
-			return chatRepository.save(newChatRoom);
-		});
+				return chatRepository.save(newChatRoom);
+			});
 
 		ChatRoom.ChatMessages newMessage = new ChatRoom.ChatMessages(sender, messageContent, new Date());
 		chatRoom.addMessage(newMessage);
+
 		return chatRepository.save(chatRoom);
 	}
 
-
 }
+
 
