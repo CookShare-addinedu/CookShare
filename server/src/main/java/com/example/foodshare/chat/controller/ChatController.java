@@ -28,5 +28,5 @@ public class ChatController {
 		System.out.println(message);
 		template.convertAndSend("/topic/public", message);
 	}
-}
 
+}
