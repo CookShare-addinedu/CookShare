@@ -48,7 +48,7 @@ function Chat() {
             }
         };
     }, []);
-
+//주석
     const sendMessage = () => {
         if (stompClient && stompClient.connected && newMessage.trim() !== "") {
             const currentTime = new Date().toISOString();
