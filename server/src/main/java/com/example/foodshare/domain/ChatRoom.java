@@ -8,13 +8,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder
 @Document
 public class ChatRoom {
 	@Id
@@ -34,7 +35,7 @@ public class ChatRoom {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class ChatMessages { // 정적 내부 클래스로 선언
+	public static class ChatMessages {
 		private String sender;
 		private String content;
 		private Date timestamp;

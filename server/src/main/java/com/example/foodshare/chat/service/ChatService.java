@@ -1,6 +1,7 @@
 package com.example.foodshare.chat.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,8 @@ public class ChatService {
 		return chatRepository.save(chatRoom);
 	}
 
+	public List<ChatRoom> getChatRoomListForUser(String userId) { //본인이 firstUser 인지 secondUser 인지 모르니
+		return chatRepository.findChatRoomsByFirstUserOrSecondUser(userId, userId);
+	}
 }
-
 

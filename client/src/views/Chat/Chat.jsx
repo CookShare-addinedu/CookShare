@@ -17,7 +17,6 @@ function Chat() {
 
     const currentChatRoomId = [firstUser, secondUser].sort().join("_");
 
-
     useEffect(() => {
 
         if (stompClient) {
@@ -32,7 +31,6 @@ function Chat() {
 
             client.subscribe('/topic/public', message => {
                 const receivedMessage = JSON.parse(message.body);
-
 
                 setMessages((prevMessages) => [...prevMessages, receivedMessage]);
             });
@@ -55,12 +53,12 @@ function Chat() {
         if (stompClient && stompClient.connected && newMessage.trim() !== "") {
             const currentTime = new Date().toISOString();
             const chatMessage = {
-
                 chatRoomId: currentChatRoomId,
                 sender: firstUser,
                 content: newMessage,
                 timestamp: currentTime
             };
+
             stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
             console.log(chatMessage)
             setNewMessage("");
@@ -77,9 +75,9 @@ function Chat() {
                     <div>Sender: {msg.sender}</div>
                     <div>Message: {msg.content}</div>
                     <div>Time: {msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</div>
-
                 </div>
             ))}
+
             <input
                 type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyPress={(e) => {
                 if (e.key === "Enter") {
