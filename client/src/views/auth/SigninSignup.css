@@ -1,0 +1,102 @@
+/* SigninSignup.css */
+
+/* 상위 컨테이너에 대한 스타일 */
+.HomeContainer {
+    position: relative; /* 상대적 위치 설정 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box; /* 패딩이 너비와 높이에 포함되도록 설정 */
+}
+
+/* Header 컴포넌트 스타일 */
+.Header {
+    position: relative; /* 절대적 위치 설정 */
+    /*top: 0; !* 상단에 위치 *!*/
+    /*left: 0; !* 좌측에 위치 *!*/
+    /*right: 0; !* 우측에 위치 *!*/
+    width: 100%; /* 전체 너비 사용 */
+    height: 50px;
+    padding: 20px 0;
+    background-color: #ff9d00;
+    margin-bottom: 20px;
+}
+
+/* 모바일 화면 크기에 대한 미디어 쿼리 */
+@media screen and (max-width: 768px) {
+    .HomeContainer {
+        border: 2px solid black; /* 모바일 화면의 테두리를 검정색으로 설정 */
+        padding: 10px; /* 모바일에서는 패딩을 조금 줄임 */
+        margin: auto; /* 중앙 정렬을 위해 자동 마진 사용 */
+        width: 90%; /* 모바일 화면 너비에 맞게 조정 */
+        max-width: 500px; /* 최대 너비를 500px로 제한 */
+    }
+
+    .Header {
+        width: 100%; /* 부모 컨테이너의 너비에 맞게 조정 */
+        padding: 10px 0; /* 모바일에서는 패딩을 조금 줄임 */
+    }
+}
+
+/* 태블릿 화면 크기에 대한 미디어 쿼리 */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .HomeContainer {
+        padding: 20px; /* 태블릿에서는 조금 더 많은 패딩을 추가 */
+        margin : auto;
+        width: 90%;
+        max-width: 800px;
+        border: 2px solid black; /* 태블릿 화면에 맞게 테두리 색상 변경 */
+
+    }
+
+    .Header {
+        width: 100%; /* 태블릿 화면 너비에 맞게 Header 컴포넌트의 너비 조정 */
+        background-color: #ff9d00; /* 태블릿에서는 배경색을 변경하여 다른 느낌을 줌 */
+    }
+
+    .logo {
+        max-width: 80%;
+    }
+    /* 태블릿에서의 추가 스타일을 여기에 추가할 수 있습니다. */
+}
+
+.logo {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+.loginButton {
+    padding: 15px 30px; /* 패딩으로 버튼 크기 조정 */
+    font-size: 16px; /* 글자 크기 */
+    background-color: #007bff; /* 배경색 */
+    color: white; /* 글자 색상 */
+    border: none; /* 테두리 없음 */
+    border-radius: 5px; /* 테두리 둥글게 */
+    cursor: pointer; /* 마우스 오버 시 커서 변경 */
+    margin: 10px; /* 마진으로 버튼 사이 간격 조정 */
+    transition: background-color 0.3s; /* 호버 애니메이션을 위한 전환 */
+}
+
+.signupButton {
+    padding: 15px 30px; /* 패딩으로 버튼 크기 조정 */
+    font-size: 16px; /* 글자 크기 */
+    background-color: #28a745; /* 배경색 */
+    color: white; /* 글자 색상 */
+    border: none; /* 테두리 없음 */
+    border-radius: 5px; /* 테두리 둥글게 */
+    cursor: pointer; /* 마우스 오버 시 커서 변경 */
+    margin: 10px; /* 마진으로 버튼 사이 간격 조정 */
+    transition: background-color 0.3s; /* 호버 애니메이션을 위한 전환 */
+}
+
+/* 버튼 호버 시의 스타일 */
+.loginButton:hover, .signupButton:hover {
+    background-color: #0056b3; /* 로그인 버튼 호버 색상 */
+    background-color: #1e7e34; /* 회원가입 버튼 호버 색상 */
+}

@@ -21,6 +21,9 @@ public class User {
     @Column(name = "location")
     private String location;
 
+    @Column
+
+
     @Column(name = "mobile_number")
     private String mobileNumber;
 

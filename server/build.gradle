@@ -32,6 +32,24 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    //jwt
+    //JWT 설정 1
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    //JWT 설정 2
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    //JWT 설정 3
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
+    implementation'io.jsonwebtoken:jjwt-jackson:0.12.5'
+    // log4jdbc
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+    // OAuth2 관련 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
 }
 
 tasks.named('test') {
