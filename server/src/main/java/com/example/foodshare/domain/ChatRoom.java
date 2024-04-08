@@ -25,7 +25,7 @@ public class ChatRoom {
 	private String firstUser;
 	private String secondUser;
 	private String identifier;
-
+	@Builder.Default
 	private List<ChatMessages> content = new ArrayList<>(); // 초기화
 	private Date createdAt;
 

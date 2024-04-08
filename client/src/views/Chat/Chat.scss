@@ -22,16 +22,18 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 .chatForm .chatContent{
-  margin: 5px 0;
-  padding: 5px 10px;
-  background-color: #ffffff;
+  display: flex;
+  align-items: flex-start;
+  margin: 10px 0;
+  padding: 10px;
   border-radius: 15px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  width: 65%;
-  max-width: 100%;
+  min-width: 150px;
   word-wrap: break-word;
 
 }
+
+
 
 #chatBtn {
   padding: 10px 20px;
@@ -42,6 +44,8 @@
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
+
 
 #chatBtn:hover {
   background-color: #0056b3;
@@ -59,26 +63,17 @@
 
 .chatContent.me {
   margin-left: auto;
-  background-color: #dcf8c6;
+  background-color: #b0d7f3;
+  max-width: 20%;
 }
 
 .chatContent.them {
   margin-right: auto;
-  background-color: #ffffff;
+  background-color: #b3c1c5;
+  max-width: 50%;
+  font: bold;
 }
 
-
-.chatContent {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  width: 100%;
-  margin-bottom: 20px;
-  word-wrap: break-word;
-}
 
 .chatContent .sender {
   font-size: 0.85em;
@@ -99,10 +94,28 @@
   text-align: right;
 }
 
+.messageInfo {
+  display: flex;
+  font-size: 1.0em;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+
+.chatContent.me .messageInfo {
+  align-items: flex-end;
+}
+
+
 .chatContent img {
   width: 30px;
   height: 30px;
   border-radius: 50%;
   margin-right: 10px;
-  vertical-align: middle;
+  order: -1;
+}
+
+
+.messageArea {
+  flex-grow: 1;
 }

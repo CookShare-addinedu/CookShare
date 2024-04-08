@@ -1,12 +1,13 @@
 package com.example.foodshare.chat.controller;
 
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.example.foodshare.chat.dto.ChatMessageDTO;
-import com.example.foodshare.chat.service.ChatService;
+import com.example.foodshare.chat.service.ChatMessageService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,19 +15,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class ChatController {
+public class MessageChatController {
 
 	private final SimpMessagingTemplate template;
-	private final ChatService chatService;
+	private final ChatMessageService chatMessageService;
 
-	@MessageMapping("/chat.sendMessage")
-	public void message(@Payload ChatMessageDTO message) {
+	@MessageMapping("/chat.room/{chatRoomId}/sendMessage")
+	public void message(@DestinationVariable String chatRoomId, @Payload ChatMessageDTO message) {
 		log.info("채팅 시작");
 		log.debug(message.toString());
 
-		chatService.addMessageToChatRoom(message.getChatRoomId(), message.getSender(), message.getContent());
+		chatMessageService.addMessageToChatRoom(message.getChatRoomId(), message.getSender(), message.getContent());
 
-		template.convertAndSend("/topic/public", message);
+		template.convertAndSend(String.format("/topic/chat/room/%s", chatRoomId), message);
+
 	}
 
 }

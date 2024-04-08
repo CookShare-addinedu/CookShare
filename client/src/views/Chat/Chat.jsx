@@ -2,20 +2,20 @@ import React, {useEffect, useState} from "react";
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import './Chat.scss'
+import { jwtDecode } from 'jwt-decode';
 
 function Chat() {
     const [stompClient, setStompClient] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
 
-    // const currentChatRoomId = "testRoomId";
-    // const currentUser = "testUser";
+    const token = localStorage.getItem('token');
+    const decoded = jwtDecode(token);
+    const firstUser = decoded.uid;
 
-    const firstUser = "User1";
-    const secondUser = "User3";
-
-
-    const currentChatRoomId = [firstUser, secondUser].sort().join("_");
+    const secondUser = "01012345678";
+  //  const currentChatRoomId = [firstUser, secondUser].sort().join("_");
+    const currentChatRoomId = "01000000000_01012345678";
 
     useEffect(() => {
 
@@ -29,7 +29,7 @@ function Chat() {
         client.connect({}, (frame) => {
             console.log('연결정보: ', frame);
 
-            client.subscribe('/topic/public', message => {
+            client.subscribe(`/topic/chat/room/${currentChatRoomId}`, message => {
                 const receivedMessage = JSON.parse(message.body);
 
                 setMessages((prevMessages) => [...prevMessages, receivedMessage]);
@@ -40,6 +40,14 @@ function Chat() {
             console.error('연결에러 ', error);
         });
 
+        fetch(`/api/detailRoom/${currentChatRoomId}`)
+            .then(response => response.json())
+            .then(data => {
+                setMessages(data.messages || []);
+            })
+            .catch(error => console.error("채팅방 상세 정보 조회 에러: ", error));
+
+
         return () => {
             if (client && client.connected) {
                 client.disconnect(() => {
@@ -47,8 +55,8 @@ function Chat() {
                 });
             }
         };
-    }, []);
-//주석
+    }, [currentChatRoomId]);
+
     const sendMessage = () => {
         if (stompClient && stompClient.connected && newMessage.trim() !== "") {
             const currentTime = new Date().toISOString();
@@ -59,7 +67,7 @@ function Chat() {
                 timestamp: currentTime
             };
 
-            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+            stompClient.send(`/app/chat.room/${currentChatRoomId}/sendMessage`, {}, JSON.stringify(chatMessage));
             console.log(chatMessage)
             setNewMessage("");
         } else {
@@ -71,11 +79,18 @@ function Chat() {
         <div className="chatForm">
             <div className="messagesContainer">
                 {messages.map((msg, index) => (
-                    <div className="chatContent" key={index}>
-                        <img src="/images/userImage.png" alt="Profile" />
-                        <div className="sender">{msg.sender}</div>
-                        <div className="content">{msg.content}</div>
-                        <div className="timestamp">{msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</div>
+                    <div
+                        className={`chatContent ${msg.sender === firstUser ? "me" : "them"}`}
+                        key={index}
+                    >
+                        {msg.sender !== firstUser && <img src="/images/userImage.png" alt={`${msg.sender}`} />}
+                        <div className="messageArea">
+                            <div className="messageInfo">
+                                <div className="sender">{msg.sender === firstUser ? `` : msg.sender}</div>
+                                <div className="content">{msg.content}</div>
+                                <div className="timestamp">{msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</div>
+                            </div>
+                        </div>
                     </div>
                 ))}
             </div>

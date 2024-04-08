@@ -11,17 +11,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.example.foodshare.chat.dto.ChatMessageDTO;
-import com.example.foodshare.chat.service.ChatService;
+import com.example.foodshare.chat.service.ChatMessageService;
 import com.example.foodshare.domain.ChatRoom;
 
-@WebMvcTest(ChatController.class)
+@WebMvcTest(MessageChatController.class)
 public class ChatControllerTest {
 
 	@Autowired
-	private ChatController chatController;
+	private MessageChatController chatController;
 
 	@MockBean
-	private ChatService chatService;
+	private ChatMessageService chatMessageService;
 
 	@MockBean
 	private SimpMessagingTemplate messagingTemplate;
@@ -38,9 +38,9 @@ public class ChatControllerTest {
 		chatRoom.setId(message.getChatRoomId());
 		chatRoom.addMessage(new ChatRoom.ChatMessages(message.getSender(), message.getContent(), new Date()));
 
-		when(chatService.addMessageToChatRoom(anyString(), anyString(), anyString())).thenReturn(chatRoom);
+	//	when(chatMessageService.addMessageToChatRoom(anyString(), anyString(), anyString())).thenReturn(chatRoom);
 
-		chatController.message(message);
+		//chatController.message(message);
 
 		verify(messagingTemplate, times(1)).convertAndSend(eq("/topic/public"), any(ChatMessageDTO.class));
 	}

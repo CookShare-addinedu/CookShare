@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.example.foodshare.domain.ChatRoom;
 
 @Repository
-public interface ChatRepository extends MongoRepository<ChatRoom, String> {
+public interface ChatMessageRepository extends MongoRepository<ChatRoom, String> {
 	List<ChatRoom> findChatRoomsByFirstUserOrSecondUser(String firstUser, String secondUser);
 }
