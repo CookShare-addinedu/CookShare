@@ -32,7 +32,7 @@ public class Food {
     private Category category;
 
     @Column(name = "status")
-    private Long status;
+    private String status;
 
     @Column(name = "title")
     private String title;
