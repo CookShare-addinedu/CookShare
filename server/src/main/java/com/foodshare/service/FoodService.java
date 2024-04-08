@@ -2,18 +2,32 @@ package com.foodshare.service;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.foodshare.domain.Category;
 import com.foodshare.domain.Food;
+import com.foodshare.domain.FoodImage;
+import com.foodshare.dto.FoodDTO;
+import com.foodshare.mapper.EntityMapper;
+import com.foodshare.repository.CategoryRepository;
+import com.foodshare.repository.FoodImageRepository;
 import com.foodshare.repository.FoodRepository;
 
 @Service
+@Transactional
 public class FoodService {
-	@Autowired
-	private FoodRepository foodRepository;
+	private final FoodRepository foodRepository;
+	private final FoodImageRepository foodImageRepository;
+	private final CategoryRepository categoryRepository;
+	private final EntityMapper entityMapper;
 
+	public FoodService(FoodRepository foodRepository, FoodImageRepository foodImageRepository, CategoryRepository categoryRepository, EntityMapper entityMapper) {
+		this.foodRepository = foodRepository;
+		this.foodImageRepository = foodImageRepository;
+		this.categoryRepository = categoryRepository;
+		this.entityMapper = entityMapper;
+	}
 	public List<Food> findAll() {
 		return foodRepository.findAll();
 	}
@@ -22,12 +36,22 @@ public class FoodService {
 		return foodRepository.findById(foodId);
 	}
 
-	public Food create(Food food) {
-		return foodRepository.save(food);
+	public Food create(FoodDTO foodDTO) {
+		Category category = entityMapper.convertToCategory(foodDTO.getCategory());
+		category = categoryRepository.save(category);
+
+		Food food = entityMapper.convertToFood(foodDTO);
+		food.setCategory(category);
+		food = foodRepository.save(food);
+
+		FoodImage foodImage = entityMapper.convertToFoodImage(foodDTO, food);
+		if (foodImage != null) {
+			foodImageRepository.save(foodImage);
+		}
+		return food;
 	}
 
 	public Food update(Food food) {
-		// 여기에는 존재하는 Food를 업데이트하는 로직 추가
 		return foodRepository.save(food);
 	}
 
