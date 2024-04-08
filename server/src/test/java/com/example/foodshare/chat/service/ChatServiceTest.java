@@ -75,7 +75,7 @@ public class ChatServiceTest {
 		String sender = "UserA";
 		String messageContent = "Hello, World!";
 
-		when(chatRepository.findById(chatRoomId))  //findById 메소드가 chatRoomId와 함께 호출될 때를 가정합
+		when(chatRepository.findById(chatRoomId))  //findById 메소드가 chatRoomId와 함께 호출될 때를 가정한당
 			.thenReturn(Optional.of(expectedChatRoom)); //위의 가정에 따라 호출될 때, expectedChatRoom을 포함하는 Optional 객체를 반환
 
 		// when (실행) 하면
@@ -103,8 +103,12 @@ public class ChatServiceTest {
 	void getChatRoomListForCurrentUserTest() {
 		// given
 		List<ChatRoom> expectedChatRooms = Arrays.asList(
-			ChatRoom.builder().id("User1_User2").build(),
-			ChatRoom.builder().id("User1_User3").build()
+			ChatRoom.builder()
+				.id("User1_User2")
+				.build(),
+			ChatRoom.builder()
+				.id("User1_User3")
+				.build()
 		);
 
 		// 현재 사용자와 연관된 채팅방 목록을 반환하도록 설정

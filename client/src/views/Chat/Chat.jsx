@@ -69,14 +69,16 @@ function Chat() {
 
     return (
         <div className="chatForm">
-
-            {messages.map((msg, index) => (
-                <div className="chatContent" key={index}>
-                    <div>Sender: {msg.sender}</div>
-                    <div>Message: {msg.content}</div>
-                    <div>Time: {msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</div>
-                </div>
-            ))}
+            <div className="messagesContainer">
+                {messages.map((msg, index) => (
+                    <div className="chatContent" key={index}>
+                        <img src="/images/userImage.png" alt="Profile" />
+                        <div className="sender">{msg.sender}</div>
+                        <div className="content">{msg.content}</div>
+                        <div className="timestamp">{msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</div>
+                    </div>
+                ))}
+            </div>
 
             <input
                 type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyPress={(e) => {
