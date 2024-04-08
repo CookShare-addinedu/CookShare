@@ -1,6 +1,6 @@
 .Header {
     display: flex;
-    /*justify-content: space-between;*/
+    justify-content: space-between;
     width: 390px;
     height: 50px;
     align-items: center;
@@ -9,17 +9,23 @@
 
 }
 
-Header > div {
+.Header > .header_left, .Header > .header_right {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.Header .header_center {
+.Header > .header_center {
+    flex: 2;
     display: flex;
-    background-color: red;
-    width: 50%;
-    font-size: 25px;
     justify-content: center;
-    align-items: center; /* 수정된 부분: 내용을 세로 중앙 정렬 */
+    align-items: center;
+    font-size: 25px;
+    background-color: #ff9d00; /* 중앙 제목 배경색, 필요 없다면 제거 */
+}
+
+/* 버튼 스타일링이 필요하다면 여기에 추가 */
+.button {
+    /* Button 스타일 정의 */
 }

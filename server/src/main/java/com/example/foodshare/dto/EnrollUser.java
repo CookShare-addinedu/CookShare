@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class EnrollUser {
-        private String username;
+        private String mobileNumber;
         private String password;
 }
