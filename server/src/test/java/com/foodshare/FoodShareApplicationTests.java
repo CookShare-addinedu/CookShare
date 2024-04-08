@@ -1,4 +1,4 @@
-package com.example.foodshare;
+package com.foodshare;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

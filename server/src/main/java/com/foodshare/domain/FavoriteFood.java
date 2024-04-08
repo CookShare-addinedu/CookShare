@@ -1,4 +1,4 @@
-package com.example.foodshare.domain;
+package com.foodshare.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,28 +7,27 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "spoon")
-public class Spoon {
+@Table(name = "favorite_foods")
+public class FavoriteFood {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "spoon_id")
-    private Long spoonId;
+    @Column(name = "favorite_id")
+    private Long favoriteId;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id", referencedColumnName = "user_id")
-    private User receiver;
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    private User user;
 
     @ManyToOne
-    @JoinColumn(name = "giver_id", referencedColumnName = "user_id")
-    private User giver;
+    @JoinColumn(name = "food_id", referencedColumnName = "food_id")
+    private Food food;
 
-    @Column(name = "score")
-    private Integer score;
+    @Column(name = "is_favorite")
+    private Boolean isFavorite;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
