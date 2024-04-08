@@ -1,25 +1,108 @@
-<div align="center">
-    <img width="60%" height="50%" src="https://github.com/FoodShare-addinedu/FoodShare/assets/148300331/8346c1f0-7931-40a0-a7f5-07ee8ef1adc7"/>
-</div></br>
 
-***
-# 🔍 FoodShare 는 어떤 서비스 인가요 ?
-* 푸드 쉐어링을 통해 지역 커뮤니티 활성화 
-* 사용자들은 음식을 나누고 교환할 수 있는 기능을 제공
+# FoodShare ( 브랜치 다시 만들기)
+에드인에듀 파이널 프로젝트 
 
-# 💯 Team Ladder 
-  사람과 사람 사이의 나눔과 소통의 다리를 놓는 네 명의 개발자
-* 조장 : <a href="https://github.com/AN-js">`안정선`</a>
-* 조원 : <a href="https://github.com/UKC1">`김강민`</a>
-* 조원 : <a href="https://github.com/eun-su-jeong">`은수정`</a>
-* 조원 : <a href="https://github.com/5hyunsu">`오현수`</a>
+Front directory tree (은수정)
 
-# 💬 프로젝트 진행은 어떻게 하였나요?
-* 전체적인 과정을 `Github` 내에서 해결하고자 노력했어요.
-* 신뢰를 기반으로 최선의 `협업`을 하고자 했어요 
-* 매일 10시 30분 🕥 3시 30분 🕞 회의를 통해서 지속적으로 진행과정을 확인하고 문서로 남기기로 했어요  
+📦client  
+ ┣ 📂node_modules  
+ ┃  
+ ┣ 📂public  
+ ┃  
+ ┣ 📂src  
+ ┃ ┣ 📂assets  
+ ┃ ┃ ┗ 📂img  
+ ┃ ┃  
+ ┃ ┣ 📂components  
+ ┃ ┃ ┣ 📂style  
+ ┃ ┃ ┗ 📂common  
+ ┃ ┃   ┣ 📜Header.jsx  
+ ┃ ┃   ┗ 📜Footer.jsx  
+ ┃ ┃  
+ ┃ ┣ 📂views  
+ ┃ ┃ ┣ 📂auth  
+ ┃ ┃ ┃ ┣ 📜Login.jsx         # 로그인 화면  
+ ┃ ┃ ┃ ┗ 📜Register.jsx        # 회원가입 화면  
+ ┃ ┃ ┃  
+ ┃ ┃ ┗ 📂pages  
+ ┃ ┃   ┣ 📂Splash  
+ ┃ ┃   ┃ ┣ 📜Splash.jsx        # 스플래쉬 화면  
+ ┃ ┃   ┃ ┗ 📜Splash.scss       # 스플래쉬 화면 스타일  
+ ┃ ┃   ┃  
+ ┃ ┃   ┣ 📂Onboarding  
+ ┃ ┃   ┃ ┣ 📜Onboarding.jsx    # 온보딩 화면  
+ ┃ ┃   ┃ ┗ 📜Onboarding.scss   # 온보딩 화면 스타일  
+ ┃ ┃   ┃  
+ ┃ ┃   ┣ 📂Board  
+ ┃ ┃   ┃ ┣ 📜Board.jsx         # 게시판 목록 화면  
+ ┃ ┃   ┃ ┗ 📜Board.scss        # 게시판 목록 화면 스타일  
+ ┃ ┃   ┃  
+ ┃ ┃   ┣ 📂BoardDetail  
+ ┃ ┃   ┃ ┣ 📜BoardDetail.jsx   # 게시판 상세페이지  
+ ┃ ┃   ┃ ┗ 📜BoardDetail.scss  # 게시판 상세페이지 스타일  
+ ┃ ┃   ┃  
+ ┃ ┃   ┣ 📂Chat  
+ ┃ ┃   ┃ ┣ 📜Chat.jsx          # 채팅 화면  
+ ┃ ┃   ┃ ┗ 📜Chat.scss         # 채팅 화면 스타일  
+ ┃ ┃   ┃  
+ ┃ ┃   ┗ 📂MyPage  
+ ┃ ┃     ┣ 📜MyPage.jsx        # 마이페이지  
+ ┃ ┃     ┗ 📜MyPage.scss       # 마이페이지 스타일  
+ ┃ ┃  
+ ┃ ┣ 📜App.js  
+ ┃ ┗ 📜index.js  
+ ┃  
+ ┣ 📜.gitignore  
+ ┣ 📜package.json  
+ ┣ 📜package-lock.json  
+ ┗ 📜README.md  
 
 
+Backend directory tree (김강민)
 
+📦com.foodshare  
+ ┣ 📂config  
+ ┃ ┣ 📜RestTemplateConfig.java  
+ ┃ ┣ 📜SecurityConfig.java  
+ ┃ ┗ 📜UserPasswordEncoder.java  
+ ┣ 📂controller  
+ ┃ ┣ 📜HomeController.java  
+ ┃ ┣ 📜UserController.java  
+ ┃ ┗ 📜UserApiController.java  
+ ┣ 📂domain  
+ ┃ ┣ 📜Alarm.java  
+ ┃ ┣ 📜Category.java  
+ ┃ ┣ 📜FavoriteFood.java  
+ ┃ ┣ 📜Food.java  
+ ┃ ┣ 📜FoodImage.java  
+ ┃ ┣ 📜Notification.java  
+ ┃ ┣ 📜Plan.java  
+ ┃ ┣ 📜SnsInfo.java  
+ ┃ ┣ 📜Spoon.java  
+ ┃ ┣ 📜TradeReview.java  
+ ┃ ┗ 📜User.java  
+ ┣ 📂dto  
+ ┃ ┣ 📜EventDto.java  
+ ┃ ┗ 📜LoginDto.java  
+ ┣ 📂mobilenumberverify  
+ ┃ ┣ 📜MobileNumberConfig.java  
+ ┃ ┣ 📜MobileNumberService.java  
+ ┃ ┗ 📜MobileNumberVerificationController.java  
+ ┣ 📂oauth2  
+ ┃ ┣ 📂exception  
+ ┃ ┣ 📂handler  
+ ┃ ┣ 📂service  
+ ┃ ┣ 📂user  
+ ┃ ┣ 📂util  
+ ┃ ┗ 📜HttpCookieOauth2AuthorizationRequestRepository.java  
+ ┣ 📂repository  
+ ┃ ┣ 📜SnsInfoRepository.java  
+ ┃ ┣ 📜UserLogRepository.java  
+ ┃ ┗ 📜UserRepository.java  
+ ┣ 📂service  
+ ┃ ┗ 📜UserService.java  
+ ┣ 📂util  
+ ┃ ┗ 📜BooleanToNumberConverter.java  
+ ┗ 📜FoodShareApplication.java  
 
-
+ 
