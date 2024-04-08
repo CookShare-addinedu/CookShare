@@ -2,8 +2,9 @@ package com.foodshare.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.foodshare.domain.Food;
+
+import com.foodshare.domain.FoodImage;
 
 @Repository
-public interface FoodRepository extends JpaRepository<Food, Long> {
+public interface FoodImageRepository extends JpaRepository<FoodImage, Long> {
 }
