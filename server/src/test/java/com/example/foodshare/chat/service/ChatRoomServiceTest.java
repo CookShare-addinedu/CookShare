@@ -133,8 +133,10 @@ public class ChatRoomServiceTest {
 		Optional<ChatRoom> result = chatRoomService.findRoomByIdAndUserId(roomId, userId);
 
 		// 검증
-		assertThat(result).isEmpty();
+		assertFalse(result.isEmpty(), "사용자가 채팅방에 존재하지 않음");
+
 		log.info("User {} 사용자가 채팅방에 존재하지 않음", userId);
+
 	}
 
 	@Test
@@ -150,7 +152,7 @@ public class ChatRoomServiceTest {
 
 		// 검증
 		assertThat(result).isEmpty();
-		log.info("User {} 채팅방이 존재하지 않음",  roomId);
+		log.info("User {} 채팅방이 존재하지 않음", roomId);
 	}
 
 }
