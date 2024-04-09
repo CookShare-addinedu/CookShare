@@ -29,19 +29,18 @@ public class ChatControllerTest {
 	@Test
 
 	public void testMessage() {
+		String chatRoomId = "testRoomId";
 		ChatMessageDTO message = new ChatMessageDTO();
-		message.setChatRoomId("testRoomId");
+		message.setChatRoomId(chatRoomId);
 		message.setSender("testUser");
 		message.setContent("Hello, World!");
 
-		ChatRoom chatRoom = new ChatRoom();
-		chatRoom.setId(message.getChatRoomId());
-		chatRoom.addMessage(new ChatRoom.ChatMessages(message.getSender(), message.getContent(), new Date()));
+		// 실행
+		chatController.message(chatRoomId, message);//message라는 컨트롤러
 
-	//	when(chatMessageService.addMessageToChatRoom(anyString(), anyString(), anyString())).thenReturn(chatRoom);
-
-		//chatController.message(message);
-
-		verify(messagingTemplate, times(1)).convertAndSend(eq("/topic/public"), any(ChatMessageDTO.class));
+		verify(chatMessageService, times(1)).addMessageToChatRoom(chatRoomId, message.getSender(),
+			message.getContent());
+		//times(n)는 verify 메서드와 함께 사용되어, 검증하고자 하는 메서드가 정확히 n번 호출되었는지를 검사
+		verify(messagingTemplate, times(1)).convertAndSend(String.format("/topic/chat/room/%s", chatRoomId), message);
 	}
 }

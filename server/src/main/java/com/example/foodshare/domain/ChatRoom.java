@@ -29,9 +29,6 @@ public class ChatRoom {
 	private List<ChatMessages> content = new ArrayList<>(); // 초기화
 	private Date createdAt;
 
-
-
-
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
@@ -44,6 +41,10 @@ public class ChatRoom {
 	public void addMessage(ChatMessages message) {
 
 		this.content.add(message);
+	}
+
+	public boolean isMember(String userId) {
+		return userId.equals(firstUser) || userId.equals(secondUser);
 	}
 
 }

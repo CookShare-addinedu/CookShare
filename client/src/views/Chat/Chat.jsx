@@ -3,6 +3,7 @@ import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import './Chat.scss'
 import { jwtDecode } from 'jwt-decode';
+import axios from "axios";
 
 function Chat() {
     const [stompClient, setStompClient] = useState(null);
@@ -40,13 +41,19 @@ function Chat() {
             console.error('연결에러 ', error);
         });
 
-        fetch(`/api/detailRoom/${currentChatRoomId}`)
-            .then(response => response.json())
-            .then(data => {
-                setMessages(data.messages || []);
+        axios.get(`/api/detailRoom/${currentChatRoomId}`, {
+            params: {
+                userId: firstUser
+            }
+        })
+            .then(response => {
+                const data = response.data;
+                setMessages(data.content || []);
+                console.log("채팅조회!!!!!!!!!!!!!!!!!!!!", data);
             })
-            .catch(error => console.error("채팅방 상세 정보 조회 에러: ", error));
-
+            .catch(error => {
+                console.error("채팅방 상세 정보 조회 에러: ", error);
+            });
 
         return () => {
             if (client && client.connected) {
