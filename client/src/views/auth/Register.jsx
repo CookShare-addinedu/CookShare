@@ -4,6 +4,10 @@ import Button from "../../components/Button";
 import {useNavigate} from "react-router-dom";
 import './Register.css';
 import axios from "axios";
+import Address from "./Address";
+import DaumPostcode from "react-daum-postcode";
+import Map from "./Address";
+
 
 const Register = () => {
     const navigate = useNavigate();
@@ -23,7 +27,7 @@ const Register = () => {
     const [message, setMessage] = useState("");
 
     const registerAxios = (e) => {
-        // e.preventDefault();
+         e.preventDefault();
         const createdAt = new  Date().toISOString();
         const updatedAt = new Date().toISOString();
         axios
@@ -227,11 +231,19 @@ const Register = () => {
 
             <Button text={"가입하기"} type={"submit"} onClick={registerAxios}>회원 가입하기</Button>
 
-
-        </div>
-    )
+            <Address />
 
 
-}
+
+
+
+
+
+
+        </div> //<div className="HomeContainer">
+    ) // return
+
+
+} //const Register = () => {
 
 export default Register;
