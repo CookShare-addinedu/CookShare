@@ -1,25 +1,19 @@
-package com.foodshare.controller;
+package com.foodshare.board.exception.controller;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.foodshare.board.exception.FileStorageException;
+import com.foodshare.board.service.FileStorageService;
+import com.foodshare.board.service.FoodService;
 import com.foodshare.domain.Food;
-import com.foodshare.dto.FoodDTO;
-import com.foodshare.exception.FileStorageException;
-import com.foodshare.service.FileStorageService;
-import com.foodshare.service.FoodService;
+import com.foodshare.board.dto.FoodDTO;
 
 @RequestMapping("/api")
 @RestController
