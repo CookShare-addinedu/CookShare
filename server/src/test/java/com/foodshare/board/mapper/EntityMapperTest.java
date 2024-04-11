@@ -1,4 +1,4 @@
-package com.foodshare.mapper;
+package com.foodshare.board.mapper;
 
 import static com.foodshare.board.mapper.EntityMapper.*;
 import static org.junit.jupiter.api.Assertions.*;

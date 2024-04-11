@@ -1,4 +1,4 @@
-	package com.foodshare.service;
+	package com.foodshare.board.service;
 
 	import org.junit.jupiter.api.Test;
 	import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,6 @@
 	import com.foodshare.board.repository.CategoryRepository;
 	import com.foodshare.board.repository.FoodImageRepository;
 	import com.foodshare.board.repository.FoodRepository;
-	import com.foodshare.board.service.FoodService;
 
 	@ExtendWith(MockitoExtension.class)
 	public class FoodServiceTest {

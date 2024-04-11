@@ -1,4 +1,4 @@
-package com.foodshare.service;
+package com.foodshare.board.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,4 +1,4 @@
-package com.foodshare.controller;
+package com.foodshare.board.controller;
 
 import com.foodshare.domain.Food;
 import com.foodshare.board.dto.FoodDTO;
