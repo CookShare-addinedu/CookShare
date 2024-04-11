@@ -1,4 +1,4 @@
-package com.foodshare.board.exception.controller;
+package com.foodshare.board.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

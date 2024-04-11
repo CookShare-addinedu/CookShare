@@ -1,4 +1,4 @@
-package com.foodshare.dto;
+package com.foodshare.board.dto;
 
 import java.time.LocalDate;
 import org.springframework.web.multipart.MultipartFile;

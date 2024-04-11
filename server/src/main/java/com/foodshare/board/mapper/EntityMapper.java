@@ -1,4 +1,4 @@
-	package com.foodshare.mapper;
+	package com.foodshare.board.mapper;
 
 	import java.sql.Timestamp;
 	import java.time.Instant;
@@ -11,7 +11,7 @@
 	import com.foodshare.domain.Category;
 	import com.foodshare.domain.Food;
 	import com.foodshare.domain.FoodImage;
-	import com.foodshare.dto.FoodDTO;
+	import com.foodshare.board.dto.FoodDTO;
 
 	@Mapper(componentModel = "spring")
 	public interface EntityMapper {
@@ -29,7 +29,7 @@
 		@Mapping(target = "updatedAt", expression = "java(java.sql.Timestamp.from(java.time.Instant.now()))")
 		Food convertToFood(FoodDTO foodDTO);
 		@Named("localDateToTimestamp")
-		static Timestamp localDateToTimestamp(LocalDate date) {
+		default Timestamp localDateToTimestamp(LocalDate date) {
 			return date == null ? null : Timestamp.valueOf(date.atStartOfDay());
 		}
 		default FoodImage convertToFoodImage(FoodDTO foodDTO, Food food) {

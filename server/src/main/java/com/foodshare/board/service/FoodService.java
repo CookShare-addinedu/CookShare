@@ -1,4 +1,4 @@
-	package com.foodshare.service;
+	package com.foodshare.board.service;
 
 	import org.springframework.stereotype.Service;
 	import org.springframework.transaction.annotation.Transactional;
@@ -6,11 +6,11 @@
 	import com.foodshare.domain.Category;
 	import com.foodshare.domain.Food;
 	import com.foodshare.domain.FoodImage;
-	import com.foodshare.dto.FoodDTO;
-	import com.foodshare.mapper.EntityMapper;
-	import com.foodshare.repository.CategoryRepository;
-	import com.foodshare.repository.FoodImageRepository;
-	import com.foodshare.repository.FoodRepository;
+	import com.foodshare.board.dto.FoodDTO;
+	import com.foodshare.board.mapper.EntityMapper;
+	import com.foodshare.board.repository.CategoryRepository;
+	import com.foodshare.board.repository.FoodImageRepository;
+	import com.foodshare.board.repository.FoodRepository;
 
 	@Service
 	@Transactional
