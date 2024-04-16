@@ -23,14 +23,13 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     // mysql
     implementation 'org.springframework.boot:spring-boot-starter'
-    //runtimeOnly 'mysql:mysql-connector-java'
+    runtimeOnly 'mysql:mysql-connector-java'
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.hibernate:hibernate-core:6.4.4.Final'
     runtimeOnly('com.mysql:mysql-connector-j')
@@ -64,6 +63,26 @@ dependencies {
     // https://mvnrepository.com/artifact/net.nurigo/javaSDK
     //implementation 'net.nurigo:javaSDK:2.2'
     implementation 'net.nurigo:sdk:4.3.0'
+
+    testImplementation ('org.springframework.security:spring-security-test')
+    testImplementation ("org.springframework.boot:spring-boot-starter-test")
+
+    //채팅관련 총괄
+    //웹소캣
+    implementation 'org.springframework.boot:spring-boot-starter-websocket' // 웹소켓 의존성 추가
+
+    //테스트코드 로깅 사용
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // 스프링 부트 스타터 데이터 MongoDB
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    // implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+
+
+
+
+
 }
 
 tasks.named('test') {

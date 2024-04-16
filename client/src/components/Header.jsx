@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 const Header = ({title, leftChild, rightChild}) => {
     const navigate = useNavigate();
 
-    const goToHome = () => navigate('/');
+    const goToHome = () => navigate('/welcome');
 
     return (
         <div className={"Header"}>

@@ -45,5 +45,9 @@ public class User {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
+    //  휴면계정인지 아닌지 , 나중에 CustomUserDetails에서 연동
+    //    public boolean isActive() {
+    //    }
+
     // Getters and Setters
 }
