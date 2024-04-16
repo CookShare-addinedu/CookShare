@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import './Chat.scss';
@@ -6,17 +6,22 @@ import {jwtDecode} from 'jwt-decode';
 import useChatDetailList from "./useChatDetailList";
 import {useParams} from "react-router-dom";
 
+
 function Chat() {
     const {chatRoomId} = useParams(); // URL에서 roomId 추출 . app.js ChatRoomList
     const [stompClient, setStompClient] = useState(null);
     const [newMessage, setNewMessage] = useState("");
-    const endOfMessagesRef = useRef(null);
+    const [initialLoad, setInitialLoad] = useState(true);
+
 
     const token = localStorage.getItem('token');
     const decoded = jwtDecode(token);
-    const firstUser = decoded.uid;
+    const userId = decoded.uid;
 
-    const {messageList, addMessageList} = useChatDetailList(chatRoomId, firstUser);
+    const { messageList, loadChatMessages, hasMore , addMessageList } = useChatDetailList(chatRoomId, userId);
+
+
+    const messagesContainerRef = useRef(null);
 
     useEffect(() => {
         if (stompClient) {
@@ -40,13 +45,6 @@ function Chat() {
 
     }, [chatRoomId, addMessageList]);
 
-    // 스크롤을 마지막 메시지로 이동
-    useEffect(() => {
-        if (endOfMessagesRef.current) {
-            endOfMessagesRef.current.scrollIntoView({behavior: 'smooth'});
-        }
-    }, [messageList]);
-
     // 컴포넌트가 언마운트될 때 웹소켓 연결 해제
     useEffect(() => {
         return () => {
@@ -58,11 +56,45 @@ function Chat() {
         };
     }, [stompClient]);
 
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const { scrollTop, clientHeight, scrollHeight } = messagesContainerRef.current;
+
+            if (scrollTop === 0 && hasMore) {
+                const currentTopMessage = messagesContainerRef.current.firstChild;
+                loadChatMessages().then(() => {
+                    // 새 메시지가 로드되었다면, 이전에 맨 위에 있었던 메시지가 다시 맨 위에 오도록 스크롤 위치 조정
+                    if (currentTopMessage) {
+                        currentTopMessage.scrollIntoView({ behavior: "smooth" });
+                    }
+                });
+            }
+        };
+
+        const container = messagesContainerRef.current;
+        container.addEventListener('scroll', handleScroll);
+        return () => container.removeEventListener('scroll', handleScroll);
+    }, [hasMore, loadChatMessages]);
+
+
+    useEffect(() => {
+        loadChatMessages();  // 컴포넌트 마운트 시 초기 메시지 로드
+    }, []);
+
+    useEffect(() => {
+        if (initialLoad && messageList.length > 0) {
+            const container = messagesContainerRef.current;
+            container.scrollTop = container.scrollHeight;
+            setInitialLoad(false);
+        }
+    }, [messageList, initialLoad]);
+
     const sendMessage = () => {
         if (stompClient && stompClient.connected && newMessage.trim() !== "") {
             const chatMessage = {
                 chatRoomId: chatRoomId,
-                sender: firstUser,
+                sender: userId,
                 content: newMessage,
                 timestamp: new Date().toISOString()
             };
@@ -75,36 +107,37 @@ function Chat() {
         }
     };
 
+
     return (
-        <div className="chatForm">
-            <div className="messagesContainer">
-                {messageList.map((msg, index) => (
-                    <div className={`chatContent ${msg.sender === firstUser ? "me" : "them"}`} key={index}>
-                        {msg.sender !== firstUser && <img src="/images/userImage.png" alt={`${msg.sender}`}/>}
-                        <div className="messageArea">
-                            <div className="messageInfo">
-                                <div className="sender">{msg.sender === firstUser ? `` : msg.sender}</div>
-                                <div className="content">{msg.content}</div>
-                                <div
-                                    className="timestamp">{msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</div>
+        <div className="chatForm" >
+
+                <div className="messagesContainer" id="messagesContainer"  ref={messagesContainerRef}>
+                    {messageList.map((msg, index) => (
+                        <div key={index} className={`chatContent ${msg.sender === userId ? "me" : "them"}`}>
+                            <div className="messageArea">
+                                <div className="messageInfo">
+                                    <div className="sender">{msg.sender === userId ? "" : msg.sender}</div>
+                                    <div className="content">{msg.content}</div>
+                                    <div className="timestamp">{msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-                <div ref={endOfMessagesRef}/>
-                {/* 마지막 메시지 위치의 레퍼런스 */}
-            </div>
+                    ))}
+                </div>
+
+
             <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyPress={(e) => {
                 if (e.key === "Enter") {
                     sendMessage();
                 }
             }}/>
-            <button id="chatBtn" onClick={sendMessage}>보내기</button>
+            <button id="chatBtn" onClick={sendMessage}>메시지 전송</button>
         </div>
     );
 }
 
 export default Chat;
+
 
 
 
