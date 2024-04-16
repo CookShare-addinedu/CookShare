@@ -56,6 +56,11 @@ function Chat() {
         };
     }, [stompClient]);
 
+    useEffect(() => {
+        loadChatMessages();  // 컴포넌트 마운트 시 초기 메시지 로드
+    }, []);
+
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -77,11 +82,6 @@ function Chat() {
         return () => container.removeEventListener('scroll', handleScroll);
     }, [hasMore, loadChatMessages]);
 
-
-    useEffect(() => {
-        loadChatMessages();  // 컴포넌트 마운트 시 초기 메시지 로드
-    }, []);
-
     useEffect(() => {
         if (initialLoad && messageList.length > 0) {
             const container = messagesContainerRef.current;
@@ -89,6 +89,10 @@ function Chat() {
             setInitialLoad(false);
         }
     }, [messageList, initialLoad]);
+
+
+
+
 
     const sendMessage = () => {
         if (stompClient && stompClient.connected && newMessage.trim() !== "") {
