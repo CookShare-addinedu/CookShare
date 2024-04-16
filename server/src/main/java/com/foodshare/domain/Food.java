@@ -1,4 +1,4 @@
-package com.example.foodshare.domain;
+package com.foodshare.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -32,7 +32,7 @@ public class Food {
     private Category category;
 
     @Column(name = "status")
-    private Long status;
+    private String status;
 
     @Column(name = "title")
     private String title;
