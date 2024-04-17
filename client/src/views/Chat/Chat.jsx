@@ -5,23 +5,29 @@ import './Chat.scss';
 import {jwtDecode} from 'jwt-decode';
 import useChatDetailList from "./useChatDetailList";
 import {useParams} from "react-router-dom";
+import {useScrollManagement} from "./useScrollManagement";
 
 
 function Chat() {
     const {chatRoomId} = useParams(); // URL에서 roomId 추출 . app.js ChatRoomList
     const [stompClient, setStompClient] = useState(null);
     const [newMessage, setNewMessage] = useState("");
-    const [initialLoad, setInitialLoad] = useState(true);
 
+    const [isFirstLoaded, setIsFirstLoaded] = useState(true);
+    const [lastMessageTimestamp, setLastMessageTimestamp] = useState(null); // 마지막으로 전송된 메시지의 ID 또는 타임스탬프를 저장
+    const [hasUserScrolled, setHasUserScrolled] = useState(false);
+    const messagesContainerRef = useRef(null);
 
     const token = localStorage.getItem('token');
     const decoded = jwtDecode(token);
     const userId = decoded.uid;
 
-    const { messageList, loadChatMessages, hasMore , addMessageList } = useChatDetailList(chatRoomId, userId);
+    const {messageList, isLoading, loadChatMessages, hasMore, addMessageList} = useChatDetailList(chatRoomId, userId);
 
+    useScrollManagement(messagesContainerRef, messageList, hasMore, isLoading,
+        loadChatMessages, isFirstLoaded, setIsFirstLoaded, lastMessageTimestamp,
+        hasUserScrolled, setHasUserScrolled, userId);
 
-    const messagesContainerRef = useRef(null);
 
     useEffect(() => {
         if (stompClient) {
@@ -61,51 +67,22 @@ function Chat() {
     }, []);
 
 
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const { scrollTop, clientHeight, scrollHeight } = messagesContainerRef.current;
-
-            if (scrollTop === 0 && hasMore) {
-                const currentTopMessage = messagesContainerRef.current.firstChild;
-                loadChatMessages().then(() => {
-                    // 새 메시지가 로드되었다면, 이전에 맨 위에 있었던 메시지가 다시 맨 위에 오도록 스크롤 위치 조정
-                    if (currentTopMessage) {
-                        currentTopMessage.scrollIntoView({ behavior: "smooth" });
-                    }
-                });
-            }
-        };
-
-        const container = messagesContainerRef.current;
-        container.addEventListener('scroll', handleScroll);
-        return () => container.removeEventListener('scroll', handleScroll);
-    }, [hasMore, loadChatMessages]);
-
-    useEffect(() => {
-        if (initialLoad && messageList.length > 0) {
-            const container = messagesContainerRef.current;
-            container.scrollTop = container.scrollHeight;
-            setInitialLoad(false);
-        }
-    }, [messageList, initialLoad]);
-
-
-
-
-
     const sendMessage = () => {
         if (stompClient && stompClient.connected && newMessage.trim() !== "") {
+            const timestamp = new Date().toISOString();
             const chatMessage = {
                 chatRoomId: chatRoomId,
                 sender: userId,
                 content: newMessage,
-                timestamp: new Date().toISOString()
+                timestamp: timestamp
             };
 
             stompClient.send(`/app/chat.room/${chatRoomId}/sendMessage`, {},
                 JSON.stringify(chatMessage));
+            setLastMessageTimestamp(timestamp);
             setNewMessage("");
+
+
         } else {
             console.log("메시지를 전송할수 없습니다 : Chat.jsx sendMessage");
         }
@@ -113,22 +90,22 @@ function Chat() {
 
 
     return (
-        <div className="chatForm" >
-
-                <div className="messagesContainer" id="messagesContainer"  ref={messagesContainerRef}>
-                    {messageList.map((msg, index) => (
-                        <div key={index} className={`chatContent ${msg.sender === userId ? "me" : "them"}`}>
-                            <div className="messageArea">
-                                <div className="messageInfo">
-                                    <div className="sender">{msg.sender === userId ? "" : msg.sender}</div>
-                                    <div className="content">{msg.content}</div>
-                                    <div className="timestamp">{msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</div>
-                                </div>
+        <div className="chatForm">
+            <div>{isLoading && <div>Loading...</div>}</div>
+            <div className="messagesContainer" id="messagesContainer" ref={messagesContainerRef}>
+                {messageList.map((msg, index) => (
+                    <div key={index} className={`chatContent ${msg.sender === userId ? "me" : "them"}`}>
+                        <div className="messageArea">
+                            <div className="messageInfo">
+                                <div className="sender">{msg.sender === userId ? "" : msg.sender}</div>
+                                <div className="content">{msg.content}</div>
+                                <div
+                                    className="timestamp">{msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</div>
                             </div>
                         </div>
-                    ))}
-                </div>
-
+                    </div>
+                ))}
+            </div>
 
             <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyPress={(e) => {
                 if (e.key === "Enter") {
