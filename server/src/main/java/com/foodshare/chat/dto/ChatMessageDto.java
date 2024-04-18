@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessageDTO {
+public class ChatMessageDto {
 	private String chatRoomId;
 	private String sender;
 	private String content;

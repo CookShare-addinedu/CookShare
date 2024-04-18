@@ -90,29 +90,44 @@ function Chat() {
 
 
     return (
-        <div className="chatForm">
-            <div>{isLoading && <div>Loading...</div>}</div>
-            <div className="messagesContainer" id="messagesContainer" ref={messagesContainerRef}>
-                {messageList.map((msg, index) => (
-                    <div key={index} className={`chatContent ${msg.sender === userId ? "me" : "them"}`}>
-                        <div className="messageArea">
-                            <div className="messageInfo">
-                                <div className="sender">{msg.sender === userId ? "" : msg.sender}</div>
-                                <div className="content">{msg.content}</div>
-                                <div
-                                    className="timestamp">{msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</div>
+        <div>
+            <div className="chatForm">
+                {/*{isLoading && <div className="loadingContainer">Loading...</div>}*/}
+                <div className="messagesContainer" id="messagesContainer" ref={messagesContainerRef}>
+                    {messageList.map((msg, index) => (
+                        <div key={index} className={`chatContent ${msg.sender === userId ? "me" : "them"}`}>
+                            {msg.sender !== userId && <img src="/images/userImage.png" alt={`${msg.sender}`}/>}
+                            <div className="messageArea">
+                                <div className="messageInfo">
+                                    <div className="sender">{msg.sender === userId ? "" : msg.sender}</div>
+                                    <div className="content">{msg.content}</div>
+                                    <div
+                                        className="timestamp">
+                                        {msg.timestamp ? new Date(msg.timestamp).toLocaleString('ko-KR',
+                                            {
+                                                year: 'numeric',
+                                                month: '2-digit',
+                                                day: '2-digit',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            }) : 'N/A'}
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+                <div className="inputContainer">
+                    <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+                           onKeyPress={(e) => {
+                               if (e.key === "Enter") {
+                                   sendMessage();
+                               }
+                           }}/>
+                    <button id="chatBtn" onClick={sendMessage}>보내기</button>
+                </div>
             </div>
-
-            <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                    sendMessage();
-                }
-            }}/>
-            <button id="chatBtn" onClick={sendMessage}>메시지 전송</button>
         </div>
     );
 }

@@ -8,14 +8,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.foodshare.chat.dto.ChatMessageDTO;
+import com.foodshare.chat.dto.ChatMessageDto;
 import com.foodshare.chat.service.ChatMessageService;
 
-@WebMvcTest(MessageChatController.class)
+@WebMvcTest(ChatMessageController.class)
 public class ChatControllerTest {
 
 	@Autowired
-	private MessageChatController chatController;
+	private ChatMessageController chatController;
 
 	@MockBean
 	private ChatMessageService chatMessageService;
@@ -27,7 +27,7 @@ public class ChatControllerTest {
 
 	public void testMessage() {
 		String chatRoomId = "testRoomId";
-		ChatMessageDTO message = new ChatMessageDTO();
+		ChatMessageDto message = new ChatMessageDto();
 		message.setChatRoomId(chatRoomId);
 		message.setSender("testUser");
 		message.setContent("Hello, World!");

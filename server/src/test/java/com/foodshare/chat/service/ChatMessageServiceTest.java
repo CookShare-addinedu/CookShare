@@ -64,9 +64,9 @@ class ChatMessageServiceTest {
 		String sender = "UserA";
 		String messageContent = "Hello, World!";
 
-		when(chatMessageRepository.findById(chatRoomId))
+		//when(chatMessageRepository.findById(chatRoomId))
 			//findById 메소드가 chatRoomId와 함께 호출될 때를 가정한당
-			.thenReturn(Optional.of(expectedChatRoom));
+		//	.thenReturn(Optional.of(expectedChatRoom));
 		//위의 가정에 따라 호출될 때, expectedChatRoom을 포함하는 Optional 객체를 반환
 
 		// when (실행) 하면
