@@ -1,6 +1,10 @@
 import './Header.scss';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleLeft, faEllipsisVertical, faMagnifyingGlass, faBell, faUser} from "@fortawesome/free-solid-svg-icons";
+import useHeaderTitle from "../../../hook/useHeaderTitle";
+
+
+
 function Header1() {
     return (
         <header className={'header1'}>
@@ -15,6 +19,8 @@ function Header1() {
     );
 }
 function Header2() {
+    const title = useHeaderTitle();
+
     return (
         <header className={'header2'}>
             <div className={'prev'}>
@@ -25,22 +31,24 @@ function Header2() {
                 </a>
             </div>
             <div className={'title'}>
-                <h1>Header1</h1>
+                <h1>{title}</h1>
             </div>
         </header>
     );
 }
 
 function Header3() {
+    const title = useHeaderTitle();
     return (
         <header className={'header3'}>
             <div className={'title'}>
-                <h1>Header1</h1>
+                <h1>{title}</h1>
             </div>
         </header>
     )
 }
 function Header4() {
+    const title = useHeaderTitle();
     return(
         <header className={'header4'}>
             <div className={'prev'}>
@@ -51,7 +59,7 @@ function Header4() {
                 </a>
             </div>
             <div className={'title'}>
-                <h1>Header1</h1>
+                <h1>{title}</h1>
             </div>
             <div className={'menu'}>
                 <button>
