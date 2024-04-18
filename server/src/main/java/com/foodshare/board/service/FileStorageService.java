@@ -1,6 +1,6 @@
-package com.foodshare.service;
+package com.foodshare.board.service;
 
-import com.foodshare.exception.FileStorageException;
+import com.foodshare.board.exception.FileStorageException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

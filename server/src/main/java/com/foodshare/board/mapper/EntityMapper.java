@@ -1,22 +1,49 @@
-package com.foodshare.mapper;
+package com.foodshare.board.mapper;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 
 import com.foodshare.domain.Category;
 import com.foodshare.domain.Food;
 import com.foodshare.domain.FoodImage;
-import com.foodshare.dto.FoodDTO;
+import com.foodshare.board.dto.FoodDTO;
 
 @Mapper(componentModel = "spring")
 public interface EntityMapper {
-	// EntityMapper INSTANCE = Mappers.getMapper(EntityMapper.class);
+	@Mappings({
+		@Mapping(target = "foodId", source = "food.foodId"),
+		@Mapping(target = "imageUrls", expression = "java(mapImagePaths(foodImages))"),
+		@Mapping(target = "category", source = "category.name"),
+		@Mapping(target = "makeByDate", source = "food.makeByDate", qualifiedByName = "timestampToLocalDate"),
+		@Mapping(target = "eatByDate", source = "food.eatByDate", qualifiedByName = "timestampToLocalDate"),
+		@Mapping(target = "title", source = "food.title"),
+		@Mapping(target = "description", source = "food.description")
+	})
+	FoodDTO convertToFoodDTO(Food food, List<FoodImage> foodImages, Category category);
 
+	default List<String> mapImagePaths(List<FoodImage> foodImages) {
+		if (foodImages == null) return Collections.emptyList();
+		return foodImages.stream()
+			.flatMap(image -> image.getImagePaths().stream())
+			.collect(Collectors.toList());
+	}
+
+	@Named("timestampToLocalDate")
+	default LocalDate timestampToLocalDate(Timestamp timestamp) {
+		return timestamp != null ? timestamp.toLocalDateTime().toLocalDate() : null;
+	}
+
+	@Mapping(target = "foodId", ignore = true)
+	@Mapping(target = "location", ignore = true)
 	@Mapping(target = "category", ignore = true)
 	@Mapping(target = "giver", ignore = true)
 	@Mapping(target = "receiver", ignore = true)
@@ -28,13 +55,13 @@ public interface EntityMapper {
 	@Mapping(target = "updatedAt", expression = "java(java.sql.Timestamp.from(java.time.Instant.now()))")
 	Food convertToFood(FoodDTO foodDTO);
 	@Named("localDateToTimestamp")
-	public static Timestamp localDateToTimestamp(LocalDate date) {
+	default Timestamp localDateToTimestamp(LocalDate date) {
 		return date == null ? null : Timestamp.valueOf(date.atStartOfDay());
 	}
 	default FoodImage convertToFoodImage(FoodDTO foodDTO, Food food) {
-		if (foodDTO.getImageUri() == null) return null;
+		if (foodDTO.getImageUrls() == null) return null;
 		FoodImage foodImage = FoodImage.builder()
-			.imagePath(foodDTO.getImageUri())
+			.imagePaths(foodDTO.getImageUrls())
 			.food(food)
 			.createdAt(Timestamp.from(Instant.now()))
 			.updatedAt(Timestamp.from(Instant.now()))

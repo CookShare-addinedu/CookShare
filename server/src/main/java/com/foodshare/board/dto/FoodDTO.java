@@ -1,6 +1,8 @@
-package com.foodshare.dto;
+package com.foodshare.board.dto;
 
 import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FoodDTO {
-	private MultipartFile image;
-	private String imageUri;
+	private Long foodId; // Food ID 필드 추가
+	private List<MultipartFile> images;
+	private List<String> imageUrls;
 	private String category;
 	private LocalDate makeByDate;
 	private LocalDate eatByDate;
