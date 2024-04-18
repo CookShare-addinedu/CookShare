@@ -1,17 +1,44 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import './FoodForm.css';
+import {useLocation, useNavigate} from "react-router-dom";
 
 const FoodForm = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const initialData = location.state?.food;
+
     const [foodData, setFoodData] = useState({
-        image: '', // 이미지 파일 상태 추가
-        category: '', // 카테고리 ID 또는 이름을 입력받을 것
+        category: '',
         makeByDate: '',
         eatByDate: '',
         status: '',
         title: '',
         description: ''
     });
+
+    useEffect(() => {
+        console.log(initialData);
+        if (initialData) {
+            setFoodData({
+                category: initialData.category,
+                makeByDate: initialData.makeByDate,
+                eatByDate: initialData.eatByDate,
+                status: initialData.status,
+                title: initialData.title,
+                description: initialData.description
+            });
+            setSelectedStatus(initialData.status); // 상태를 설정합니다.
+
+            // 이미지 URL을 이미지 미리보기 배열에 추가합니다.
+            // 가정: initialData.imageUrls는 이미지 URL 문자열 배열입니다.
+            if (initialData.imageUrls) {
+                setImages(initialData.imageUrls.map(url => ({ url })));
+            }
+        }
+    }, [initialData]);
+
+    const [images, setImages] = useState([]); // 이미지 파일 목록 상태 추가
 
     const handleChange = (e) => {
         setFoodData({ ...foodData, [e.target.name]: e.target.value });
@@ -23,31 +50,49 @@ const FoodForm = () => {
         setFoodData({ ...foodData, status: statusValue });
         setSelectedStatus(statusValue); // 버튼의 스타일을 변경하기 위해 선택된 상태를 설정합니다.
     };
+    // 이미지 변경 핸들러를 수정합니다.
     const handleImageChange = (e) => {
-        setFoodData({ ...foodData, image: e.target.files[0] });
+        if (e.target.files) {
+            // 로컬에서 선택된 이미지 파일들의 배열을 생성합니다.
+            const fileImages = Array.from(e.target.files).map(file => ({
+                file,
+                url: URL.createObjectURL(file)
+            }));
+            // 기존 이미지와 새로운 이미지를 결합합니다.
+            setImages(prevImages => [...prevImages, ...fileImages].slice(0, 5));
+        }
+    };
+
+    // 이미지 제거 핸들러를 추가합니다.
+    const handleRemoveImage = (index) => {
+        setImages(prevImages => prevImages.filter((_, i) => i !== index));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append('image', foodData.image);
+        images.forEach(image => {
+            formData.append('images', image); // 이미지 파일을 formData에 추가
+        });
+
         Object.keys(foodData).forEach(key => {
-            if (key !== 'image') { // image 키를 제외하고 formData에 추가
-                formData.append(key, foodData[key]);
-            }
+            formData.append(key, foodData[key]);
         });
 
         try {
-            // 서버에 POST 요청
-            console.log(formData.get('image'));
-            console.log(formData.get('title'));
-            console.log(foodData);
-            const response = await axios.post('/api/foods', formData);
+            let response;
+            if (initialData?.id) {
+                // 데이터 수정 (PUT 요청)
+                response = await axios.put(`/api/foods/${initialData.id}`, formData);
+            } else {
+                // 새 데이터 추가 (POST 요청)
+                response = await axios.post('/api/foods', formData);
+            }
             console.log(response.data);
-            // 처리 완료 후 추가 동작(예: 폼 초기화, 알림 표시 등)
+            navigate(`/foods/${response.data.id}`); // 성공적으로 처리 후 해당 음식 상세 페이지로 이동
         } catch (error) {
-            console.error('Error posting food data', error);
+            console.error('Error submitting food data', error);
         }
     };
 
@@ -61,9 +106,20 @@ const FoodForm = () => {
             <form onSubmit={handleSubmit} className="food-form">
                 <div className="form-group">
                     <label htmlFor="image" className="image-label">
-                        이미지 (0/5)
-                        <input type="file" id="image" onChange={handleImageChange} className="image-input"/>
+                        이미지 ({images.length}/5) {/* 이미지 개수 업데이트 */}
+                        <input type="file" id="image" onChange={handleImageChange} className="image-input" multiple/>
                     </label>
+                    <div className="image-preview">
+                        {images.map((image, index) => (
+                            <div key={index}>
+                                <img src={image.url} alt={`Preview ${index}`} />
+                                {/* 이미지 제거 버튼을 추가합니다. */}
+                                <button type="button" onClick={() => handleRemoveImage(index)}>
+                                    Remove
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="form-group">

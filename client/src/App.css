@@ -1,3 +1,11 @@
+/* styles.css 또는 해당 컴포넌트의 CSS 파일에 추가 */
+.food-image {
+    width: 200px;  /* 원하는 너비 */
+    height: 150px; /* 원하는 높이 */
+    object-fit: cover; /* 이미지 비율을 유지하면서 요소에 맞춤 */
+}
+
+
 .app {
     font-family: sans-serif;
     text-align: center;

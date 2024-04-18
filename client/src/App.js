@@ -2,23 +2,23 @@ import React from 'react';
 import './App.css';
 import {Link, Route, Routes} from "react-router-dom";
 import FoodForm from "./views/Board/FoodForm";
+import FoodList from "./views/Board/FoodList";
+import FoodDetail from "./views/Board/FoodDetail";
 
 function App() {
     return (
         <div className="app">
             <Header />
-            <MessageList messages={dummyMessages} />
             <NavigationBar />
             <Routes>
-                <Route path="/add" element={<FoodForm/>} />
-                {/*<Route path="/search" element={<Search/>} />*/}
-                {/*<Route path="/country/:code" element={<Country/>} />*/}
-                {/*<Route path="*" element={<NotFound/>} />*/}
+                <Route path="/" element={<FoodList />} />
+                <Route path="/add" element={<FoodForm />} />
+                <Route path="/foods/:id" element={<FoodDetail />} />
+                <Route path="/edit-food/:id" element={<FoodForm />} />
             </Routes>
             <div>
-                <Link to={"/add"}>AddFood</Link>
-                {/*<Link to={"/search"}>Search</Link>*/}
-                {/*<Link to={"/country"}>Country</Link>*/}
+                <Link to="/">Home</Link><br></br>
+                <Link to="/add">Add Food</Link>
             </div>
         </div>
     );
@@ -71,12 +71,6 @@ function NavigationBar() {
     );
 }
 
-const dummyMessages = [
-    {
-        title: "제목이에요",
-        body: "내용을 작성해주세요."
-    },
-    // ... 기타 메시지 객체
-];
+
 
 export default App;
