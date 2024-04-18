@@ -7,7 +7,7 @@ const router = {
             path: '/login',
             component: <Login/>,
             header:<Header2/>,
-            footer:<Footer/>
+            footer:null
         },
     ]
 }
