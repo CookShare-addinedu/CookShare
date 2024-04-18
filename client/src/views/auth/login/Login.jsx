@@ -29,7 +29,7 @@ export default function Login (){
             password: password.value
         }
         try{
-            const response = await axios.post('/api/login',data);
+            const response = await axios.post('/api/user/login',data);
 
             if (response.status === 200) {
                 const token =  response.data.token;
