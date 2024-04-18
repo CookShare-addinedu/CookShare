@@ -59,7 +59,6 @@ function FoodList() {
                     <Link to={`/foods/${food.foodId}`} key={food.foodId}>
                         <div className="food-item">
                             <h3>{food.title}</h3>
-                            <h3>{food.foodId}</h3>
                             <p>{food.description}</p>
                             <img src={food.imageUrls[0]} alt={food.title} className="food-image" />
                         </div>

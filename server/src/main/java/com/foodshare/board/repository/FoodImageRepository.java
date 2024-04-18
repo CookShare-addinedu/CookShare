@@ -11,5 +11,4 @@ import com.foodshare.domain.FoodImage;
 public interface FoodImageRepository extends JpaRepository<FoodImage, Long> {
 	// FoodImageRepository
 	List<FoodImage> findByFoodFoodId(Long foodId);
-
 }

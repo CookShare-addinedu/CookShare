@@ -102,5 +102,14 @@ public class FoodService {
 		return existingFood;
 	}
 
+	public void delete(Long id) {
+		Food existingFood = foodRepository.findById(id)
+			.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+		// 관련된 이미지와 카테고리도 삭제
+		categoryRepository.deleteById(existingFood.getCategory().getCategoryId()); // 카테고리 삭제
+		foodImageRepository.deleteById(id); // 이미지 삭제
+		foodRepository.delete(existingFood); // 음식 삭제
+	}
+
 }
 

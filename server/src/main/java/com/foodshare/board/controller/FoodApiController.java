@@ -26,6 +26,8 @@ import com.foodshare.board.dto.FoodDTO;
 import com.foodshare.board.exception.FileStorageException;
 import com.foodshare.board.service.FileStorageService;
 import com.foodshare.board.service.FoodService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RequestMapping("/api/foods")
 @RestController
@@ -34,6 +36,7 @@ public class FoodApiController {
 	private FoodService foodService;
 	@Autowired
 	private FileStorageService fileStorageService;
+	private static final Logger log = LoggerFactory.getLogger(FoodApiController.class);
 
 	@GetMapping("/{id}")
 	public ResponseEntity<FoodDTO> read(@PathVariable("id") Long id) {
@@ -70,8 +73,10 @@ public class FoodApiController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdFood);
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<Food> update(@PathVariable Long id, @ModelAttribute FoodDTO foodDTO) {
+	@PostMapping("/{id}/update")
+	public ResponseEntity<Food> update(@PathVariable("id") Long id, @ModelAttribute FoodDTO foodDTO) {
+		log.info("Updating food with id: {}", id);
+
 		try {
 			List<String> fileDownloadUrls = new ArrayList<>();
 			if (foodDTO.getImages() != null && !foodDTO.getImages().isEmpty()) {
@@ -84,8 +89,10 @@ public class FoodApiController {
 					fileDownloadUrls.add(fileDownloadUrl);
 				}
 				foodDTO.setImageUrls(fileDownloadUrls);
+			} else {
+				FoodDTO existingFoodDTO = foodService.read(id); // 기존 데이터 조회
+				foodDTO.setImageUrls(existingFoodDTO.getImageUrls()); // 기존 이미지 URL 설정
 			}
-
 			Food updatedFood = foodService.update(id, foodDTO);
 			return ResponseEntity.ok(updatedFood);
 		} catch (NotFoundException e) {
@@ -95,4 +102,15 @@ public class FoodApiController {
 		}
 	}
 
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+		try {
+			foodService.delete(id);
+			return ResponseEntity.ok().build(); // 삭제 성공 응답
+		} catch (NotFoundException e) {
+			return ResponseEntity.notFound().build();
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting food");
+		}
+	}
 }

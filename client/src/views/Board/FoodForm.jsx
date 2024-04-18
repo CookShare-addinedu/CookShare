@@ -72,9 +72,14 @@ const FoodForm = () => {
         e.preventDefault();
 
         const formData = new FormData();
-        images.forEach(image => {
-            formData.append('images', image); // 이미지 파일을 formData에 추가
-        });
+
+        if (images.length > 0) {
+            images.forEach(image => {
+                if (image.file) { // 'image.file'이 존재하는 경우만 추가
+                    formData.append('images', image.file);
+                }
+            });
+        }
 
         Object.keys(foodData).forEach(key => {
             formData.append(key, foodData[key]);
@@ -82,15 +87,18 @@ const FoodForm = () => {
 
         try {
             let response;
-            if (initialData?.id) {
+            if (initialData?.foodId) {
                 // 데이터 수정 (PUT 요청)
-                response = await axios.put(`/api/foods/${initialData.id}`, formData);
+                console.log("수정 요청들어옴");
+                response = await axios.post(`/api/foods/${initialData.foodId}/update`, formData);
             } else {
                 // 새 데이터 추가 (POST 요청)
+                console.log(initialData);
+                console.log("추가 요청들어옴");
                 response = await axios.post('/api/foods', formData);
             }
             console.log(response.data);
-            navigate(`/foods/${response.data.id}`); // 성공적으로 처리 후 해당 음식 상세 페이지로 이동
+            navigate(`/`); // 성공적으로 처리 후 해당 음식 상세 페이지로 이동
         } catch (error) {
             console.error('Error submitting food data', error);
         }

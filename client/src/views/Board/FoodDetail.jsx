@@ -36,12 +36,27 @@ function FoodDetail() {
         navigate(`/edit-food/${id}`, { state: { food: food } });
     };
 
+    const handleDelete = async () => {
+        if (window.confirm('Are you sure you want to delete this item?')) {
+            try {
+                await axios.delete(`/api/foods/${id}`);
+                navigate('/'); // 삭제 후 메인 페이지로 리다이렉트
+                console.log("Deleted successfully!");
+            } catch (error) {
+                console.error('Error deleting food', error);
+                setError('Failed to delete the food');
+            }
+        }
+    };
+
+
     return (
         <div>
             <h2>{food.title}</h2>
             <p>{food.description}</p>
             {food.imageUrls && <img src={food.imageUrls[0]} alt={food.title}/>}
             <button onClick={handleEdit}>Edit</button>
+            <button onClick={handleDelete}>Delete</button> {/* 삭제 버튼 추가 */}
         </div>
     );
 }
