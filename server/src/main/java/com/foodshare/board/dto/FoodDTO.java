@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FoodDTO {
-	private Long foodId; // Food ID 필드 추가
+	private Long foodId;
 	private List<MultipartFile> images;
 	private List<String> imageUrls;
 	private String category;

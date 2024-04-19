@@ -90,7 +90,7 @@ const FoodForm = () => {
             if (initialData?.foodId) {
                 // 데이터 수정 (PUT 요청)
                 console.log("수정 요청들어옴");
-                response = await axios.post(`/api/foods/${initialData.foodId}/update`, formData);
+                response = await axios.put(`/api/foods/${initialData.foodId}`, formData);
             } else {
                 // 새 데이터 추가 (POST 요청)
                 console.log(initialData);
