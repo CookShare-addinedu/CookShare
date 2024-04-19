@@ -2,7 +2,6 @@ import './style/style.scss';
 import {Route, Routes, useLocation} from "react-router-dom";
 import {useEffect} from "react";
 import router from "./router";
-import SplashScreen from "./views/pages/SplashScreen";
 function App() {
 
     const location = useLocation();
@@ -23,14 +22,15 @@ function App() {
     }
     return (
         <>
-            {/*<SplashScreen/>*/}
-            {getComponent(location,"header")}
-            <Routes>
-                {router.routes.map((route, index) => (
-                    <Route path={route.path} element={route.component} key={index}/>
-                ))}
-            </Routes>
-            {getComponent(location,"footer")}
+            <main>
+                {getComponent(location,"header")}
+                <Routes>
+                    {router.routes.map((route, index) => (
+                        <Route path={route.path} element={route.component} key={index}/>
+                    ))}
+                </Routes>
+                {getComponent(location,"footer")}
+            </main>
         </>
     )
 }
