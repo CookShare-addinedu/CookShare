@@ -12,7 +12,6 @@ function Chat() {
     const {chatRoomId} = useParams(); // URL에서 roomId 추출 . app.js ChatRoomList
     const [stompClient, setStompClient] = useState(null);
     const [newMessage, setNewMessage] = useState("");
-
     const [isFirstLoaded, setIsFirstLoaded] = useState(true);
     const [lastMessageTimestamp, setLastMessageTimestamp] = useState(null); // 마지막으로 전송된 메시지의 ID 또는 타임스탬프를 저장
     const [hasUserScrolled, setHasUserScrolled] = useState(false);
