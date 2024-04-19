@@ -1,40 +1,38 @@
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import Chat from "./views/Chat/Chat";
-import React from "react";
-import './App.css'
-import Home from "./views/auth/Home";
-import Login from "./views/auth/Login";
-import Welcome from "./views/auth/Welcome";
-import Register from "./views/auth/Register";
-import ChatRoomList from "./views/Chat/ChatRoomList";
+import './style/style.scss';
+import {Route, Routes, useLocation} from "react-router-dom";
+import {useEffect} from "react";
+import router from "./router";
 
 function App() {
+
+    const location = useLocation();
+    // const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+    useEffect(() => {
+        getComponent(location,"header");
+        getComponent(location,"footer");
+    }, [location]);
+
+    const getComponent = (location,type) => {
+        for (let i = 0; i < router.routes.length; i++) {
+            if (router.routes[i].path === location.pathname) {
+
+                return type === "header" ? router.routes[i].header : router.routes[i].footer
+            }
+        }
+        return type === "header" ? null : null
+    }
     return (
-            <div className="App">
-                {/*<h1>푸드쉐어페이지입니다.</h1>*/}
-                <Routes>
-                    <Route path={"/"} element={<Home/>}/>
-                    <Route path={"/Login"} element={<Login/>}/>
-                    <Route path={"/Welcome"} element={<Welcome/>}/>
-                    <Route path={"/Register"} element={<Register/>}/>
-                    {/*<Route path={"/Profile"} element={<Profile />} />*/}
-
-
-                    {/*<Route path="/chat/GetChatList" element={<ChatRoomList/>}/>*/}
-                    {/*<Route path="/chat/GetChat" element={<Chat/>}/>*/}
-
-                    {/* 채팅방 목록 페이지 */}
-                    <Route path="/chat/GetChatList" element={<ChatRoomList />} />
-
-                    {/* 개별 채팅 페이지 */}
-                    <Route path="/chat/GetChat/:chatRoomId" element={<Chat />} />
-
-
-
-                </Routes>
-            </div>
-        )
-
+        <>
+            {/*<SplashScreen/>*/}
+            {getComponent(location,"header")}
+            <Routes>
+                {router.routes.map((route, index) => (
+                    <Route path={route.path} element={route.component} key={index}/>
+                ))}
+            </Routes>
+            {getComponent(location,"footer")}
+        </>
+    )
 }
 
 export default App;
