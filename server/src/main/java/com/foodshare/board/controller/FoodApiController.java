@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.foodshare.board.exception.FileStorageException;
+import com.foodshare.board.exception.NotFoundException;
 import com.foodshare.board.service.FileStorageService;
 import com.foodshare.board.service.FoodService;
 import com.foodshare.domain.Food;
@@ -64,5 +66,45 @@ public class FoodApiController {
 		}
 		Food createdFood = foodService.create(foodDTO); // 수정된 foodDTO 전달
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdFood);
+	}
+
+	@PostMapping("/{id}/update")
+	public ResponseEntity<Food> update(@PathVariable("id") Long id, @ModelAttribute FoodDTO foodDTO) {
+		List<String> fileDownloadUrls = new ArrayList<>();
+
+		try {
+			if (foodDTO.getImages() != null && !foodDTO.getImages().isEmpty()) {
+				for (MultipartFile image : foodDTO.getImages()) {
+					String fileName = fileStorageService.storeFile(image);
+					String fileDownloadUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+						.path("/download/")
+						.path(fileName)
+						.toUriString();
+					fileDownloadUrls.add(fileDownloadUrl);
+				}
+				foodDTO.setImageUrls(fileDownloadUrls);
+			} else {
+				FoodDTO existingFoodDTO = foodService.read(id); // 기존 데이터 조회
+				foodDTO.setImageUrls(existingFoodDTO.getImageUrls()); // 기존 이미지 URL 설정
+			}
+			Food updatedFood = foodService.update(id, foodDTO);
+			return ResponseEntity.ok(updatedFood);
+		} catch (NotFoundException e) {
+			return ResponseEntity.notFound().build();
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+		try {
+			foodService.delete(id);
+			return ResponseEntity.ok().build(); // 삭제 성공 응답
+		} catch (NotFoundException e) {
+			return ResponseEntity.notFound().build();
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting food");
+		}
 	}
 }

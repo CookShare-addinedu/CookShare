@@ -1,6 +1,8 @@
 	package com.foodshare.board.service;
 
+	import java.util.ArrayList;
 	import java.util.List;
+	import java.util.stream.Collectors;
 
 	import org.springframework.data.domain.Page;
 	import org.springframework.data.domain.Pageable;
@@ -63,6 +65,49 @@
 				foodImageRepository.save(foodImage);
 			}
 			return food;
+		}
+
+		public Food update(Long id, FoodDTO foodDTO) throws NotFoundException {
+
+			Food existingFood = foodRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+
+			// 기존 Food 엔티티 업데이트
+			existingFood.setTitle(foodDTO.getTitle());
+			existingFood.setDescription(foodDTO.getDescription());
+			// 다른 필드들도 마찬가지로 업데이트
+
+			// Category 업데이트
+			Category category = categoryRepository.findById(existingFood.getCategory().getCategoryId())
+				.orElseThrow(() -> new NotFoundException("Category not found"));
+			category.setName(foodDTO.getCategory());
+			categoryRepository.save(category);
+			existingFood.setCategory(category);
+
+			List<FoodImage> existingImages = foodImageRepository.findByFoodFoodId(id);
+			foodImageRepository.deleteAll(existingImages); // 이전 이미지 제거
+
+			List<FoodImage> newImages = foodDTO.getImageUrls().stream().map(url -> {
+				FoodImage image = new FoodImage();
+				List<String> paths = new ArrayList<>();
+				paths.add(url);
+				image.setImagePaths(paths);
+				image.setFood(existingFood);
+				return image;
+			}).collect(Collectors.toList());
+
+			foodImageRepository.saveAll(newImages); // 새 이미지 저장
+			foodRepository.save(existingFood);
+			return existingFood;
+		}
+
+		public void delete(Long id) {
+			Food existingFood = foodRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+			// 관련된 이미지와 카테고리도 삭제
+			categoryRepository.deleteById(existingFood.getCategory().getCategoryId()); // 카테고리 삭제
+			foodImageRepository.deleteById(id); // 이미지 삭제
+			foodRepository.delete(existingFood); // 음식 삭제
 		}
 
 	}
