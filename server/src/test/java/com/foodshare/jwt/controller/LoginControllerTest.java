@@ -1,4 +1,4 @@
-package com.example.foodshare.jwt.controller;
+package com.foodshare.jwt.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
