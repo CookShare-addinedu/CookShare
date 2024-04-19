@@ -7,39 +7,29 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.foodshare.chat.dto.ChatMessageDto;
 import com.foodshare.chat.dto.ChatRoomDto;
 import com.foodshare.chat.mapper.ChatDataMapper;
 import com.foodshare.chat.repository.ChatMessageRepository;
 import com.foodshare.chat.repository.ChatRoomRepository;
-import com.foodshare.chat.repository.UserRoomVisibilityRepository;
+import com.foodshare.chat.repository.UserChatRoomVisibilityRepository;
 import com.foodshare.domain.ChatMessage;
 import com.foodshare.domain.ChatRoom;
-import com.foodshare.domain.UserRoomVisibility;
+import com.foodshare.domain.UserChatRoomVisibility;
 import com.foodshare.utils.ValidationUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ChatRoomService {
-	@Autowired
-	ChatRoomRepository chatRoomRepository;
-
-	@Autowired
-	ChatMessageRepository chatMessageRepository;
-
-	@Autowired
-	private UserRoomVisibilityRepository userRoomVisibilityRepository;
-
-	@Autowired
-	ChatDataMapper chatDataMapper;
+	private final ChatRoomRepository chatRoomRepository;
+	private final ChatMessageRepository chatMessageRepository;
+	private final UserChatRoomVisibilityRepository userChatRoomVisibilityRepository;
+	private final ChatDataMapper chatDataMapper;
 
 	//채팅방 목록 불러오기
 	public List<ChatRoomDto> listChatRoomsForUser(String userId) {
@@ -48,9 +38,9 @@ public class ChatRoomService {
 	}
 
 	private Set<String> getHiddenRoomIds(String userId) {
-		return userRoomVisibilityRepository.findByUserId(userId).stream()
-			.filter(UserRoomVisibility::isHidden)
-			.map(UserRoomVisibility::getChatRoomId)
+		return userChatRoomVisibilityRepository.findByUserId(userId).stream()
+			.filter(UserChatRoomVisibility::isHidden)
+			.map(UserChatRoomVisibility::getChatRoomId)
 			.collect(Collectors.toSet());
 	}
 
@@ -64,28 +54,36 @@ public class ChatRoomService {
 	private ChatRoomDto convertRoomToDto(ChatRoom room) {
 		Optional<ChatMessage> lastMessageOpt = chatMessageRepository.findFirstByChatRoomIdOrderByTimestampDesc(
 			room.getId());
-		ChatMessage lastMessage = lastMessageOpt.orElse(new ChatMessage("", room.getId(), "", "", new Date()));
+		ChatMessage lastMessage = lastMessageOpt.orElse(ChatMessage.builder()
+			.chatRoomId(room.getId())
+			.sender("")
+			.content("")
+			.timestamp(new Date())
+			.isRead(false)
+			.build());
 		return chatDataMapper.toChatRoomDto(room, lastMessage);
 	}
 
 	//채팅방 숨기기
 	public void setRoomHidden(String userId, String chatRoomId) {
-		UserRoomVisibility visibility = findOrCreateVisibility(userId, chatRoomId);
+		UserChatRoomVisibility visibility = findOrCreateVisibility(userId, chatRoomId);
 		updateVisibilityToHidden(visibility);
 	}
 
-	private UserRoomVisibility findOrCreateVisibility(String userId, String chatRoomId) {
-		return userRoomVisibilityRepository.findByUserIdAndChatRoomId(userId, chatRoomId)
-			.orElse(UserRoomVisibility.builder()
+	private UserChatRoomVisibility findOrCreateVisibility(String userId, String chatRoomId) {
+		return userChatRoomVisibilityRepository.findByUserIdAndChatRoomId(userId, chatRoomId)
+			.orElse(UserChatRoomVisibility.builder()
 				.userId(userId)
 				.chatRoomId(chatRoomId)
 				.isHidden(false)
+				.lastHiddenTimestamp(new Date())
 				.build());
 	}
 
-	private void updateVisibilityToHidden(UserRoomVisibility visibility) {
+	private void updateVisibilityToHidden(UserChatRoomVisibility visibility) {
 		visibility.setHidden(true);
-		userRoomVisibilityRepository.save(visibility);
+		visibility.setLastHiddenTimestamp(new Date());
+		userChatRoomVisibilityRepository.save(visibility);
 	}
 
 	public ChatRoom createChatRoom(String firstUserId, String secondUserId) {

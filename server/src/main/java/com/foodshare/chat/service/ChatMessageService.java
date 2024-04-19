@@ -1,9 +1,8 @@
 package com.foodshare.chat.service;
 
 import java.util.Date;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
@@ -20,26 +19,23 @@ import com.foodshare.chat.exception.DatabaseServiceUnavailableException;
 import com.foodshare.chat.exception.DbErrorHandlingExecutor;
 import com.foodshare.chat.mapper.ChatDataMapper;
 import com.foodshare.chat.repository.ChatMessageRepository;
-import com.foodshare.chat.repository.UserRoomVisibilityRepository;
+import com.foodshare.chat.repository.UserChatRoomVisibilityRepository;
 import com.foodshare.domain.ChatMessage;
-import com.foodshare.domain.UserRoomVisibility;
+import com.foodshare.domain.UserChatRoomVisibility;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ChatMessageService {
-	@Autowired
-	ChatMessageRepository chatMessageRepository;
 
-	@Autowired
-	ChatDataMapper chatDataMapper;
-
-	@Autowired
-	UserRoomVisibilityRepository userRoomVisibilityRepository;
-
-	@Autowired
-	MongoTemplate mongoTemplate;
+	private final ChatMessageRepository chatMessageRepository;
+	private final ChatDataMapper chatDataMapper;
+	private final UserChatRoomVisibilityRepository userChatRoomVisibilityRepository;
+	private final MongoTemplate mongoTemplate;
+	private static final Date EPOCH = new Date(0);
 
 	public void addMessageToChatRoom(String chatRoomId, String senderId, String messageContent) {
 		try {
@@ -47,6 +43,7 @@ public class ChatMessageService {
 			log.info("처리 중인 채팅 메시지: 발신자 ID={}, 수신자 ID={}", senderId, receiverId);
 
 			performDatabaseOperations(chatRoomId, senderId, receiverId, messageContent);
+
 		} catch (DatabaseServiceUnavailableException e) {
 			throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "데이터베이스 용할 수 없습니다. 나중에 다시 시도해주세요.",
 				e);
@@ -89,7 +86,7 @@ public class ChatMessageService {
 	}
 
 	private void unHideChatRoomIfNeeded(String userId, String chatRoomId) {
-		log.info("채팅방 안숨숨김 업데이트 중");
+		log.info("채팅방 안숨김 업데이트 중");
 
 		DbErrorHandlingExecutor.executeDatabaseOperation(() ->
 			updateChatRoomVisibility(userId, chatRoomId), "채팅방 숨김 해제 실패");
@@ -99,32 +96,47 @@ public class ChatMessageService {
 		Query query = new Query(Criteria.where("userId").is(userId).and("chatRoomId").is(chatRoomId));
 		Update update = new Update().set("isHidden", false);
 
-		mongoTemplate.updateFirst(query, update, UserRoomVisibility.class);
+		mongoTemplate.updateFirst(query, update, UserChatRoomVisibility.class);
 	}
 
-	public Slice<ChatMessageDto> listMessagesInChatRoom(String chatRoomId, int page, int size) {
-		PageRequest pageable = PageRequest.of(page, size, Sort.by("timestamp").descending());
-
-		Slice<ChatMessage> messages = getMessages(chatRoomId, pageable);
-
-		return toChatMessageDtoSlice(messages);
+	public Slice<ChatMessageDto> listMessagesInChatRoom(String chatRoomId, String userId, int page, int size) {
+		PageRequest pageable = createPageRequest(page, size);
+		return getUserChatRoomVisibility(userId, chatRoomId)
+			.map(visibility -> filterMessagesByVisibility(visibility, chatRoomId, pageable))
+			.orElseGet(() -> getChatRoomMessages(chatRoomId, pageable));
 	}
 
-	private Slice<ChatMessage> getMessages(String chatRoomId, PageRequest pageable) {
-		try {
-			return chatMessageRepository.findByChatRoomIdOrderByTimestampDesc(chatRoomId, pageable);
-		} catch (DataAccessException ex) {
-			log.error("데이터베이스에서 메시지를 조회하는 도중 오류가 발생했습니다. 채팅방 ID: {}", chatRoomId, ex);
-			throw new DatabaseServiceUnavailableException("메시지 조회 서비스를 사용할 수 없습니다. 나중에 다시 시도해주세요.", ex);
+	// 안숨겨진 채팅방 가져오기
+	private Optional<UserChatRoomVisibility> getUserChatRoomVisibility(String userId, String chatRoomId) {
+		return userChatRoomVisibilityRepository.findByUserIdAndChatRoomId(userId, chatRoomId);
+	}
+
+	// 숨겨진 채팅방 안숨겨진 채팅방 메시지 필터링
+	private Slice<ChatMessageDto> filterMessagesByVisibility(UserChatRoomVisibility visibility, String chatRoomId,
+		PageRequest pageable) {
+		if (visibility.getLastHiddenTimestamp() != null) {
+			Date lastHidden = visibility.getLastHiddenTimestamp();
+			return getMessagesSince(chatRoomId, lastHidden, pageable);
+		} else {
+			return getChatRoomMessages(chatRoomId, pageable);
 		}
 	}
 
-	private Slice<ChatMessageDto> toChatMessageDtoSlice(Slice<ChatMessage> messages) {
-		return messages.map(chatDataMapper::toChatMessageDto);
+	// 채팅방 메시지 조회
+	public Slice<ChatMessageDto> getChatRoomMessages(String chatRoomId, PageRequest pageable) {
+		return chatMessageRepository.findByChatRoomIdOrderByTimestampDesc(chatRoomId, pageable)
+			.map(chatDataMapper::toChatMessageDto);
+	}
+
+	// 특정 시간 이후의 메시지 조회
+	private Slice<ChatMessageDto> getMessagesSince(String chatRoomId, Date startTimestamp, PageRequest pageable) {
+		return chatMessageRepository.findByChatRoomIdAndTimestampGreaterThan(chatRoomId, startTimestamp, pageable)
+			.map(chatDataMapper::toChatMessageDto);
+	}
+
+	// 페이지 요청 객체 생성
+	private PageRequest createPageRequest(int page, int size) {
+		return PageRequest.of(page, size, Sort.by("timestamp").descending());
 	}
 }
-
-
-
-
 
