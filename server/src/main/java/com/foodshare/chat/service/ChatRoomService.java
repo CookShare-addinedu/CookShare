@@ -17,7 +17,7 @@ import com.foodshare.chat.repository.UserChatRoomVisibilityRepository;
 import com.foodshare.domain.ChatMessage;
 import com.foodshare.domain.ChatRoom;
 import com.foodshare.domain.UserChatRoomVisibility;
-import com.foodshare.utils.ValidationUtils;
+import com.foodshare.chat.utils.ValidationUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

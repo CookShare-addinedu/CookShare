@@ -1,4 +1,4 @@
-package com.foodshare.utils;
+package com.foodshare.chat.utils;
 
 import java.util.Optional;
 
