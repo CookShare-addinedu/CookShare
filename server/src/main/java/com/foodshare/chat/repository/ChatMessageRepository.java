@@ -16,9 +16,11 @@ import com.foodshare.domain.ChatMessage;
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
 
 	Page<ChatMessage> findByChatRoomIdOrderByTimestampDesc(String chatRoomId, Pageable pageable);
+
 	Optional<ChatMessage> findFirstByChatRoomIdOrderByTimestampDesc(String chatRoomId);
 
-	Slice<ChatMessage> findByChatRoomIdAndTimestampGreaterThan(String chatRoomId, Date startTimestamp, PageRequest pageable);
+	Slice<ChatMessage> findByChatRoomIdAndTimestampGreaterThan(String chatRoomId, Date startTimestamp,
+		PageRequest pageable);
 }
 
 

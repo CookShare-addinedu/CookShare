@@ -111,15 +111,11 @@ public class ChatMessageService {
 		return userChatRoomVisibilityRepository.findByUserIdAndChatRoomId(userId, chatRoomId);
 	}
 
-	// 숨겨진 채팅방 안숨겨진 채팅방 메시지 필터링
 	private Slice<ChatMessageDto> filterMessagesByVisibility(UserChatRoomVisibility visibility, String chatRoomId,
 		PageRequest pageable) {
-		if (visibility.getLastHiddenTimestamp() != null) {
-			Date lastHidden = visibility.getLastHiddenTimestamp();
-			return getMessagesSince(chatRoomId, lastHidden, pageable);
-		} else {
-			return getChatRoomMessages(chatRoomId, pageable);
-		}
+		return Optional.ofNullable(visibility.getLastHiddenTimestamp())
+			.map(lastHidden -> getMessagesSince(chatRoomId, lastHidden, pageable))
+			.orElseGet(() -> getChatRoomMessages(chatRoomId, pageable));
 	}
 
 	// 채팅방 메시지 조회
