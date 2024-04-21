@@ -1,13 +1,6 @@
 package com.foodshare.chat.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,12 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-class ChatMessageServiceTest {
+class MessageProcessingServiceTest {
 	@InjectMocks
-	private ChatMessageService chatMessageService;
+	private MessageProcessingService chatMessageService;
 
 	@InjectMocks
-	private ChatRoomService chatRoomService;
+	private ChatRoomService2 chatRoomService;
 
 	@Mock
 	private ChatMessageRepository chatMessageRepository;

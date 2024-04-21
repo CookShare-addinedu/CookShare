@@ -9,7 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.foodshare.chat.dto.ChatMessageDto;
-import com.foodshare.chat.service.ChatMessageService;
+import com.foodshare.chat.service.MessageProcessingService;
 
 @WebMvcTest(ChatMessageController.class)
 public class ChatControllerTest {
@@ -18,7 +18,7 @@ public class ChatControllerTest {
 	private ChatMessageController chatController;
 
 	@MockBean
-	private ChatMessageService chatMessageService;
+	private MessageProcessingService chatMessageService;
 
 	@MockBean
 	private SimpMessagingTemplate messagingTemplate;

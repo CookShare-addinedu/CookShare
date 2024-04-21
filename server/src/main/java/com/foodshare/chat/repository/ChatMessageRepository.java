@@ -7,7 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.Modifying;
+
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
 import org.springframework.stereotype.Repository;
 
 import com.foodshare.domain.ChatMessage;
@@ -21,6 +26,7 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
 
 	Slice<ChatMessage> findByChatRoomIdAndTimestampGreaterThan(String chatRoomId, Date startTimestamp,
 		PageRequest pageable);
+
 }
 
 

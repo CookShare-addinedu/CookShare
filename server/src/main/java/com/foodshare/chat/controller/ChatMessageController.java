@@ -7,7 +7,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.foodshare.chat.dto.ChatMessageDto;
-import com.foodshare.chat.service.ChatMessageService;
+import com.foodshare.chat.service.MessageProcessingService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatMessageController {
 
 	private final SimpMessagingTemplate template;
-	private final ChatMessageService chatMessageService;
+	private final MessageProcessingService messageProcessingService;
 
 	@MessageMapping("/chat.room/{chatRoomId}/sendMessage")
 	public void message(@DestinationVariable String chatRoomId, @Payload ChatMessageDto message) {
 		log.info("채팅 시작");
 		log.debug(message.toString());
 
-		chatMessageService.addMessageToChatRoom(message.getChatRoomId(), message.getSender(), message.getContent());
+		messageProcessingService.addMessageToChatRoom(message.getChatRoomId(), message.getSender(), message.getContent());
 
 		template.convertAndSend(String.format("/topic/chat/room/%s", chatRoomId), message);
 
