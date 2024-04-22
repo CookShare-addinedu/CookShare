@@ -5,6 +5,7 @@ import router from "./router";
 function App() {
 
     const location = useLocation();
+    const isOnboarding = location.pathname === '/';
     // const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
     useEffect(() => {
         getComponent(location,"header");
@@ -22,7 +23,7 @@ function App() {
     }
     return (
         <>
-            <main>
+            <main className={isOnboarding ? 'noPadding' : ''}>
                 {getComponent(location,"header")}
                 <Routes>
                     {router.routes.map((route, index) => (
