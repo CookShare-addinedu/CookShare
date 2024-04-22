@@ -8,32 +8,34 @@ import Welcome from "./views/auth/Welcome";
 import Register from "./views/auth/Register";
 import ChatRoomList from "./views/Chat/ChatRoomList";
 
+
+import {isTokenValid} from "./views/Notification/utils/isTokenValid";
+import SSEComponent from "./views/Notification/SSEComponent";
+
 function App() {
+    const tokenIsValid = isTokenValid();
+
     return (
-            <div className="App">
-                {/*<h1>푸드쉐어페이지입니다.</h1>*/}
-                <Routes>
-                    <Route path={"/"} element={<Home/>}/>
-                    <Route path={"/Login"} element={<Login/>}/>
-                    <Route path={"/Welcome"} element={<Welcome/>}/>
-                    <Route path={"/Register"} element={<Register/>}/>
-                    {/*<Route path={"/Profile"} element={<Profile />} />*/}
+        <div className="App">
+            {tokenIsValid && <SSEComponent />}
+
+            <Routes>
+                <Route path={"/"} element={<Home/>}/>
+                <Route path={"/Login"} element={<Login/>}/>
+                <Route path={"/Welcome"} element={<Welcome/>}/>
+                <Route path={"/Register"} element={<Register/>}/>
 
 
-                    {/*<Route path="/chat/GetChatList" element={<ChatRoomList/>}/>*/}
-                    {/*<Route path="/chat/GetChat" element={<Chat/>}/>*/}
+                {/* 채팅방 목록 페이지 */}
+                <Route path="/chat/GetChatList" element={<ChatRoomList/>}/>
 
-                    {/* 채팅방 목록 페이지 */}
-                    <Route path="/chat/GetChatList" element={<ChatRoomList />} />
-
-                    {/* 개별 채팅 페이지 */}
-                    <Route path="/chat/GetChat/:chatRoomId" element={<Chat />} />
+                {/* 개별 채팅 페이지 */}
+                <Route path="/chat/GetChat/:chatRoomId" element={<Chat/>}/>
 
 
-
-                </Routes>
-            </div>
-        )
+            </Routes>
+        </div>
+    )
 
 }
 

@@ -43,10 +43,10 @@ function ChatRoomList() {
 
     const toggleRoomSelection = (chatRoomId) => {
         if (selectedRooms.includes(chatRoomId)) {
-            console.log("if toggleRoomSelection")
+        //    console.log("if toggleRoomSelection")
             setSelectedRooms(selectedRooms.filter((id) => id !== chatRoomId)); // 선택 취소
         } else {
-            console.log("else if toggleRoomSelection")
+       //     console.log("else if toggleRoomSelection")
             setSelectedRooms([...selectedRooms, chatRoomId]); // 선택 추가
         }
     };
@@ -67,7 +67,7 @@ function ChatRoomList() {
                 })
                     .then(() => {
                         fetchRooms();
-                        console.log('채팅방 숨김:', chatRoomId);
+                  //      console.log('채팅방 숨김:', chatRoomId);
                     })
 
                     .catch(error => {
