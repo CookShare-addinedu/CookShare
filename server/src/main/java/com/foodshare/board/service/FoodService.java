@@ -19,20 +19,16 @@ import com.foodshare.domain.Food;
 import com.foodshare.domain.FoodImage;
 import com.foodshare.board.mapper.EntityMapper;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class FoodService {
 	private final FoodRepository foodRepository;
 	private final FoodImageRepository foodImageRepository;
 	private final CategoryRepository categoryRepository;
 	private final EntityMapper entityMapper;
-
-	public FoodService(FoodRepository foodRepository, FoodImageRepository foodImageRepository, CategoryRepository categoryRepository, EntityMapper entityMapper) {
-		this.foodRepository = foodRepository;
-		this.foodImageRepository = foodImageRepository;
-		this.categoryRepository = categoryRepository;
-		this.entityMapper = entityMapper;
-	}
 	public Page<FoodDTO> getAllFoods(Pageable pageable) {
 		Page<Food> pageFoods = foodRepository.findAll(pageable);
 		return pageFoods.map(food -> {
@@ -51,7 +47,6 @@ public class FoodService {
 			.orElseThrow(() -> new NotFoundException("Category not found"));
 		return entityMapper.convertToFoodDTO(food, foodImages, category);
 	}
-
 
 	public Food create(FoodDTO foodDTO) {
 		Category category = entityMapper.convertToCategory(foodDTO.getCategory());
@@ -102,13 +97,27 @@ public class FoodService {
 		return existingFood;
 	}
 
-	public void delete(Long id) {
+	@Transactional
+	public void delete(Long id) throws NotFoundException {
+		// 음식 정보를 찾기
 		Food existingFood = foodRepository.findById(id)
 			.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
-		// 관련된 이미지와 카테고리도 삭제
-		categoryRepository.deleteById(existingFood.getCategory().getCategoryId()); // 카테고리 삭제
-		foodImageRepository.deleteById(id); // 이미지 삭제
-		foodRepository.delete(existingFood); // 음식 삭제
+
+		// 관련된 이미지 삭제
+		List<FoodImage> images = foodImageRepository.findByFoodFoodId(existingFood.getFoodId());
+		if (!images.isEmpty()) {
+			foodImageRepository.deleteAll(images);
+		}
+
+		// 음식 삭제
+		foodRepository.delete(existingFood);
+
+		// 이 카테고리를 참조하는 다른 음식이 없으면 카테고리 삭제
+		boolean isCategoryUsed = foodRepository.existsByCategoryCategoryId(existingFood.getCategory().getCategoryId());
+		if (!isCategoryUsed) {
+			categoryRepository.deleteById(existingFood.getCategory().getCategoryId());
+		}
 	}
+
 
 }
