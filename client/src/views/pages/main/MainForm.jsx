@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {useLocation, useNavigate} from "react-router-dom";
+import './MainForm.scss';
+
 
 const MainForm = () => {
     const location = useLocation();
@@ -97,7 +99,7 @@ const MainForm = () => {
                 response = await axios.post('/api/foods', formData);
             }
             console.log(response.data);
-            navigate(`/`); // 성공적으로 처리 후 해당 음식 상세 페이지로 이동
+            navigate(`/main`); // 성공적으로 처리 후 해당 음식 상세 페이지로 이동
         } catch (error) {
             console.error('Error submitting food data', error);
         }
@@ -112,13 +114,14 @@ const MainForm = () => {
             <form onSubmit={handleSubmit} className="food-form">
                 <div className="form-group">
                     <label htmlFor="image" className="image-label">
+                        <span className="camera-icon">📷</span> {/* 카메라 이모지 추가 */}
                         이미지 ({images.length}/5) {/* 이미지 개수 업데이트 */}
                         <input type="file" id="image" onChange={handleImageChange} className="image-input" multiple/>
                     </label>
                     <div className="image-preview">
                         {images.map((image, index) => (
                             <div key={index}>
-                                <img src={image.url} alt={`Preview ${index}`} />
+                                <img src={image.url} alt={`Preview ${index}`}/>
                                 {/* 이미지 제거 버튼을 추가합니다. */}
                                 <button type="button" onClick={() => handleRemoveImage(index)}>
                                     Remove
@@ -130,9 +133,18 @@ const MainForm = () => {
 
                 <div className="form-group">
                     <label htmlFor="category">카테고리</label>
-                    <input name="category" id="category" value={foodData.category} onChange={handleChange}
-                           placeholder="식자재"/>
+                    <select
+                        name="category"
+                        id="category"
+                        value={foodData.category}
+                        onChange={handleChange}
+                    >
+                        <option value="">카테고리를 선택해주세요</option>
+                        <option value="식자재">식자재</option>
+                        <option value="식품">식품</option>
+                    </select>
                 </div>
+
 
                 <div className="form-group">
                     <label htmlFor="makeByDate">제조일</label>

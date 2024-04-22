@@ -19,18 +19,22 @@ export default function Main() {
     }
 
     return (
-        <section className={'main'}>
-            주소
-            <p>지도</p>
+        <section className="main">
+            <div className="address-map-container">
+                <h2>주소</h2>
+                <p>지도</p>
+            </div>
             {foodData.map((food) => (
-                <NavLink to={`/foods/${food.foodId}`} key={food.foodId}>
-                    <Cards food={food}/>
-                </NavLink>
-                
+                <div className="card-container">
+                    <NavLink to={`/foods/${food.foodId}`} key={food.foodId}>
+                        <Cards food={food}/>
+                    </NavLink>
+                </div>
             ))}
             <button className="write-button">
                 <NavLink to={`/add`}>글쓰기</NavLink>
             </button>
         </section>
+
     );
 }

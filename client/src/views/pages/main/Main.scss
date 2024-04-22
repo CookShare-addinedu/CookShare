@@ -1,0 +1,36 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 20px; // 각 카드 사이의 간격
+
+  .write-button {
+    padding: 10px 20px;
+    background-color: #4CAF50; // 버튼 배경색
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin-top: 20px; // '글쓰기' 버튼 상단 마진
+    width: 100%; // 전체 너비 사용
+    box-sizing: border-box; // padding을 포함한 너비
+  }
+
+  .write-button:hover {
+    background-color: #45a049; // 버튼 호버 효과
+  }
+
+  .card-container {
+    width: 100%; // 전체 너비 사용
+    max-width: 500px; // 최대 너비 제한
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // 카드 그림자 효과
+    border-radius: 8px; // 카드 모서리 둥글게
+    overflow: hidden; // 모서리 둥근 효과를 위해 내부 요소가 넘칠 경우 숨김 처리
+  }
+
+  // 카드 컴포넌트 스타일링은 Cards 컴포넌트 내부에서 정의할 수 있습니다.
+}

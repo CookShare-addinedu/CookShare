@@ -32,6 +32,7 @@ function App() {
                     {/*<Route path="/" element={<Main />} />*/}
                     <Route path="/foods/:id" element={<MainDetail />} />
                     <Route path="/add" element={<MainForm />} />
+                    <Route path="/edit-food/:id" element={<MainForm />} />
 
                     {router.routes.map((route, index) => (
                         <Route path={route.path} element={route.component} key={index}/>
