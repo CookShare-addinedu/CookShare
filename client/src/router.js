@@ -7,6 +7,7 @@ import ChatRoomList from "./views/Chat/ChatRoomList";
 
 
 import OnBoarding from "./views/pages/onboarding/OnBoarding";
+import Mypage from "./views/pages/mypage/Mypage";
 
 const router = {
     routes: [
@@ -16,28 +17,32 @@ const router = {
             header: <Header2/>,
             footer: null
         },
-        {
-
-            path: '/chat/GetChatList',
-            component: <ChatRoomList/>,
-            header: <Header5/>,
-            footer: <Footer/>
-        },
-
-        {
-            path: '/chat/GetChat/:chatRoomId',
-            component: <Chat/>,
-            header: <Header5/>,
-            footer: <Footer/>
-        },
-
-
+        // {
+        //     path: '/chat/GetChatList',
+        //     component: <ChatRoomList/>,
+        //     header: <Header5/>,
+        //     footer: <Footer/>
+        // },
+        // {
+        //     path: '/chat/GetChat/:chatRoomId',
+        //     component: <Chat/>,
+        //     header: <Header5/>,
+        //     footer: <Footer/>
+        // },
         {
             path: '/',
             component: <OnBoarding/>,
             header: null,
             footer: null
+        },
+        {
+            path: '/mypage',
+            component: <Mypage/>,
+            title: '나의 냉장고',
+            header: <Header2/>,
+            footer:<Footer/>
         }
+
 
     ]
 }
