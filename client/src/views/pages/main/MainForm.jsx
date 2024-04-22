@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import './FoodForm.css';
 import {useLocation, useNavigate} from "react-router-dom";
 
-const FoodForm = () => {
+const MainForm = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const initialData = location.state?.food;
@@ -109,7 +108,6 @@ const FoodForm = () => {
         <div className="food-form-container">
             <header className="form-header">
                 <button className="back-button">{"<"}</button>
-                <h1>등록하기</h1>
             </header>
             <form onSubmit={handleSubmit} className="food-form">
                 <div className="form-group">
@@ -178,4 +176,4 @@ const FoodForm = () => {
         </div>
     );
 };
-export default FoodForm;
+export default MainForm;

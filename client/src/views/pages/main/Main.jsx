@@ -20,11 +20,17 @@ export default function Main() {
 
     return (
         <section className={'main'}>
+            주소
+            <p>지도</p>
             {foodData.map((food) => (
-                <NavLink to={`foods/${food.foodId}`} key={food.foodId}>
+                <NavLink to={`/foods/${food.foodId}`} key={food.foodId}>
                     <Cards food={food}/>
                 </NavLink>
+                
             ))}
+            <button className="write-button">
+                <NavLink to={`/add`}>글쓰기</NavLink>
+            </button>
         </section>
     );
 }

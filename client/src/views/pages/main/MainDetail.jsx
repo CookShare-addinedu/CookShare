@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {useNavigate, useParams} from 'react-router-dom';
 
-function FoodDetail() {
+function MainDetail() {
     const { id } = useParams();
     const [food, setFood] = useState({});
     const navigate = useNavigate();
@@ -52,13 +52,19 @@ function FoodDetail() {
 
     return (
         <div>
-            <h2>{food.title}</h2>
-            <p>{food.description}</p>
             {food.imageUrls && <img src={food.imageUrls[0]} alt={food.title}/>}
+            <h2>프로필 이미지 + 닉네임</h2>
+            <h2>{food.title}</h2><p>{food.makeByDate}</p>
+            <h3>{food.eatByDate}</h3>
+            <p>{food.description}</p>
+            <p>주의사항주의사항주의사항</p>
+            <p>주소</p>
+            <p>지도주소</p>
+            별표이미지 찜하기<button>채팅하기</button>
             <button onClick={handleEdit}>Edit</button>
-            <button onClick={handleDelete}>Delete</button> {/* 삭제 버튼 추가 */}
+            <button onClick={handleDelete}>Delete</button>
         </div>
     );
 }
 
-export default FoodDetail;
+export default MainDetail;
