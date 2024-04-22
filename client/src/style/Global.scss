@@ -1,12 +1,27 @@
 *{
-  margin: 0 auto;
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: 'Noto Sans KR', sans-serif;
 }
 
+html{
+  background-color: #ff9000;
+}
+
 body{
   max-width: 767px;
+  margin: 0 auto;
+  background-color: #fff;
+}
+
+main{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 50px 0;
+
 }
 
 ul, ol, li{
@@ -30,4 +45,8 @@ button{
   margin: -1px;
   overflow: hidden;
   clip-path: polygon(0 0, 0 0, 0 0);
+}
+
+.noPadding {
+  padding-bottom: 0;
 }

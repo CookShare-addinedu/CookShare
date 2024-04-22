@@ -2,10 +2,10 @@ import './style/style.scss';
 import {Route, Routes, useLocation} from "react-router-dom";
 import {useEffect} from "react";
 import router from "./router";
-import SplashScreen from "./views/pages/SplashScreen";
 function App() {
 
     const location = useLocation();
+    const isOnboarding = location.pathname === '/';
     // const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
     useEffect(() => {
         getComponent(location,"header");
@@ -23,14 +23,15 @@ function App() {
     }
     return (
         <>
-            {/*<SplashScreen/>*/}
-            {getComponent(location,"header")}
-            <Routes>
-                {router.routes.map((route, index) => (
-                    <Route path={route.path} element={route.component} key={index}/>
-                ))}
-            </Routes>
-            {getComponent(location,"footer")}
+            <main className={isOnboarding ? 'noPadding' : ''}>
+                {getComponent(location,"header")}
+                <Routes>
+                    {router.routes.map((route, index) => (
+                        <Route path={route.path} element={route.component} key={index}/>
+                    ))}
+                </Routes>
+                {getComponent(location,"footer")}
+            </main>
         </>
     )
 }
