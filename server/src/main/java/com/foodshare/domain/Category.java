@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 @Builder
 @Data
 @Entity
-@Builder
 @Table(name = "categories")
 public class Category {
     @Id
