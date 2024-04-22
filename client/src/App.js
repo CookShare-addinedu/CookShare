@@ -1,76 +1,39 @@
-import React from 'react';
-import './App.css';
-import {Link, Route, Routes} from "react-router-dom";
-import FoodForm from "./views/Board/FoodForm";
-import FoodList from "./views/Board/FoodList";
-import FoodDetail from "./views/Board/FoodDetail";
-
+import './style/style.scss';
+import {Route, Routes, useLocation} from "react-router-dom";
+import {useEffect} from "react";
+import router from "./router";
 function App() {
+
+    const location = useLocation();
+    // const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+    useEffect(() => {
+        getComponent(location,"header");
+        getComponent(location,"footer");
+    }, [location]);
+
+    const getComponent = (location,type) => {
+        for (let i = 0; i < router.routes.length; i++) {
+            if (router.routes[i].path === location.pathname) {
+
+                return type === "header" ? router.routes[i].header : router.routes[i].footer
+            }
+        }
+        return type === "header" ? null : null
+    }
     return (
-        <div className="app">
-            <Header />
-            <NavigationBar />
-            <Routes>
-                <Route path="/" element={<FoodList />} />
-                <Route path="/add" element={<FoodForm />} />
-                <Route path="/foods/:id" element={<FoodDetail />} />
-                <Route path="/edit-food/:id" element={<FoodForm />} />
-            </Routes>
-            <div>
-                <Link to="/">Home</Link><br></br>
-                <Link to="/add">Add Food</Link>
-            </div>
-        </div>
-    );
+        <>
+            <main>
+                {getComponent(location,"header")}
+                <Routes>
+                    {router.routes.map((route, index) => (
+                        <Route path={route.path} element={route.component} key={index}/>
+                    ))}
+                </Routes>
+                {getComponent(location,"footer")}
+            </main>
+        </>
+    )
 }
-
-function Header() {
-    return (
-        <div className="header">
-            <button className="menu-button">☰</button>
-            <div className="search-box">
-                <input type="text" placeholder="Search" />
-            </div>
-            <div className="icons">
-                <span>🔍</span>
-                <span>👤</span>
-                <span>5</span>
-            </div>
-        </div>
-    );
-}
-
-function MessageList({ messages }) {
-    return (
-        <div className="message-list">
-            {messages.map((message, index) => (
-                <MessageCard key={index} message={message} />
-            ))}
-        </div>
-    );
-}
-
-function MessageCard({ message }) {
-    return (
-        <div className="message-card">
-            <div className="message-content">
-                <h3>{message.title}</h3>
-                <p>{message.body}</p>
-            </div>
-        </div>
-    );
-}
-
-function NavigationBar() {
-    return (
-        <div className="navigation-bar">
-            <span>Home</span>
-            <span>Chatting</span>
-            <span>Orders</span>
-        </div>
-    );
-}
-
-
 
 export default App;
+
