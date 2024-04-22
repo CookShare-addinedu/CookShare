@@ -1,21 +1,38 @@
 import './style/style.scss';
-import {useMediaQuery} from "react-responsive";
-import {Route, Routes} from "react-router-dom";
-import Login from "./views/auth/login/Login";
-import Register from "./views/auth/register/Register";
-import Board from "./views/pages/board/Board";
+import {Route, Routes, useLocation} from "react-router-dom";
+import {useEffect} from "react";
+import router from "./router";
 function App() {
-    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+
+    const location = useLocation();
+    // const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+    useEffect(() => {
+        getComponent(location,"header");
+        getComponent(location,"footer");
+    }, [location]);
+
+    const getComponent = (location,type) => {
+        for (let i = 0; i < router.routes.length; i++) {
+            if (router.routes[i].path === location.pathname) {
+
+                return type === "header" ? router.routes[i].header : router.routes[i].footer
+            }
+        }
+        return type === "header" ? null : null
+    }
     return (
         <>
-            {isMobile ? <h1>푸드쉐어Mobile</h1> : <h1>푸드쉐어Desktop</h1>}
-            <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/" element={<Board />} />
-            </Routes>
+            <main>
+                {getComponent(location,"header")}
+                <Routes>
+                    {router.routes.map((route, index) => (
+                        <Route path={route.path} element={route.component} key={index}/>
+                    ))}
+                </Routes>
+                {getComponent(location,"footer")}
+            </main>
         </>
-  );
+    )
 }
 
 export default App;
