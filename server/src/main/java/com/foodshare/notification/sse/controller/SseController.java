@@ -59,7 +59,7 @@ public class SseController {
 			}
 		}, 0, 60, TimeUnit.SECONDS);
 
-		return ResponseEntity.ok(emitter); // 연결된 SSEEmitter 반환
+		return ResponseEntity.ok(emitter);
 	}
 
 

@@ -3,10 +3,9 @@ package com.foodshare.notification.sse.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.foodshare.domain.Notification;
-import com.foodshare.notification.service.NotificationService;
+
 import com.foodshare.notification.sse.component.SseEmitters;
-import com.foodshare.repository.UserRepository;
+
 
 import lombok.RequiredArgsConstructor;
 
