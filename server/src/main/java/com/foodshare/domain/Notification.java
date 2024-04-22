@@ -2,16 +2,17 @@ package com.foodshare.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
+@Builder
 @Table(name = "notifications")
 public class Notification {
     @Id
@@ -33,10 +34,10 @@ public class Notification {
     private Boolean isRead;
 
     @Column(name = "is_sent")
-    private Boolean isSent;
+    private Boolean isSent = false;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    // Getters and Setters
 }
+
