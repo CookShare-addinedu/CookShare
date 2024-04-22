@@ -1,9 +1,6 @@
 package com.foodshare.board.controller;
 
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,23 +9,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.foodshare.board.dto.FoodDTO;
 import com.foodshare.board.exception.FileStorageException;
 import com.foodshare.board.service.FileStorageService;
 import com.foodshare.board.service.FoodService;
 import com.foodshare.domain.Food;
 
+import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/api/foods")
 @RestController
+@Slf4j
 public class FoodApiController {
 	@Autowired
 	private FoodService foodService;
 	@Autowired
 	private FileStorageService fileStorageService;
-	private static final Logger log = LoggerFactory.getLogger(FoodApiController.class);
-
 
 	@GetMapping("/{id}")
 	public ResponseEntity<FoodDTO> read(@PathVariable("id") Long id) {
