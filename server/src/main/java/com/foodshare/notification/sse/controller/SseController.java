@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.foodshare.notification.sse.component.SseEmitters;
+import com.foodshare.notification.sse.service.HeartbeatService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,9 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 public class SseController {
 
 	private final SseEmitters sseEmitters;
+	private final HeartbeatService heartbeatService;
 
-	public SseController(SseEmitters sseEmitters) {
+	public SseController(SseEmitters sseEmitters, HeartbeatService heartbeatService) {
 		this.sseEmitters = sseEmitters;
+		this.heartbeatService = heartbeatService;
 	}
 
 	private final ConcurrentMap<String, SseEmitter> emitters = new ConcurrentHashMap<>();
@@ -49,18 +52,9 @@ public class SseController {
 			emitter.completeWithError(e);
 			sseEmitters.remove(userId, emitter);
 		}
-
-		// 주기적으로 "heartbeat" 메시지 보내기 (연결 유지를 위해)
-		scheduler.scheduleAtFixedRate(() -> {
-			try {
-				emitter.send(SseEmitter.event().name("heartbeat").data("ping"));
-			} catch (Exception e) {
-				emitter.completeWithError(e);
-			}
-		}, 0, 60, TimeUnit.SECONDS);
+		heartbeatService.startHeartbeat(emitter, 60, TimeUnit.SECONDS);
 
 		return ResponseEntity.ok(emitter); // 연결된 SSEEmitter 반환
 	}
-
 
 }
