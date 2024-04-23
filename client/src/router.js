@@ -14,8 +14,9 @@ const router = {
         {
             path: '/login',
             component: <Login/>,
-            header: <Header2/>,
-            footer: null
+            title: null,
+            header:<Header2/>,
+            footer:null
         },
         // {
         //     path: '/chat/GetChatList',

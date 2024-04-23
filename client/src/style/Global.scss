@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+@import url('https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css');
 *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  //font-family: 'SpoqaHanSansNeo', sans-serif;
   font-family: 'Noto Sans KR', sans-serif;
 }
-
 html{
   background-color: #ff9000;
 }
@@ -46,7 +48,7 @@ button{
   overflow: hidden;
   clip-path: polygon(0 0, 0 0, 0 0);
 }
-
-.noPadding {
-  padding-bottom: 0;
+.error{
+  font-size: 12px;
+  color: red;
 }
