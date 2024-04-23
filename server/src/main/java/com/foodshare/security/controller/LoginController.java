@@ -1,9 +1,9 @@
 package com.foodshare.security.controller;
 
 import com.foodshare.domain.User;
-import com.foodshare.security.jwt.AuthenticationRequest;
-import com.foodshare.security.jwt.JwtProp;
 import com.foodshare.security.jwt.SecurityConstants;
+import com.foodshare.security.jwt.domain.AuthenticationRequest;
+import com.foodshare.security.jwt.prop.JwtProp;
 import com.foodshare.security.service.UserService;
 import com.foodshare.security.service.LoginService;
 import io.jsonwebtoken.Claims;
@@ -38,7 +38,7 @@ public class LoginController {
     // 로그인 API는 JWT 생성 및 발급 로직을 포함합니다.
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest request) {
-        String mobileNumber = request.getTel();
+        String mobileNumber = request.getMobileNumber();
         String password = request.getPassword();
 
         Optional<User> userOptional = userService.findByMobileNumber(mobileNumber);
@@ -63,7 +63,7 @@ public class LoginController {
         log.info("JWT: " + jwt);
 
         // JWT를 헤더와 본문에 추가하여 반환
-        return ResponseEntity.ok().header(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + jwt).body(jwt);
+        return ResponseEntity.ok().header(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + jwt).body(jwt);
     }
 
     // 인증된 사용자의 정보를 반환하는 API

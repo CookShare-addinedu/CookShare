@@ -26,6 +26,14 @@ public class FoodApiController {
 
 	private final FoodService foodService;
 	private final FileStorageService fileStorageService;
+
+	@GetMapping("/search")
+	public ResponseEntity<List<FoodDTO>> searchFoods(@RequestParam(name = "query") String searchQuery) {
+		List<FoodDTO> searchResults = foodService.searchFoods(searchQuery);
+		return ResponseEntity.ok(searchResults);
+	}
+
+
 	@GetMapping("/{id}")
 	public ResponseEntity<FoodDTO> read(@PathVariable("id") Long id) {
 		FoodDTO foodDTO = foodService.read(id);

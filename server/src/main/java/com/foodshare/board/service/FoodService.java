@@ -117,4 +117,13 @@ public class FoodService {
 			categoryRepository.deleteById(existingFood.getCategory().getCategoryId());
 		}
 	}
+
+	public List<FoodDTO> searchFoods(String query) {
+		List<Food> listFoods = foodRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
+		return listFoods.stream().map(food -> {
+			List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
+			Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElse(null);
+			return entityMapper.convertToFoodDTO(food, foodImages, category);
+		}).collect(Collectors.toList());
+	}
 }
