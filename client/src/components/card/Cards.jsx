@@ -6,7 +6,7 @@ export default function Cards({food}) {
                 <Card size="1">
                     <Flex gap="3" align="center">
                         <img
-                            src={food.imageUrls[0]}
+                            src={food.imageUrls?.[0] || 'default-image.jpg'} // food.imageUrls가 정의되어 있지 않거나 비어있으면 기본 이미지 사용
                             alt={food.title}
                             style={{
                                 display: 'block',

@@ -15,16 +15,24 @@ import com.foodshare.board.service.FileStorageService;
 import com.foodshare.board.service.FoodService;
 import com.foodshare.domain.Food;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @RequestMapping("/api/foods")
 @RestController
 @Slf4j
 public class FoodApiController {
-	@Autowired
-	private FoodService foodService;
-	@Autowired
-	private FileStorageService fileStorageService;
+
+	private final FoodService foodService;
+	private final FileStorageService fileStorageService;
+
+	@GetMapping("/search")
+	public ResponseEntity<List<FoodDTO>> searchFoods(@RequestParam(name = "query") String searchQuery) {
+		List<FoodDTO> searchResults = foodService.searchFoods(searchQuery);
+		return ResponseEntity.ok(searchResults);
+	}
+
 
 	@GetMapping("/{id}")
 	public ResponseEntity<FoodDTO> read(@PathVariable("id") Long id) {
@@ -33,7 +41,7 @@ public class FoodApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<FoodDTO>> getAllFoods(@PageableDefault(size = 10) Pageable pageable) {
+	public ResponseEntity<Page<FoodDTO>> getAllFoods(@PageableDefault(size = 20) Pageable pageable) {
 		Page<FoodDTO> foodDTOs = foodService.getAllFoods(pageable);
 		return ResponseEntity.ok(foodDTOs);
 	}

@@ -17,7 +17,6 @@ public class WebConfig implements WebMvcConfigurer {
 			.addResourceLocations(imgDir);
 	}
 
-
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
