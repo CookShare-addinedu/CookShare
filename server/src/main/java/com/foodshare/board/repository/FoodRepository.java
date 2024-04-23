@@ -10,4 +10,6 @@ import com.foodshare.domain.Food;
 @Repository
 public interface FoodRepository extends JpaRepository<Food, Long> {
 	List<Food> findAll();
+
+	boolean existsByCategoryCategoryId(Long categoryId);
 }

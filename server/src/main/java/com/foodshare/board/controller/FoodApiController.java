@@ -1,8 +1,6 @@
 package com.foodshare.board.controller;
 
 import java.util.List;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,24 +9,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.foodshare.board.dto.FoodDTO;
 import com.foodshare.board.exception.FileStorageException;
 import com.foodshare.board.service.FileStorageService;
 import com.foodshare.board.service.FoodService;
 import com.foodshare.domain.Food;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @RequestMapping("/api/foods")
 @RestController
 @Slf4j
 public class FoodApiController {
-	@Autowired
-	private FoodService foodService;
-	@Autowired
-	private FileStorageService fileStorageService;
 
+	private final FoodService foodService;
+	private final FileStorageService fileStorageService;
 	@GetMapping("/{id}")
 	public ResponseEntity<FoodDTO> read(@PathVariable("id") Long id) {
 		FoodDTO foodDTO = foodService.read(id);
@@ -36,7 +33,7 @@ public class FoodApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<FoodDTO>> getAllFoods(@PageableDefault(size = 10) Pageable pageable) {
+	public ResponseEntity<Page<FoodDTO>> getAllFoods(@PageableDefault(size = 20) Pageable pageable) {
 		Page<FoodDTO> foodDTOs = foodService.getAllFoods(pageable);
 		return ResponseEntity.ok(foodDTOs);
 	}
