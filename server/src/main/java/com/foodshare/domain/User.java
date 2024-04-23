@@ -24,8 +24,11 @@ public class User {
     @Column(name = "mobile_number")
     private String mobileNumber;
 
+    @Column(name = "password")
+    private String password;
+
     @Column(name = "role")
-    private Long role;
+    private String role;
 
     @Column(name = "nick_name", unique = true)
     private String nickName;

@@ -1,4 +1,4 @@
-package com.example.foodshare.jwt;
+package com.foodshare.security.jwt;
 
 // Security 및 JWT 관련된 상수를 관리하는 클래스
 /*
