@@ -32,6 +32,24 @@ const useSSEConnection = () => {
                 }
             });
 
+            eventSource.addEventListener("grouped_notification", (event) => {
+                console.log("grouped_notification notification:", event.data); // 이벤트 데이터 확인
+                try {
+                    const notificationData = JSON.parse(event.data);
+                    console.log("파싱된 데이터:", notificationData);
+                    const message = notificationData.message; // 메시지 필드 추출
+                    const count = notificationData.count;
+                    console.log("메시지:", message, "카운트:", count);
+
+                    setMessages((prev) => [...prev, { message, count }]);  // 상태 업데이트
+                } catch (error) {
+                    console.error("JSON 파싱 오류:", error, "원본 데이터:", event.data);
+                }
+            });
+
+
+
+
             eventSource.onerror = (error) => {
                 console.error("SSE 연결 오류:", error);
                 setIsConnected(false);

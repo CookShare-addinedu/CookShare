@@ -25,10 +25,18 @@ public class ChatMessageController {
 		log.info("채팅 시작");
 		log.debug(message.toString());
 
-		messageProcessingService.addMessageToChatRoom(message.getChatRoomId(), message.getSender(), message.getContent());
+		messageProcessingService.addMessageToChatRoom(message.getChatRoomId(), message.getSender(),
+			message.getContent());
 
 		template.convertAndSend(String.format("/topic/chat/room/%s", chatRoomId), message);
 
+		template.convertAndSend("/topic/chat/room/updates", "채팅방 업데이트");
+
+	}
+
+	public void updateChatRoomList() {
+
+		template.convertAndSend("/topic/chat/room/updates", "채팅방 목록 업데이트");
 	}
 
 }

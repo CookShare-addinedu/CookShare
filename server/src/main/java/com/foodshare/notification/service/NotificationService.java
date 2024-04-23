@@ -1,8 +1,10 @@
 package com.foodshare.notification.service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.foodshare.domain.Notification;
 import com.foodshare.domain.User;
@@ -17,19 +19,22 @@ public class NotificationService {
 	private final NotificationRepository notificationRepository;
 	private final UserRepository userRepository;
 
+
 	public Notification createNotificationForMessage(String receiverMobileNumber, String senderMobileNumber,
 		String messageContent) {
 
 		User receiver = findUserByMobileNumber(receiverMobileNumber);
 		User sender = findUserByMobileNumber(senderMobileNumber);
 
-		String personalizedMessage = createPersonalizedMessage(sender, messageContent);
+		String individualMessage = createIndividualMessage(sender, messageContent);
 
-		return createNotification(receiver, personalizedMessage);
+		return createNotification(receiver, individualMessage);
 	}
 
-	private String createPersonalizedMessage(User sender, String messageContent) {
-		return String.format("%s 의 사용자가 채팅을 보냈습니다", sender.getMobileNumber());
+
+
+	private String createIndividualMessage(User sender, String messageContent) {
+		return String.format("%s 사용자가 채팅을 보냈습니다:", sender.getMobileNumber());
 	}
 
 	private Notification createNotification(User receiver, String message) {

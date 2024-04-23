@@ -3,7 +3,8 @@ import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
 import {Link} from "react-router-dom";
 import './ChatRoomList.scss'
-
+import SockJS from "sockjs-client";
+import Stomp from 'stompjs';
 function ChatRoomList() {
     const [rooms, setRooms] = useState([]);
     const [selectedRooms, setSelectedRooms] = useState([]);
@@ -38,15 +39,31 @@ function ChatRoomList() {
 
     useEffect(() => {
         fetchRooms();
+
+        const socket = new SockJS("http://localhost:8080/ws");
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+
+            stompClient.subscribe("/topic/chat/room/updates", () => {
+                fetchRooms();
+            });
+        });
+
+        return () => {
+            stompClient.disconnect()
+        };
+
+
     }, []);
 
 
     const toggleRoomSelection = (chatRoomId) => {
         if (selectedRooms.includes(chatRoomId)) {
-        //    console.log("if toggleRoomSelection")
+            //    console.log("if toggleRoomSelection")
             setSelectedRooms(selectedRooms.filter((id) => id !== chatRoomId)); // 선택 취소
         } else {
-       //     console.log("else if toggleRoomSelection")
+            //     console.log("else if toggleRoomSelection")
             setSelectedRooms([...selectedRooms, chatRoomId]); // 선택 추가
         }
     };
@@ -67,7 +84,7 @@ function ChatRoomList() {
                 })
                     .then(() => {
                         fetchRooms();
-                  //      console.log('채팅방 숨김:', chatRoomId);
+                        //      console.log('채팅방 숨김:', chatRoomId);
                     })
 
                     .catch(error => {
