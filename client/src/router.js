@@ -8,6 +8,7 @@ import ChatRoomList from "./views/Chat/ChatRoomList";
 
 import OnBoarding from "./views/pages/onboarding/OnBoarding";
 import Mypage from "./views/pages/mypage/Mypage";
+import Register from "./views/auth/register/Register";
 
 const router = {
     routes: [
@@ -17,6 +18,13 @@ const router = {
             title: null,
             header:<Header2/>,
             footer:null
+        },
+        {
+            path: '/register',
+            component: <Register/>,
+            title: '회원가입',
+            header:<Header2/>,
+            footer:null,
         },
         // {
         //     path: '/chat/GetChatList',
