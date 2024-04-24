@@ -1,4 +1,4 @@
-package com.example.foodshare.jwt.prop;
+package com.foodshare.security.jwt.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

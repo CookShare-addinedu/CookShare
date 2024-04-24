@@ -1,4 +1,4 @@
-package com.example.foodshare.jwt.domain;
+package com.foodshare.security.jwt.domain;
 
 import lombok.Data;
 
