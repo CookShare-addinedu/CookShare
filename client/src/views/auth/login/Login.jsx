@@ -48,7 +48,7 @@ export default function Login (){
         try{
             const response = await axios.post('/api/user/login',data);
 
-            if (response.status === 200) {
+            if (response.status === 200 && response.data.token) {
                 const token =  response.data.token;
                 localStorage.setItem('jwt', token);
                 console.log('로그인 성공, JWT저장됨')

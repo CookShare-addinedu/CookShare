@@ -107,7 +107,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // 토큰 세부 정보를 Map에 저장
         Map<String, Object> tokenDetails = new HashMap<>();
-        tokenDetails.put("엑세스토큰(accessToken)", token);
+        tokenDetails.put("token", token);
         tokenDetails.put("리프레시토큰(refreshToken)", refreshToken);
         tokenDetails.put("엑세스토큰유효기간(accessTokenExpiresIn)", dateFormat.format(new Date(accessTokenExpirationMs)));
         tokenDetails.put("리프레시토큰유효기간(refreshTokenExpiresIn)", dateFormat.format(new Date(refreshTokenExpirationMs)));
