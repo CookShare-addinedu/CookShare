@@ -18,7 +18,7 @@ import com.foodshare.chat.repository.ChatMessageRepository;
 import com.foodshare.chat.repository.ChatRoomRepository;
 import com.foodshare.domain.ChatMessage;
 import com.foodshare.domain.ChatRoom;
-import com.foodshare.utils.ValidationUtils;
+import com.foodshare.chat.utils.ValidationUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

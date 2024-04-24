@@ -2,24 +2,56 @@ import {useState, useEffect, useCallback} from 'react';
 import axios from 'axios';
 
 const useChatDetailList = (chatRoomId, userId) => {
+    console.log("useChatDetailList initialized with:", chatRoomId, userId);
     const [messageList, setMessageList] = useState([]);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
-
     const [pageSize, setPageSize] = useState(10); // 초기 페이지 사이즈는 10
     const [isLoading, setIsLoading] = useState(false);
+
+
+    const markMessagesAsRead = useCallback(() => {
+        console.log("Marking messages as read:", chatRoomId, userId); // 디버그 로그 추가
+
+        if (!userId) {
+            throw new Error("userId is required"); // 유효성 검사
+        }
+
+        const chatRequestData = {
+            chatRoomId: chatRoomId,
+            userId: userId,
+        };
+
+        return axios.put(`/api/detailRoom/updateAsRead`, chatRequestData)
+            .then((response) => {
+                console.log("Messages marked as read"); // 성공 로그
+            })
+            .catch((error) => {
+                console.error("읽음 업데이트 실패:", error);
+            });
+    }, [chatRoomId, userId]);
+
+
+    const addMessageList = useCallback((newMessage) => {
+        setMessageList((prevMessages) => [...prevMessages, newMessage]);
+
+        markMessagesAsRead();
+    }, []);
+
 
     //메시지 페이징 조회
     const loadChatMessages = useCallback(() => {
         if (!hasMore || isLoading) {
             return Promise.resolve();
         }
+
         setIsLoading(true);
+
         return axios.get(`/api/detailRoom/${chatRoomId}/messages`, {
-            //arams: { userId, page, size: 10 }
             params: {userId, page, size: pageSize}
         })
             .then(response => {
+
                 let newMessages = [];
                 if (response.data && Array.isArray(response.data.content)) {
                     newMessages = response.data.content.reverse();
@@ -32,7 +64,9 @@ const useChatDetailList = (chatRoomId, userId) => {
 
                 if (page === 0) {
                     setPageSize(5);
-                } 
+                }
+
+
             })
             .catch(error => {
                 console.error("채팅방 상세 정보 조회 에러: ", error);
@@ -41,14 +75,9 @@ const useChatDetailList = (chatRoomId, userId) => {
             .finally(() => {
                 setIsLoading(false); // 로딩 상태 종료
             });
-    }, [chatRoomId, userId, page, hasMore, isLoading, pageSize]);
+    }, [chatRoomId, userId, page, pageSize, isLoading, hasMore, setMessageList, addMessageList]);
 
-
-
-    const addMessageList = useCallback((newMessage) => {
-        setMessageList(prevMessages => [...prevMessages, newMessage]);
-    }, []);
-
+    //[chatRoomId, userId, page, hasMore, isLoading, pageSize,]);
 
     return {messageList, isLoading, loadChatMessages, hasMore, addMessageList};
 };

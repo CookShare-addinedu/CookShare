@@ -41,13 +41,11 @@ const useSSEConnection = () => {
                     const count = notificationData.count;
                     console.log("메시지:", message, "카운트:", count);
 
-                    setMessages((prev) => [...prev, { message, count }]);  // 상태 업데이트
+                    setMessages((prev) => [...prev, {message, count}]);  // 상태 업데이트
                 } catch (error) {
                     console.error("JSON 파싱 오류:", error, "원본 데이터:", event.data);
                 }
             });
-
-
 
 
             eventSource.onerror = (error) => {
@@ -69,7 +67,7 @@ const useSSEConnection = () => {
         };
     }, []);
 
-    return {messages, isConnected , setMessages};
+    return {messages, isConnected, setMessages};
 };
 
 export default useSSEConnection;

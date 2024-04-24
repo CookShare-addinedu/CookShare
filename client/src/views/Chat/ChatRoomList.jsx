@@ -3,22 +3,23 @@ import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
 import {Link} from "react-router-dom";
 import './ChatRoomList.scss'
-import SockJS from "sockjs-client";
-import Stomp from 'stompjs';
+
+import useWebSocketConnection from "./useWebSocketConnection";
+
 function ChatRoomList() {
     const [rooms, setRooms] = useState([]);
     const [selectedRooms, setSelectedRooms] = useState([]);
     const [error, setError] = useState('');
-
+    const token = localStorage.getItem('token');
+    const decoded = jwtDecode(token);
+    const userId = decoded.uid;
 
     const fetchRooms = () => {
-        const token = localStorage.getItem('token');
         if (!token) {
             setError('로그인이 필요합니다.');
             return;
         }
-        const decoded = jwtDecode(token);
-        const userId = decoded.uid;
+
         axios.get('/api/ListRooms', {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -29,6 +30,7 @@ function ChatRoomList() {
         })
             .then(response => {
                 setRooms(response.data);
+                console.log(response.data);
             })
             .catch(error => {
                 console.error('채팅방 목록을 가져오는데 실패했습니다.', error);
@@ -36,34 +38,26 @@ function ChatRoomList() {
             });
     };
 
-
     useEffect(() => {
-        fetchRooms();
-
-        const socket = new SockJS("http://localhost:8080/ws");
-        const stompClient = Stomp.over(socket);
-
-        stompClient.connect({}, () => {
-
-            stompClient.subscribe("/topic/chat/room/updates", () => {
-                fetchRooms();
-            });
-        });
-
-        return () => {
-            stompClient.disconnect()
-        };
-
-
+        fetchRooms(); // 컴포넌트 마운트 시 목록 로드
     }, []);
+
+    const stompClient = useWebSocketConnection(
+        'http://localhost:8080/ws',
+        '/topic/chat/room/updates',
+        () => {
+            console.log("채팅방 목록 업데이트 수신");
+            fetchRooms(); // 메시지 수신 시 목록 다시 로드
+        }
+    );
 
 
     const toggleRoomSelection = (chatRoomId) => {
         if (selectedRooms.includes(chatRoomId)) {
-            //    console.log("if toggleRoomSelection")
+
             setSelectedRooms(selectedRooms.filter((id) => id !== chatRoomId)); // 선택 취소
         } else {
-            //     console.log("else if toggleRoomSelection")
+
             setSelectedRooms([...selectedRooms, chatRoomId]); // 선택 추가
         }
     };
@@ -73,22 +67,24 @@ function ChatRoomList() {
         if (selectedRooms.length > 0 && window.confirm('선택한 채팅방을 숨기시겠습니까?')) {
             console.log("if  hideRooms")
 
-            const token = localStorage.getItem('token');
-            const decoded = jwtDecode(token);
-            const userId = decoded.uid;
+
+
 
             selectedRooms.forEach((chatRoomId) => {
-                axios.put(`/api/hideRoom/${chatRoomId}`, null, {
-                    params: {userId: userId},
-                    headers: {'Authorization': `Bearer ${token}`}
-                })
+                const hideRequestData = {
+                    chatRoomId: chatRoomId, // 입력된 채팅방 ID
+                    userId: userId, // 디코딩된 사용자 ID
+                };
+                console.log("Sending data to hideRoom API:", hideRequestData);
+
+
+                axios.put(`/api/hideRoom/${chatRoomId}`, hideRequestData)
                     .then(() => {
                         fetchRooms();
-                        //      console.log('채팅방 숨김:', chatRoomId);
                     })
-
                     .catch(error => {
                         console.error('채팅방 숨기기에 실패했습니다.', error);
+                        console.log(JSON.stringify(hideRequestData));
                     });
 
             });

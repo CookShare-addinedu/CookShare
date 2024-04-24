@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 
 import com.foodshare.chat.dto.ChatMessageDto;
 import com.foodshare.chat.service.MessageProcessingService;
+import com.nimbusds.jose.shaded.gson.Gson;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,13 +31,14 @@ public class ChatMessageController {
 
 		template.convertAndSend(String.format("/topic/chat/room/%s", chatRoomId), message);
 
-		template.convertAndSend("/topic/chat/room/updates", "채팅방 업데이트");
-
+		template.convertAndSend(
+			"/topic/chat/room/updates",
+			new Gson().toJson(message));
 	}
 
 	public void updateChatRoomList() {
 
-		template.convertAndSend("/topic/chat/room/updates", "채팅방 목록 업데이트");
+		template.convertAndSend("/topic/chat/room/updates", "목록 업데이트"); // 대상 경로 직접 지정
 	}
 
 }
