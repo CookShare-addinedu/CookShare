@@ -31,7 +31,7 @@ function App() {
     }
     return (
         <>
-            {/*{tokenIsValid && <SSEComponent />}*/}
+            {tokenIsValid && <SSEComponent />}
             <main className={isOnboarding ? 'noPadding' : ''}>
                 {getComponent(location,"header")}
                 <Routes>

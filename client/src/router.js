@@ -9,7 +9,8 @@ import ChatRoomList from "./views/Chat/ChatRoomList";
 import OnBoarding from "./views/pages/onboarding/OnBoarding";
 
 import Register from "./views/auth/register/Register";
-import Mypage from "./views/pages/MyPage/Mypage";
+
+
 
 const router = {
     routes: [
@@ -17,15 +18,15 @@ const router = {
             path: '/login',
             component: <Login/>,
             title: null,
-            header:<Header2/>,
-            footer:null
+            header: <Header2/>,
+            footer: null
         },
         {
             path: '/register',
             component: <Register/>,
             title: '회원가입',
-            header:<Header2/>,
-            footer:null,
+            header: <Header2/>,
+            footer: null,
         },
         {
             path: '/chat/GetChatList',
@@ -46,11 +47,11 @@ const router = {
             footer: null
         },
         {
-            path: '/mypage',
-            component: <Mypage/>,
-            title: '나의 냉장고',
-            header: <Header2/>,
-            footer:<Footer/>
+            // path: '/mypage',
+            // component: <Mypage/>,
+            // title: '나의 냉장고',
+            // header: <Header2/>,
+            // footer: <Footer/>
         }
 
 
