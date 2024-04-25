@@ -9,10 +9,11 @@ const useSSEConnection = () => {
         let eventSource = null;
 
         const createEventSource = () => {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('jwt');
 
             const decoded = jwtDecode(token);
-            const userId = decoded.uid;
+            const userId = decoded.mobilenumber;
+
 
             const serverUrl = 'http://localhost:8080';
             const eventSource = new EventSource(`${serverUrl}/sse/connect/${encodeURIComponent(userId)}`);
