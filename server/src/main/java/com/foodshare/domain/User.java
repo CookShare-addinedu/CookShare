@@ -27,6 +27,7 @@ public class User {
     @Column(name = "mobile_number", unique = true)
     private String mobileNumber;
 
+
     @Column(name = "role")
     private String role;
 

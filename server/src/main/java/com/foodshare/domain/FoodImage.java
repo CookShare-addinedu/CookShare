@@ -7,13 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Data
 @Entity
-@Builder
+
 @Table(name = "food_images")
 public class FoodImage {
     @Id
@@ -25,8 +26,10 @@ public class FoodImage {
     @JoinColumn(name = "food_id", referencedColumnName = "food_id")
     private Food food;
 
-    @Column(name = "image_path")
-    private String imagePath;
+    @ElementCollection
+    @CollectionTable(name = "image_paths", joinColumns = @JoinColumn(name = "image_id"))
+    @Column(name = "path")
+    private List<String> imagePaths;
 
     @Column(name = "created_at")
     private Timestamp createdAt;

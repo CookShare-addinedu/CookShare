@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,15 +24,15 @@ import com.foodshare.chat.service.ChatRoomMessageService;
 import com.foodshare.chat.service.ChatRoomService;
 
 import com.foodshare.chat.service.VisibilityService;
+
 import com.foodshare.chat.utils.ValidationUtils;
-import com.foodshare.domain.ChatMessage;
 import com.foodshare.domain.ChatRoom;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/chat")
 @Slf4j
 
 @RequiredArgsConstructor
@@ -92,7 +93,7 @@ public class ChatRoomController {
 		return new ResponseEntity<>(newRoom, HttpStatus.CREATED);
 	}
 
-}
+} 
 
 
 

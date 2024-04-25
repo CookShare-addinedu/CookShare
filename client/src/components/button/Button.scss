@@ -1,0 +1,24 @@
+.mypage_button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 60px;
+    color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #eee;
+    cursor: pointer;
+
+    .btn_wrap{
+        color: #757373;
+        svg{
+            width: 20px;
+            height: 20px;
+        }
+        p{
+            font-size: 12px;
+        }
+
+    }
+}

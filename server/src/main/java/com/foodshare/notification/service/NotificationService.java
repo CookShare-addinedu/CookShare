@@ -9,7 +9,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.foodshare.domain.Notification;
 import com.foodshare.domain.User;
 import com.foodshare.notification.repository.NotificationRepository;
-import com.foodshare.repository.UserRepository;
+import com.foodshare.security.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

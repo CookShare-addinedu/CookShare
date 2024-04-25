@@ -18,9 +18,9 @@ function Chat() {
     const [hasUserScrolled, setHasUserScrolled] = useState(false);
     const messagesContainerRef = useRef(null);
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwt');
     const decoded = jwtDecode(token);
-    const userId = decoded.uid;
+    const userId = decoded.mobilenumber;
 
     const {messageList, isLoading, loadChatMessages, hasMore, addMessageList} = useChatDetailList(chatRoomId, userId);
 

@@ -22,7 +22,7 @@ const useChatDetailList = (chatRoomId, userId) => {
             userId: userId,
         };
 
-        return axios.put(`/api/detailRoom/updateAsRead`, chatRequestData)
+        return axios.put(`/api/chat/detailRoom/updateAsRead`, chatRequestData)
             .then((response) => {
 
             })
@@ -47,7 +47,7 @@ const useChatDetailList = (chatRoomId, userId) => {
 
         setIsLoading(true);
 
-        return axios.get(`/api/detailRoom/${chatRoomId}/messages`, {
+        return axios.get(`/api/chat/detailRoom/${chatRoomId}/messages`, {
             params: {userId, page, size: pageSize}
         })
             .then(response => {
