@@ -37,7 +37,7 @@ function Chat() {
 
 
     useEffect(() => {
-        loadChatMessages();  // 컴포넌트 마운트 시 초기 메시지 로드
+        loadChatMessages();
     }, []);
 
 
@@ -51,9 +51,8 @@ function Chat() {
                 timestamp: timestamp,
             };
 
-            // 메시지 전송 후 타임스탬프 업데이트
             stompClient.send(`/app/chat.room/${chatRoomId}/sendMessage`, {}, JSON.stringify(chatMessage));
-            setLastMessageTimestamp(timestamp); // 전송된 메시지의 타임스탬프를 업데이트
+            setLastMessageTimestamp(timestamp);
             setNewMessage('');
         } else {
             console.log("메시지를 전송할 수 없습니다.");

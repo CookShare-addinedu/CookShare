@@ -10,11 +10,11 @@ const useChatDetailList = (chatRoomId, userId) => {
     const [isLoading, setIsLoading] = useState(false);
 
 
-    const markMessagesAsRead = useCallback(() => {
-        console.log("Marking messages as read:", chatRoomId, userId); // 디버그 로그 추가
+    const updateMessagesAsRead = useCallback(() => {
+
 
         if (!userId) {
-            throw new Error("userId is required"); // 유효성 검사
+            throw new Error("userId 필요"); // 유효성 검사
         }
 
         const chatRequestData = {
@@ -24,7 +24,7 @@ const useChatDetailList = (chatRoomId, userId) => {
 
         return axios.put(`/api/detailRoom/updateAsRead`, chatRequestData)
             .then((response) => {
-                console.log("Messages marked as read"); // 성공 로그
+
             })
             .catch((error) => {
                 console.error("읽음 업데이트 실패:", error);
@@ -35,7 +35,7 @@ const useChatDetailList = (chatRoomId, userId) => {
     const addMessageList = useCallback((newMessage) => {
         setMessageList((prevMessages) => [...prevMessages, newMessage]);
 
-        markMessagesAsRead();
+        updateMessagesAsRead();
     }, []);
 
 

@@ -39,7 +39,7 @@ function ChatRoomList() {
     };
 
     useEffect(() => {
-        fetchRooms(); // 컴포넌트 마운트 시 목록 로드
+        fetchRooms();
     }, []);
 
     const stompClient = useWebSocketConnection(
@@ -47,7 +47,7 @@ function ChatRoomList() {
         '/topic/chat/room/updates',
         () => {
             console.log("채팅방 목록 업데이트 수신");
-            fetchRooms(); // 메시지 수신 시 목록 다시 로드
+            fetchRooms();
         }
     );
 
@@ -67,13 +67,10 @@ function ChatRoomList() {
         if (selectedRooms.length > 0 && window.confirm('선택한 채팅방을 숨기시겠습니까?')) {
             console.log("if  hideRooms")
 
-
-
-
             selectedRooms.forEach((chatRoomId) => {
                 const hideRequestData = {
-                    chatRoomId: chatRoomId, // 입력된 채팅방 ID
-                    userId: userId, // 디코딩된 사용자 ID
+                    chatRoomId: chatRoomId,
+                    userId: userId,
                 };
                 console.log("Sending data to hideRoom API:", hideRequestData);
 
