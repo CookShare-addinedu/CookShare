@@ -11,16 +11,14 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-
 import com.foodshare.chat.annotation.LogExecutionTime;
 import com.foodshare.chat.dto.ChatRoomDto;
 import com.foodshare.chat.mapper.ChatDataMapper;
 import com.foodshare.chat.repository.ChatMessageRepository;
 import com.foodshare.chat.repository.ChatRoomRepository;
-import com.foodshare.chat.utils.ValidationUtils;
 import com.foodshare.domain.ChatMessage;
 import com.foodshare.domain.ChatRoom;
-
+import com.foodshare.chat.utils.ValidationUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
