@@ -1,4 +1,4 @@
-package com.foodshare.security.jwt.domain;
+package com.foodshare.security.jwt;
 
 import lombok.Data;
 
@@ -6,7 +6,5 @@ import lombok.Data;
 public class AuthenticationRequest {
     private  String mobileNumber;
     private  String password;
-    //위에 2개를 파라미터 바인딩
-
 }
 
