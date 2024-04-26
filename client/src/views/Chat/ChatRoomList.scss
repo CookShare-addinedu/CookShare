@@ -14,6 +14,7 @@
 
 .chat-room {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ccc;
   padding: 10px 0;
@@ -55,3 +56,23 @@
   font-weight: 600;
   margin-bottom: 4px;
 }
+
+.chat-room-actions {
+  display: flex;
+  align-items: center;
+}
+
+
+.chat-room-unread-indicator {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 0.25em;
+  text-align: center;
+  min-width: 1em;
+  height: 1em;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 1em;
+}
+
