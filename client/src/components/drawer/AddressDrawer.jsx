@@ -1,7 +1,6 @@
 import { Drawer } from 'rsuite';
 import {useState} from "react";
-import Address from "../adress/Address";
-
+import Address from "../adress/Adress";
 const AddressDrawer = ({title, placeholder}) => {
     const [open, setOpen] = useState(false);
     const [placement, setPlacement] = useState('bottom');
@@ -17,8 +16,8 @@ const AddressDrawer = ({title, placeholder}) => {
     }
 
     const handleLocationSelect = (selectAddress) => {
-      setAddress(selectAddress);
-      handleClose();
+        setAddress(selectAddress);
+        handleClose();
     }
     return (
         <div>
