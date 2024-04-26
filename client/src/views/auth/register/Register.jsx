@@ -2,7 +2,7 @@ import './Register.scss'
 import {useEffect, useRef, useState} from "react";
 import {useDebounce} from "../../../hook/useDebounce";
 import axios from "axios";
-import Address from "../../../components/adress/Adress";
+import Address from "../../../components/adress/Address";
 export default function Register() {
     const initVal = useRef({
         nickname: '',

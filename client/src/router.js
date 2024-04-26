@@ -9,6 +9,8 @@ import ChatRoomList from "./views/Chat/ChatRoomList";
 import OnBoarding from "./views/pages/onboarding/OnBoarding";
 import Mypage from "./views/pages/mypage/Mypage";
 import Register from "./views/auth/register/Register";
+import Search from "./views/pages/search/Search";
+import SearchAddress from "./views/pages/searchaddress/SearchAddress";
 
 const router = {
     routes: [
@@ -25,13 +27,6 @@ const router = {
             title: '회원가입',
             header:<Header1/>,
             footer:null,
-        },
-        {
-            path: '/main',
-            component: <Main/>,
-            title: null,
-            header:<Header4/>,
-            footer:<Footer/>
         },
         {
             path: '/',
