@@ -11,8 +11,7 @@ import com.foodshare.chat.exception.DatabaseServiceUnavailableException;
 import com.foodshare.chat.exception.DbErrorHandlingExecutor;
 import com.foodshare.chat.repository.ChatMessageRepository;
 import com.foodshare.domain.ChatMessage;
-import com.foodshare.domain.Notification;
-import com.foodshare.notification.service.NotificationService;
+
 import com.foodshare.notification.sse.service.SseEmitterService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ public class MessageProcessingService {
 
 	private final ChatMessageRepository chatMessageRepository;
 	private final VisibilityService visibilityService;
-	private final NotificationService notificationService;
+
 	private final SseEmitterService sseEmitterService;
 	private static final Date EPOCH = new Date(0);
 
@@ -36,12 +35,7 @@ public class MessageProcessingService {
 			log.info("처리 중인 채팅 메시지: 발신자 ID={}, 수신자 ID={}", senderId, receiverId);
 
 			performDatabaseOperations(chatRoomId, senderId, receiverId, messageContent);
-
-			Notification notification = notificationService.createNotificationForMessage(
-				receiverId, senderId, messageContent
-			);
-
-			sseEmitterService.sendNotification(receiverId, notification);
+			sseEmitterService.processNotification(receiverId, senderId, messageContent);
 
 		} catch (DatabaseServiceUnavailableException e) {
 			throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "데이터베이스 용할 수 없습니다. 나중에 다시 시도해주세요.",
@@ -56,6 +50,7 @@ public class MessageProcessingService {
 
 		String[] userIds = chatRoomId.split("_");
 		if (userIds[0].equals(senderId)) {
+
 			return userIds[1];
 		} else {
 			return userIds[0];
