@@ -1,6 +1,5 @@
 package com.foodshare.controller;
 
-import com.foodshare.security.controller.UserController;
 import com.foodshare.security.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

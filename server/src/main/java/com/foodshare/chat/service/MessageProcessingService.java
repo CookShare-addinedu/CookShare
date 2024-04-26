@@ -1,6 +1,7 @@
 package com.foodshare.chat.service;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,9 @@ import com.foodshare.chat.annotation.LogExecutionTime;
 import com.foodshare.chat.exception.DatabaseServiceUnavailableException;
 import com.foodshare.chat.exception.DbErrorHandlingExecutor;
 import com.foodshare.chat.repository.ChatMessageRepository;
+import com.foodshare.chat.repository.ChatRoomRepository;
 import com.foodshare.domain.ChatMessage;
+import com.foodshare.domain.ChatRoom;
 import com.foodshare.domain.Notification;
 import com.foodshare.notification.service.NotificationService;
 import com.foodshare.notification.sse.service.SseEmitterService;
@@ -27,6 +30,7 @@ public class MessageProcessingService {
 	private final VisibilityService visibilityService;
 
 	private final SseEmitterService sseEmitterService;
+	private final ChatRoomRepository chatRoomRepository;
 	private static final Date EPOCH = new Date(0);
 
 	@LogExecutionTime
@@ -46,25 +50,28 @@ public class MessageProcessingService {
 		}
 	}
 
-	private String identifyReceiver(String chatRoomId, String senderId) {
-		log.info("identifyReceiver: chatRoomI={},  senderId={}", chatRoomId, senderId);
+	private String identifyReceiver(String chatRoomUrlId, String senderId) {
+		log.info("identifyReceiver: chatRoomUrlId={}, senderId={}", chatRoomUrlId, senderId);
 
-		String[] userIds = chatRoomId.split("_");
-		if (userIds[0].equals(senderId)) {
-
-			return userIds[1];
-		} else {
-			return userIds[0];
-		}
+		return chatRoomRepository
+			.findByUrlIdentifier(chatRoomUrlId) // Optional<ChatRoom>
+			.map(chatRoom -> {
+				if (chatRoom.getFirstUser().equals(senderId)) {
+					return chatRoom.getSecondUser();
+				} else {
+					return chatRoom.getFirstUser();
+				}
+			})
+			.orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다."));
 	}
 
-	private void performDatabaseOperations(String chatRoomId, String senderId, String receiverId,
+	private void performDatabaseOperations(String chatRoomUrlId, String senderId, String receiverId,
 		String messageContent) {
-		log.info("performDatabaseOperations, chatRoomId={},  senderId={}", chatRoomId, senderId);
+		log.info("performDatabaseOperations, chatRoomUrlId={},  senderId={}", chatRoomUrlId, senderId);
 		log.info("performDatabaseOperations, receiverIdd={},   messageContent={}", receiverId, messageContent);
 
-		saveNewMessage(chatRoomId, senderId, messageContent);
-		visibilityService.unHideChatRoomIfNeeded(receiverId, chatRoomId);
+		saveNewMessage(chatRoomUrlId, senderId, messageContent);
+		visibilityService.unHideChatRoomIfNeeded(receiverId, chatRoomUrlId);
 	}
 
 	private void saveNewMessage(String chatRoomId, String sender, String messageContent) {
@@ -88,3 +95,20 @@ public class MessageProcessingService {
 
 }
 
+// private String identifyReceiver(String chatRoomUrlId, String senderId) {
+// 	log.info("identifyReceiver: chatRoomUrlId={},  senderId={}", chatRoomUrlId, senderId);
+//
+// 	Optional<ChatRoom> chatRoomOpt = chatRoomRepository.findByUrlIdentifier(chatRoomUrlId);
+//
+// 	if (chatRoomOpt.isPresent()) {
+// 		ChatRoom chatRoom = chatRoomOpt.get();
+//
+// 		if (chatRoom.getFirstUser().equals(senderId)) {
+// 			return chatRoom.getSecondUser();
+// 		} else {
+// 			return chatRoom.getFirstUser();
+// 		}
+// 	} else {
+// 		throw new IllegalArgumentException("채팅방을 찾을 수 없습니다.");
+// 	}
+// }

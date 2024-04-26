@@ -2,13 +2,14 @@ import Login from "./views/auth/login/Login";
 import {Header1, Header2, Header3, Header4, Header5} from "./views/common/header/Header";
 import Footer from "./views/common/footer/Footer";
 
-import Chat from "./views/Chat/Chat";
+
 import ChatRoomList from "./views/Chat/ChatRoomList";
 
 
 import OnBoarding from "./views/pages/onboarding/OnBoarding";
 
 import Register from "./views/auth/register/Register";
+import Chat from "./views/Chat/Chat";
 
 
 

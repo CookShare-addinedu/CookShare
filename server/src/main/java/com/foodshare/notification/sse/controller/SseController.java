@@ -31,30 +31,30 @@ public class SseController {
 		this.heartbeatService = heartbeatService;
 	}
 
-	private final ConcurrentMap<String, SseEmitter> emitters = new ConcurrentHashMap<>();
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
 	@GetMapping(value = "/sse/connect/{userId}", produces = "text/event-stream")
 	public ResponseEntity<SseEmitter> connect(@PathVariable String userId) {
-		SseEmitter emitter = new SseEmitter(300_000L); // 5분 연결 유지
-		sseEmitters.add(userId, emitter);
+		SseEmitter newEmitter = new SseEmitter(300_000L); // 5분 연결 유지
 
-		emitter.onCompletion(() -> sseEmitters.remove(userId, emitter));
-		emitter.onTimeout(() -> {
-			emitter.complete();
-			sseEmitters.remove(userId, emitter);
+		sseEmitters.removeExistingEmitter(userId);
+
+		sseEmitters.add(userId, newEmitter);
+
+		newEmitter.onCompletion(() -> sseEmitters.remove(userId, newEmitter));
+		newEmitter.onTimeout(() -> {
+			newEmitter.complete();
+			sseEmitters.remove(userId, newEmitter);
 		});
 
 		try {
-			emitter.send(SseEmitter.event().name("connect").data("connected"));
+			sseEmitters.sendEvent(newEmitter, "connect", "connected");
 		} catch (Exception e) {
 			log.error("SSE 연결 오류: {}", e.getMessage());
-			emitter.completeWithError(e);
-			sseEmitters.remove(userId, emitter);
+			newEmitter.completeWithError(e);
+			sseEmitters.remove(userId, newEmitter);
 		}
-		heartbeatService.startHeartbeat(emitter, 60, TimeUnit.SECONDS);
 
-		return ResponseEntity.ok(emitter); // 연결된 SSEEmitter 반환
+		heartbeatService.startHeartbeat(newEmitter, 60, TimeUnit.SECONDS);
+
+		return ResponseEntity.ok(newEmitter);
 	}
-
 }

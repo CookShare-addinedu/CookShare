@@ -23,8 +23,8 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
@@ -53,7 +53,7 @@ dependencies {
     implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 
     // 스프링 부트 스타터 데이터 MongoDB
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    //implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
 
     // Spring Security
