@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.foodshare.chat.dto.ChatMessageDto;
 import com.foodshare.chat.dto.ChatRoomCreationDto;
 import com.foodshare.chat.dto.ChatRoomDto;
-import com.foodshare.chat.service.ChatMessageService;
+import com.foodshare.chat.service.ChatRoomMessageService;
+
 import com.foodshare.chat.service.ChatRoomService;
+
+import com.foodshare.chat.service.VisibilityService;
 import com.foodshare.domain.ChatRoom;
 
 import lombok.RequiredArgsConstructor;
@@ -32,7 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatRoomController {
 
 	private final ChatRoomService chatRoomService;
-	private final ChatMessageService chatMessageService;
+	private final ChatRoomMessageService chatRoomMessageService;
+	private final VisibilityService visibilityService;
 
 	@GetMapping("/detailRoom/{chatRoomId}/messages")
 	public ResponseEntity<Slice<ChatMessageDto>> listChatRoomMessages(
@@ -42,7 +46,7 @@ public class ChatRoomController {
 		@RequestParam(defaultValue = "10") int size) {
 		log.info("페이징 메시지 상세 조회 시작 ");
 
-		Slice<ChatMessageDto> messages = chatMessageService.listMessagesInChatRoom(chatRoomId, userId, page, size);
+		Slice<ChatMessageDto> messages = chatRoomMessageService.listMessagesInChatRoom(chatRoomId, userId , page, size);
 		log.info("메시지 내용: {}", messages.getContent());
 
 		if (messages.isEmpty()) {
@@ -71,7 +75,7 @@ public class ChatRoomController {
 
 	@PutMapping("/hideRoom/{chatRoomId}")
 	public void hideChatRoom(@PathVariable String chatRoomId, @RequestParam String userId) {
-		chatRoomService.setRoomHidden(userId, chatRoomId);
+		visibilityService.setRoomHidden(userId, chatRoomId);
 	}
 }
 
