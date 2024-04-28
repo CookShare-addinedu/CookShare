@@ -87,7 +87,7 @@ function Chat() {
                 <div className="messagesContainer" id="messagesContainer" ref={messagesContainerRef}>
                     {messageList.map((msg, index) => (
                         <div key={index} className={`chatContent ${msg.sender === userId ? "me" : "them"}`}>
-                            {msg.sender !== userId && <img src="/images/userImage.png" alt={`${msg.sender}`}/>}
+                            {msg.sender !== userId && <img src="/img/fooding.png" alt={`${msg.sender}`}/>}
                             <div className="messageArea">
                                 <div className="messageInfo">
                                     <div className="sender">{msg.sender === userId ? "" : msg.sender}</div>

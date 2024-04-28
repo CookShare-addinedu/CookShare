@@ -44,7 +44,6 @@ const useChatDetailList = (chatRoomId, userId) => {
         if (!hasMore || isLoading) {
             return Promise.resolve();
         }
-
         setIsLoading(true);
 
         return axios.get(`/api/chat/detailRoom/${chatRoomId}/messages`, {

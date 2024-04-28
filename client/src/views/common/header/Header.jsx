@@ -1,65 +1,54 @@
 import './Header.scss';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAngleLeft, faEllipsisVertical, faMagnifyingGlass, faBell, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faAngleLeft, faEllipsisVertical, faMagnifyingGlass, faBell} from "@fortawesome/free-solid-svg-icons";
 import useHeaderTitle from "../../../hook/useHeaderTitle";
-
-
+import {NavLink, useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 function Header1() {
+    const navigate = useNavigate();
+    const title = useHeaderTitle();
+
     return (
         <header className={'header1'}>
             <div className={'prev'}>
-                <a href="#">
+                <button onClick={() => navigate(-1)}>
                     <span>
-                        <FontAwesomeIcon icon={faAngleLeft} />
+                        <FontAwesomeIcon icon={faAngleLeft}/>
                     </span>
-                </a>
+                </button>
+            </div>
+            <div className={'title'}>
+                <h2>{title}</h2>
             </div>
         </header>
     );
 }
+
 function Header2() {
     const title = useHeaderTitle();
-
     return (
         <header className={'header2'}>
-            <div className={'prev'}>
-                <a href="#">
-                    <span>
-                        <FontAwesomeIcon icon={faAngleLeft} />
-                    </span>
-                </a>
-            </div>
             <div className={'title'}>
-                <h1>{title}</h1>
-            </div>
-        </header>
-    );
-}
-
-function Header3() {
-    const title = useHeaderTitle();
-    return (
-        <header className={'header3'}>
-            <div className={'title'}>
-                <h1>{title}</h1>
+                <h2>{title}</h2>
             </div>
         </header>
     )
 }
-function Header4() {
+function Header3() {
+    const navigate = useNavigate();
     const title = useHeaderTitle();
     return(
-        <header className={'header4'}>
+        <header className={'header3'}>
             <div className={'prev'}>
-                <a href="#">
+                <button onClick={() => navigate(-1)}>
                     <span>
-                        <FontAwesomeIcon icon={faAngleLeft} />
+                        <FontAwesomeIcon icon={faAngleLeft}/>
                     </span>
-                </a>
+                </button>
             </div>
             <div className={'title'}>
-                <h1>{title}</h1>
+                <h2>{title}</h2>
             </div>
             <div className={'menu'}>
                 <button>
@@ -71,32 +60,26 @@ function Header4() {
         </header>
     )
 }
-function Header5(){
+function Header4(){
+    const address = useSelector(state => state.address.currentAddress);
     return(
-        <header className={'header5'}>
-            <div className={'select_wrap'}>
-                <select>
-                    <option selected>가산동</option>
-                    <option>2</option>
-                    <option>3</option>
-                </select>
+        <header className={'header4'}>
+            <div className={'address_wrap'}>
+                <NavLink to={'/searchAddress'}>
+                    <span className={'address'}>{address}</span>
+                </NavLink>
             </div>
             <div className={'menu'}>
                 <ul>
                     <li>
-                        <a href={"#"}>
+                        <NavLink to={'/search'}>
                             <FontAwesomeIcon icon={faMagnifyingGlass}/>
-                        </a>
+                        </NavLink>
                     </li>
                     <li>
-                        <a href={"#"}>
-                            <FontAwesomeIcon icon={faUser} />
-                        </a>
-                    </li>
-                    <li>
-                        <a href={"#"}>
+                        <NavLink to={'/notification'}>
                             <FontAwesomeIcon icon={faBell}/>
-                        </a>
+                        </NavLink>
                     </li>
                 </ul>
             </div>
@@ -105,4 +88,4 @@ function Header5(){
 }
 
 
-export {Header1, Header2, Header3, Header4, Header5};
+export {Header1, Header2, Header3, Header4};

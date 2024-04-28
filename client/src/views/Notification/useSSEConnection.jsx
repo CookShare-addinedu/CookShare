@@ -4,7 +4,7 @@ import {jwtDecode} from 'jwt-decode';
 const useSSEConnection = () => {
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState([]);
-
+    const [totalUnreadCount, setTotalUnreadCount] = useState(0);
     useEffect(() => {
         let eventSource = null;
 
@@ -22,6 +22,12 @@ const useSSEConnection = () => {
                 setIsConnected(true);
             });
 
+            eventSource.addEventListener("unreadCountUpdate", (event) => {
+                const unreadCount = parseInt(event.data, 10);
+                console.log("읽지 않은 메시지의 총합:", unreadCount);
+                setTotalUnreadCount(unreadCount); // 읽지 않은 메시지 수 상태 업데이트
+            });
+
             eventSource.addEventListener("notification", (event) => {
                 console.log("Received notification:", event.data); // 이벤트 데이터 확인
                 try {
@@ -31,6 +37,11 @@ const useSSEConnection = () => {
                     console.error("JSON 파싱 오류:", error); // 파싱 오류 처리
                 }
             });
+
+            eventSource.addEventListener("heartbeat", (event) => {
+                console.log("Heartbeat received:", event.data); // 하트비트 수신
+            });
+
 
             eventSource.addEventListener("grouped_notification", (event) => {
                 console.log("grouped_notification notification:", event.data); // 이벤트 데이터 확인
@@ -67,7 +78,7 @@ const useSSEConnection = () => {
         };
     }, []);
 
-    return {messages, isConnected, setMessages};
+    return {messages, isConnected, setMessages , totalUnreadCount};
 };
 
 export default useSSEConnection;

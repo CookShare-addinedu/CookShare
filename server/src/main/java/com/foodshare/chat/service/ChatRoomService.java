@@ -23,6 +23,8 @@ import com.foodshare.domain.ChatMessage;
 import com.foodshare.domain.ChatRoom;
 import com.foodshare.chat.utils.ValidationUtils;
 import com.foodshare.domain.User;
+import com.foodshare.notification.service.NotificationService;
+import com.foodshare.notification.sse.service.SseEmitterService;
 import com.foodshare.security.repository.UserRepository;
 import com.foodshare.security.service.UserServiceImpl;
 
@@ -40,6 +42,7 @@ public class ChatRoomService {
 	private final UserServiceImpl userService;
 	private final MongoQueryBuilder mongoQueryBuilder;
 
+
 	@LogExecutionTime
 	public List<ChatRoomDto> listChatRoomsForUser(String userId) {
 		log.debug("listChatRoomsForUser: userId={}", userId);
@@ -49,6 +52,12 @@ public class ChatRoomService {
 		List<ChatRoomDto> chatRooms = listAvailableChatRooms(userId, hiddenRoomIds);
 
 		updateUnreadCounts(chatRooms, userId);
+
+		//long totalUnreadCount = updateUnreadCountsAndGetTotal(chatRooms, userId);
+
+		//	sseEmitterService.sendUnreadCountUpdate(userId, totalUnreadCount);
+
+		//	log.info("사용자 {}의 읽지 않은 메시지 총합={}", userId, totalUnreadCount);
 
 		return chatRooms;
 	}
@@ -86,6 +95,18 @@ public class ChatRoomService {
 		});
 	}
 
+	// public long updateUnreadCountsAndGetTotal(List<ChatRoomDto> chatRooms, String userId) {
+	// 	long totalUnreadCount = 0;
+	//
+	// 	for (ChatRoomDto room : chatRooms) {
+	// 		long unreadCount = mongoQueryBuilder.countUnreadMessages(room.getChatRoomId(), userId);
+	// 		room.setUnreadCount(unreadCount);
+	// 		totalUnreadCount += unreadCount;
+	// 		log.debug("채팅방 ID={}, 읽지 않은 메시지 수={}", room.getChatRoomId(), unreadCount);
+	// 	}
+	//
+	// 	return totalUnreadCount;
+	// }
 
 	public ChatRoom createChatRoom(String firstUserId, String secondUserId, Long foodId, String chatRoomId,
 		String chaRoomUrlId) {

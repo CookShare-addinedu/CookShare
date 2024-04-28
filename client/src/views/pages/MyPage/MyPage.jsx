@@ -1,4 +1,4 @@
-import './Mypage.scss';
+import './MyPage.scss';
 import List from "../../../components/list/List";
 import {
     faBell,
@@ -14,7 +14,7 @@ import {MypageButton} from "../../../components/button/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
-export default function Mypage() {
+export default function MyPage() {
     const navigate = useNavigate();
     const handleLogout = () => {
         if(window.confirm('로그아웃을 하시겠습니까?')){

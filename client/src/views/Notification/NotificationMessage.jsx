@@ -9,7 +9,7 @@ const NotificationMessage = ({message, duration = 10000, onClose}) => {
 
     return (
         <div className="notification-message">
-            <img src="/images/fooding.png" alt="Icon" className="icon"/>
+            <img src="/img/fooding.png" alt="Icon" className="icon"/>
             <span className="message-text">{message}</span>
             <button onClick={onClose} className="close-button">×</button>
         </div>

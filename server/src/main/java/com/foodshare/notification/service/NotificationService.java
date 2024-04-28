@@ -6,9 +6,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.foodshare.chat.dto.ChatRoomDto;
+import com.foodshare.chat.service.ChatRoomService;
+import com.foodshare.chat.service.MongoQueryBuilder;
 import com.foodshare.domain.Notification;
 import com.foodshare.domain.User;
 import com.foodshare.notification.repository.NotificationRepository;
+import com.foodshare.notification.sse.service.SseEmitterService;
 import com.foodshare.security.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 public class NotificationService {
 	private final NotificationRepository notificationRepository;
 	private final UserRepository userRepository;
+	private final MongoQueryBuilder mongoQueryBuilder;
+
 
 
 	public Notification createNotificationForMessage(String receiverMobileNumber, String senderMobileNumber,
@@ -30,8 +36,6 @@ public class NotificationService {
 
 		return createNotification(receiver, individualMessage);
 	}
-
-
 
 	private String createIndividualMessage(User sender, String messageContent) {
 		return String.format("%s 사용자가 채팅을 보냈습니다:", sender.getMobileNumber());

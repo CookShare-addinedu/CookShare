@@ -59,7 +59,7 @@ public class WebSecurityConfig {
 			.authorizeHttpRequests((authz) -> authz
 				.requestMatchers("/login",
 					"/register",
-                    "/login",
+					"/login",
 					"/api/chat/**",
 					"/ws/**",
 					"/sse/connect/**",

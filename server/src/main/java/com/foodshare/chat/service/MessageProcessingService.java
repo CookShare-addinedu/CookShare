@@ -31,6 +31,8 @@ public class MessageProcessingService {
 
 	private final SseEmitterService sseEmitterService;
 	private final ChatRoomRepository chatRoomRepository;
+	private final MongoQueryBuilder mongoQueryBuilder;
+
 	private static final Date EPOCH = new Date(0);
 
 	@LogExecutionTime
@@ -41,6 +43,10 @@ public class MessageProcessingService {
 
 			performDatabaseOperations(chatRoomId, senderId, receiverId, messageContent);
 			sseEmitterService.processNotification(receiverId, senderId, messageContent);
+
+			long totalUnreadCount = mongoQueryBuilder.countTotalUnreadMessages(receiverId);
+			sseEmitterService.sendUnreadCountUpdate(receiverId, totalUnreadCount);
+
 
 		} catch (DatabaseServiceUnavailableException e) {
 			throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "데이터베이스 용할 수 없습니다. 나중에 다시 시도해주세요.",

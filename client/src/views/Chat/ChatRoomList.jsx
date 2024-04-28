@@ -33,7 +33,7 @@ function ChatRoomList() {
 
         axios.get('/api/chat/ListRooms', {
             headers: {
-         //      'Authorization': `Bearer ${token}`
+                //      'Authorization': `Bearer ${token}`
             },
             params: {
                 userId: decoded.mobilenumber,
@@ -50,13 +50,13 @@ function ChatRoomList() {
                 }
             })
             .catch(error => {
-                if (error.response && error.response.status === 401) {
-                    console.error("인증되지 않았습니다. 로그인이 필요합니다."); // 오류 처리
-                    setError("로그인이 필요합니다.");
+                    if (error.response && error.response.status === 401) {
+                        console.error("인증되지 않았습니다. 로그인이 필요합니다."); // 오류 처리
+                        setError("로그인이 필요합니다.");
+                    }
+                    console.error('채팅방 목록을 가져오는데 실패했습니다.', error);
+                    setError('채팅방 목록을 가져오는데 실패했습니다.');
                 }
-                console.error('채팅방 목록을 가져오는데 실패했습니다.', error);
-                setError('채팅방 목록을 가져오는데 실패했습니다.');
-            }
 
             );
     };
@@ -111,7 +111,11 @@ function ChatRoomList() {
             setSelectedRooms([]);
         }
     };
-
+    const trimMessage = (message, maxLength = 30) => {
+        return message.length > maxLength
+            ? `${message.slice(0, maxLength)}...`
+            : message;
+    };
 
     if (error) {
         return <div>오류: {error}</div>;
@@ -120,8 +124,7 @@ function ChatRoomList() {
 
     return (
         <div className="chat-room-list-container">
-            <h1>채팅방 목록</h1>
-            <button onClick={hideRooms}>선택한 채팅방 숨기기</button>
+            <button id="chatHideBtn" onClick={hideRooms}>선택한 채팅방 숨기기</button>
             {/* 버튼 클릭 이벤트 */}
             <ul className="chat-room-list">
                 {rooms.map(chatRoom => (
@@ -131,11 +134,13 @@ function ChatRoomList() {
                             checked={selectedRooms.includes(chatRoom.chatRoomId)}
                             onChange={() => toggleRoomSelection(chatRoom.chatRoomId)}
                         />
-                        <Link to={`/chat/GetChat/${chatRoom.chatRoomId}`} className="chat-room-link">
-                            <img src="/images/userImage.png" alt="User" className="chat-room-image"/>
+                        <Link to={`/chat/getChat/${chatRoom.chatRoomId}`} className="chat-room-link">
+                            <img src="/img/userImage.png" alt="User" className="chat-room-image"/>
                             <div className="chat-room-info">
                                 <p className="chat-room-name">{chatRoom.chatRoomId}</p>
-                                <p className="chat-room-last-message">{chatRoom.lastMessage}</p>
+                                <p className="chat-room-last-message">
+                                    {trimMessage(chatRoom.lastMessage)}
+                                </p>
                                 <p className="chat-room-time">{new Date(chatRoom.lastMessageTimestamp).toLocaleString()}</p>
                             </div>
                         </Link>

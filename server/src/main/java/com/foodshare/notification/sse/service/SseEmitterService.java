@@ -1,8 +1,11 @@
 package com.foodshare.notification.sse.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.foodshare.chat.dto.ChatRoomDto;
 import com.foodshare.domain.Notification;
 import com.foodshare.notification.service.NotificationAggregator;
 import com.foodshare.notification.service.NotificationService;
@@ -41,10 +44,28 @@ public class SseEmitterService {
 		log.info("receiverId = {}", receiverId);
 		if (emitter != null) {
 			try {
-				emitter.send(SseEmitter.event().name("notification").data(data));
+				emitter.send(SseEmitter.event()
+					.name("notification")
+					.data(data));
+				log.info("호출됨");
 			} catch (Exception e) {
 				sseEmitters.remove(receiverId, emitter);
 				log.error("알림보내는거실패  {}", receiverId, e);
+			}
+		}
+	}
+
+	public void sendUnreadCountUpdate(String userId, long unreadCount) {
+		SseEmitter emitter = sseEmitters.getEmitter(userId);
+
+		if (emitter != null) {
+			try {
+				emitter.send(SseEmitter.event()
+					.name("unreadCountUpdate")
+					.data(unreadCount));
+			} catch (Exception e) {
+				emitter.completeWithError(e);
+				sseEmitters.remove(userId, emitter);
 			}
 		}
 	}
