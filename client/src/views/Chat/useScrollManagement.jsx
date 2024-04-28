@@ -40,7 +40,7 @@ export const useScrollManagement = (
             }
         };
         const container = messagesContainerRef.current;
-        const throttledScrollHandler = throttle(loadMoreMessagesOnScrollUp, 0);
+        const throttledScrollHandler = throttle(loadMoreMessagesOnScrollUp, 10);
         container.addEventListener('scroll', throttledScrollHandler);
         return () => {
             container.removeEventListener('scroll', throttledScrollHandler)

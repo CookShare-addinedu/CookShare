@@ -32,8 +32,9 @@ const router = {
         {
             path: '/chat/GetChatList',
             component: <ChatRoomList/>,
-            header: <Header5/>,
-            footer: <Footer/>
+            title: '채팅목록',
+            header: <Header2/>,
+            footer: null,
         },
         {
             path: '/chat/GetChat/:chatRoomId',

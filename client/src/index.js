@@ -9,7 +9,12 @@ const root = ReactDOM.createRoot(rootElement);
 
 
 root.render(
-    <BrowserRouter>
-        <App/>
-    </BrowserRouter>
+
+
+
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+
+
 );
