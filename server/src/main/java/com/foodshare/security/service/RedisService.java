@@ -59,18 +59,12 @@ public class RedisService {
     }
 
     public void blacklistToken(String token, long duration) {
-        String key = "BLACKLISTED_TOKEN:" + token;
-        try {
-            redisTemplate.opsForValue().set(key, "blacklisted", duration, TimeUnit.SECONDS);
-            System.out.println("블랙리스트 토큰 추가: " + key + ", 기간: " + duration + "초");
-        } catch (Exception e) {
-            System.err.println("토큰 블랙리스트 추가 실패: " + e.getMessage());
-        }
+        redisTemplate.opsForValue().set(token, "blacklisted", duration, TimeUnit.SECONDS);
     }
 
-
-    public boolean isTokenBlacklisted(String key) {
-        return redisTemplate.hasKey(key); // 블랙리스트 토큰이 있는지 확인
+    public boolean isTokenBlacklisted(String token) {
+        String status = redisTemplate.opsForValue().get(token);
+        return "blacklisted".equals(status);
     }
 
 

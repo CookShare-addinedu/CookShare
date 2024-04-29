@@ -32,6 +32,7 @@ public class VisibilityService {
 
 		UserChatRoomVisibility visibility = findOrCreateVisibility(userId, chatRoomId);
 		updateVisibilityToHidden(visibility);
+		mongoQueryBuilder.updateMessagesAsRead(chatRoomId, userId);
 	}
 
 	public UserChatRoomVisibility findOrCreateVisibility(String userId, String chatRoomId) {

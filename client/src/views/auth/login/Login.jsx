@@ -7,7 +7,7 @@ import {NavLink} from "react-router-dom";
 
 export default function Login (){
     const [FormData, setFormData] = useState({
-        tel: '',
+        mobileNumber: '',
         password: ''
     });
     const [ShowPassword, setShowPassword] = useState(false);
@@ -25,7 +25,7 @@ export default function Login (){
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        const formattedValue = name === 'tel' ? formatPhoneNumber(value) : value;
+        const formattedValue = name === 'mobileNumber' ? formatPhoneNumber(value) : value;
 
         setFormData(prevState => ({
             ...prevState,
@@ -40,9 +40,9 @@ export default function Login (){
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const {tel, password} = event.target.elements;
+        const {mobileNumber, password} = event.target.elements;
         const data = {
-            tel: tel.value,
+            mobileNumber: mobileNumber.value,
             password: password.value
         }
         try{
@@ -51,10 +51,7 @@ export default function Login (){
             if (response.status === 200 && response.data.token) {
                 const token =  response.data.token;
                 localStorage.setItem('jwt', token);
-                console.log(token);
-                console.log('로그인 성공, JWT 저장됨:', token);
-
-                console.log('LocalStorage에 저장된 토큰:', localStorage.getItem('jwt'));
+                console.log('로그인 성공, JWT저장됨')
             }else{
                 console.log('로그인 실패:', response.status, response.statusText);
             }
@@ -75,12 +72,12 @@ export default function Login (){
             </div>
             <form className={'login_form'} onSubmit={handleSubmit}>
                 <div className={'field'}>
-                    <label htmlFor={'tel'} className={'a11y-hidden'}>휴대폰 번호</label>
+                    <label htmlFor={'mobileNumber'} className={'a11y-hidden'}>휴대폰 번호</label>
                     <input
-                        type={'tel'}
-                        id={'tel'}
-                        name={'tel'}
-                        value={FormData.tel}
+                        type={'mobileNumber'}
+                        id={'mobileNumber'}
+                        name={'mobileNumber'}
+                        value={FormData.mobileNumber}
                         placeholder="휴대폰 번호를 입력해주세요"
                         maxLength={13}
                         pattern={'[0-9]{3}-[0-9]{3,4}-[0-9]{4}'}

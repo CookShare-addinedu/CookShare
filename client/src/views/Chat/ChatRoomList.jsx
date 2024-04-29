@@ -12,7 +12,7 @@ function ChatRoomList() {
     const [error, setError] = useState('');
     const token = localStorage.getItem('jwt');
     const decoded = jwtDecode(token);
-    const userId = decoded.mobilenumber;
+    const userId = decoded.mobileNumber;
     const userName = decoded.userId;
 
 
@@ -27,7 +27,7 @@ function ChatRoomList() {
                 //      'Authorization': `Bearer ${token}`
             },
             params: {
-                userId: decoded.mobilenumber,
+                userId: decoded.mobileNumber,
 
             }
         })

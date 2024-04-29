@@ -21,7 +21,7 @@ function Chat() {
 
     const token = localStorage.getItem('jwt');
     const decoded = jwtDecode(token);
-    const userId = decoded.mobilenumber;
+    const userId = decoded.mobileNumber;
 
     const {messageList, isLoading, loadChatMessages, hasMore, addMessageList} = useChatDetailList(chatRoomId, userId);
 

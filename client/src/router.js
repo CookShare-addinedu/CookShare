@@ -4,12 +4,16 @@ import {Header1, Header2, Header3, Header4} from "./views/common/header/Header";
 import Footer from "./views/common/footer/Footer";
 import Main from "./views/pages/main/Main";
 import OnBoarding from "./views/pages/onboarding/OnBoarding";
-import Mypage from "./views/pages/mypage/Mypage";
+
 import Drawers from "./components/drawer/Drawers";
 import Search from "./views/pages/search/Search";
 import SearchAddress from "./views/pages/searchaddress/SearchAddress";
 import MainDetail from "./views/pages/main/MainDetail";
 import MainForm from "./views/pages/main/MainForm";
+import MyPage from "./views/pages/MyPage/MyPage";
+import ChatRoomList from "./views/Chat/ChatRoomList";
+import Chat from "./views/Chat/Chat";
+import Notifications from "./views/Notification/Notifications";
 
 const router = {
     routes: [
@@ -17,50 +21,50 @@ const router = {
             path: '/login',
             component: <Login/>,
             title: null,
-            header:<Header1/>,
-            footer:null
+            header: <Header1/>,
+            footer: null
         },
         {
             path: '/register',
             component: <Register/>,
             title: '회원가입',
-            header:<Header1/>,
-            footer:<Footer/>,
+            header: <Header1/>,
+            footer: <Footer/>,
         },
         {
             path: '/main',
             component: <Main/>,
             title: null,
-            header:<Header4/>,
-            footer:<Footer/>
+            header: <Header4/>,
+            footer: <Footer/>
         },
         {
             path: '/main/foods/:id',
             component: <MainDetail/>,
             title: null,
-            header:<Header3/>,
-            footer:null
+            header: <Header3/>,
+            footer: null
         },
         {
             path: '/main/add',
             component: <MainForm/>,
             title: null,
-            header:<Header1/>,
-            footer:null
+            header: <Header1/>,
+            footer: null
         },
         {
             path: '/',
             component: <OnBoarding/>,
             title: null,
-            header:null,
-            footer:null
+            header: null,
+            footer: null
         },
         {
             path: '/mypage',
-            component: <Mypage/>,
+            component: <MyPage/>,
             title: '나의 냉장고',
             header: <Header1/>,
-            footer:<Footer/>
+            footer: <Footer/>
         },
         {
             path: '/drawer',
@@ -84,18 +88,24 @@ const router = {
             footer: null
         },
         {
-            path:'/chat/getChatList',
+            path: '/chat/getChatList',
             component: <ChatRoomList/>,
             header: <Header4/>,
-            footer:<Footer/>
+            footer: <Footer/>
         },
         {
-            path:'/chat/getChat/:chatRoomId',
+            path: '/chat/getChat/:chatRoomId',
             component: <Chat/>,
             header: <Header4/>,
-            footer:<Footer/>
+
         },
 
+        {
+            path: '/notification',
+            component: <Notifications/>,
+            header: <Header4/>,
+
+        }
 
 
     ]

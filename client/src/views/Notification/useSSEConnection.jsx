@@ -20,7 +20,7 @@ const useSSEConnection = () => {
         }
 
         const decoded = jwtDecode(token);
-        const userId = decoded.mobilenumber;
+        const userId = decoded.mobileNumber;
         const serverUrl = 'http://localhost:8080';
         const eventSource = new EventSource(`${serverUrl}/sse/connect/${encodeURIComponent(userId)}`);
 
