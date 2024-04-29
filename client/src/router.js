@@ -9,6 +9,8 @@ import ChatRoomList from "./views/Chat/ChatRoomList";
 import OnBoarding from "./views/pages/onboarding/OnBoarding";
 import Mypage from "./views/pages/mypage/Mypage";
 import Register from "./views/auth/register/Register";
+import Search from "./views/pages/search/Search";
+import SearchAddress from "./views/pages/searchaddress/SearchAddress";
 
 const router = {
     routes: [
@@ -16,16 +18,44 @@ const router = {
             path: '/login',
             component: <Login/>,
             title: null,
-            header:<Header2/>,
+            header:<Header1/>,
             footer:null
         },
         {
             path: '/register',
             component: <Register/>,
             title: '회원가입',
-            header:<Header2/>,
+            header:<Header1/>,
             footer:null,
         },
+        {
+            path: '/',
+            component: <OnBoarding/>,
+            title: null,
+            header:null,
+            footer:null
+        },
+        {
+            path: '/mypage',
+            component: <Mypage/>,
+            title: '나의 냉장고',
+            header: <Header1/>,
+            footer:<Footer/>
+        },
+        {
+            path: '/search',
+            component: <Search/>,
+            title: null,
+            header: null,
+            footer: null
+        },
+        {
+            path: '/searchAddress',
+            component: <SearchAddress/>,
+            title: null,
+            header: null,
+            footer: null
+        }
         // {
         //     path: '/chat/GetChatList',
         //     component: <ChatRoomList/>,
@@ -38,19 +68,7 @@ const router = {
         //     header: <Header5/>,
         //     footer: <Footer/>
         // },
-        {
-            path: '/',
-            component: <OnBoarding/>,
-            header: null,
-            footer: null
-        },
-        {
-            path: '/mypage',
-            component: <Mypage/>,
-            title: '나의 냉장고',
-            header: <Header2/>,
-            footer:<Footer/>
-        }
+
 
 
     ]

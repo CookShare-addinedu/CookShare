@@ -17,10 +17,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 여기서는 User 엔티티의 getAuthorities 메소드가 필요합니다.
-        // User 클래스에 그런 메소드가 없다면, 적절한 권한을 반환하도록 수정해야 합니다.
         Collection<GrantedAuthority> collection = new ArrayList<>();
-
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
@@ -30,15 +27,27 @@ public class CustomUserDetails implements UserDetails {
         return collection;
     }
 
+    public Long getUserId() {
+        return user.getUserId();
+    }
+
     @Override
-    public String getPassword() {
-        return user.getPassword();
+    public String getPassword() { return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getMobileNumber(); // 또는 user.getUsername() 사용자 이름을 반환하는 것으로 가정
+        return user.getMobileNumber();
     }
+
+    public String getLocation() {
+        return user.getLocation();
+    }
+
+    public String getNickName() {
+        return user.getNickName();
+    }
+
 
     @Override
     public boolean isAccountNonExpired() {
@@ -68,4 +77,7 @@ public class CustomUserDetails implements UserDetails {
         //return user.isActive(); // User 클래스에 isActive() 메서드가 있다고 가정
         return true;
     }
+
+
+
 }

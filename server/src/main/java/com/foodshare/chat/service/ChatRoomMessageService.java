@@ -76,7 +76,7 @@ public class ChatRoomMessageService {
 			.and("isRead").is(false));
 
 		Update update = new Update().set("isRead", true);
-
+		log.info("update ={}", update);
 		mongoTemplate.updateMulti(query, update, ChatMessage.class);
 	}
 }
