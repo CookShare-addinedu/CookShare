@@ -4,11 +4,16 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.foodshare.chat.dto.ChatRoomDto;
+import com.foodshare.chat.service.ChatRoomService;
+import com.foodshare.chat.service.MongoQueryBuilder;
 import com.foodshare.domain.Notification;
 import com.foodshare.domain.User;
 import com.foodshare.notification.repository.NotificationRepository;
+import com.foodshare.notification.sse.service.SseEmitterService;
 import com.foodshare.security.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -50,6 +55,18 @@ public class NotificationService {
 		return userRepository.findByMobileNumber(mobileNumber).orElseThrow(
 			() -> new RuntimeException("사용자를 찾을 수 없습니다.")
 		);
+	}
+
+	public List<Notification> getUnreadNotifications(Long userId) {
+		return notificationRepository.findByUser_UserIdAndIsReadFalse(userId);
+	}
+
+	@Transactional
+	public void updateNotificationAsRead(Long notificationId) {
+		Notification notification = notificationRepository.findById(notificationId)
+			.orElseThrow(() -> new IllegalStateException("Notification not found"));
+		notification.setIsRead(true);
+		notificationRepository.save(notification);
 	}
 
 }

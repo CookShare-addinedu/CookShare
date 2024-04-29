@@ -29,14 +29,18 @@ public class ChatRoomMessageService {
 	private final ChatMessageRepository chatMessageRepository;
 	private final ChatDataMapper chatDataMapper;
 	private final VisibilityService visibilityService;
-	private final MongoTemplate mongoTemplate;
+	private final MongoQueryBuilder mongoQueryBuilder;
 
 	@LogExecutionTime
 	public Slice<ChatMessageDto> listMessagesInChatRoom(String chatRoomId, String userId, int page, int size) {
 		PageRequest pageable = createPageRequest(page, size);
-		Slice<ChatMessageDto> messages = processMessagesBasedOnVisibility(userId, chatRoomId, pageable);
 
-		updateMessagesAsRead(chatRoomId, userId);
+		log.info("listMessagesInChatRoom: chatRoomId={}, userId={}, page={}, size={}", chatRoomId, userId, page, size);
+
+		Slice<ChatMessageDto> messages = processMessagesBasedOnVisibility(userId, chatRoomId, pageable);
+		log.info("Messages returned: {}", messages.getContent());
+
+		mongoQueryBuilder.updateMessagesAsRead(chatRoomId, userId);
 
 		return messages;
 	}
@@ -45,6 +49,9 @@ public class ChatRoomMessageService {
 		PageRequest pageable) {
 		Optional<UserChatRoomVisibility> visibilityOpt = visibilityService.getUserChatRoomVisibility(userId,
 			chatRoomId);
+		log.info("processMessagesBasedOnVisibility: userId={}, chatRoomId={}, visibilityOpt={}", userId, chatRoomId,
+			visibilityOpt);
+
 		return visibilityOpt.map(visibility -> filterMessagesByVisibility(visibility, chatRoomId, pageable))
 			.orElseGet(() -> getChatRoomMessages(chatRoomId, pageable));
 	}
@@ -57,8 +64,21 @@ public class ChatRoomMessageService {
 	}
 
 	public Slice<ChatMessageDto> getChatRoomMessages(String chatRoomId, PageRequest pageable) {
-		return chatMessageRepository.findByChatRoomIdOrderByTimestampDesc(chatRoomId, pageable)
+		log.info("쿼리 요청: chatRoomId={}, page={}, size={}", chatRoomId, pageable.getPageNumber(),
+			pageable.getPageSize());
+
+		Slice<ChatMessageDto> messages = chatMessageRepository.findByChatRoomIdOrderByTimestampDesc(chatRoomId,
+				pageable)
 			.map(chatDataMapper::toChatMessageDto);
+
+		if (messages.isEmpty()) {
+			log.warn("쿼리 결과: 메시지 없음");
+		} else {
+			log.info("쿼리 결과: 메시지 수={}, 첫 번째 메시지 내용={}", messages.getNumberOfElements(),
+				messages.getContent().isEmpty() ? "없음" : messages.getContent().get(0).getContent());
+		}
+
+		return messages;
 	}
 
 	private Slice<ChatMessageDto> getMessagesSince(String chatRoomId, Date startTimestamp, PageRequest pageable) {
@@ -70,13 +90,4 @@ public class ChatRoomMessageService {
 		return PageRequest.of(page, size, Sort.by("timestamp").descending());
 	}
 
-	public void updateMessagesAsRead(String chatRoomId, String userId) {
-		Query query = new Query(Criteria.where("chatRoomId").is(chatRoomId)
-			.and("sender").ne(userId)
-			.and("isRead").is(false));
-
-		Update update = new Update().set("isRead", true);
-		log.info("update ={}", update);
-		mongoTemplate.updateMulti(query, update, ChatMessage.class);
-	}
 }

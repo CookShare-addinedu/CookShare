@@ -7,20 +7,21 @@
   background-color: #f0f2f5;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  max-width: 400px;
+  max-width: 800px;
   margin: auto;
 }
 
 .messagesContainer {
   overflow-y: scroll;
-  max-height: 600px;
-  min-height: 600px;
+  max-height: 500px;
+  min-height: 500px;
   width: 100%;
   margin-bottom: 10px;
-  background: #ABBFCE;
+  background:#EBF0F4;
   //background:#E8ECED;
   border-radius: 15px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  //overscroll-behavior: contain;
 }
 .chatForm .chatContent{
   display: flex;
@@ -38,7 +39,7 @@
 
 #chatBtn {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #F2A875;
   color: white;
   border: none;
   border-radius: 20px;
@@ -49,7 +50,7 @@
 
 
 #chatBtn:hover {
-  background-color: #0056b3;
+  background-color: #F2A875;
 }
 
 .chatForm input[type="text"] {
@@ -65,8 +66,9 @@
 .chatContent.me {
   margin-left: auto;
  // background-color: #F7E013;
-  background-color: #D2DEEF;
+  background-color: #F8C5AA;
   max-width: 20%;
+
 }
 
 .chatContent.them {
@@ -87,11 +89,12 @@
 .chatContent .content {
   font-size: 0.95em;
   color: #555;
+
 }
 
 .chatContent .timestamp {
   font-size: 0.75em;
-  color: #888;
+  color:#CE6520;
   margin-top: 5px;
   text-align: right;
 }
@@ -101,6 +104,7 @@
   font-size: 1.0em;
   flex-direction: column;
   align-items: flex-start;
+
 }
 
 

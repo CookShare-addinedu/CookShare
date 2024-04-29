@@ -2,9 +2,10 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import './Chat.scss';
 import {jwtDecode} from 'jwt-decode';
 import useChatDetailList from "./useChatDetailList";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useScrollManagement} from "./useScrollManagement";
 import useWebSocketConnection from "./useWebSocketConnection";
+import axios from "axios";
 
 
 function Chat() {
@@ -20,7 +21,7 @@ function Chat() {
 
     const token = localStorage.getItem('jwt');
     const decoded = jwtDecode(token);
-    const userId = decoded.mobilenumber;
+    const userId = decoded.mobileNumber;
 
     const {messageList, isLoading, loadChatMessages, hasMore, addMessageList} = useChatDetailList(chatRoomId, userId);
 
@@ -41,6 +42,19 @@ function Chat() {
     }, []);
 
 
+    const ensureChatRoomExists = async (chatRoomId, user1Index, user2Index, foodId) => {
+        try {
+            await axios.post('/api/chat/createRoom', { chatRoomId,user1Index, user2Index, foodId });
+        } catch (error) {
+            console.error('채팅방 생성 중 오류 발생:', error);
+            throw error;
+        }
+    };
+
+
+
+
+
     const sendMessage = () => {
         if (stompClient && stompClient.connected && newMessage.trim() !== '') {
             const timestamp = new Date().toISOString();
@@ -50,6 +64,12 @@ function Chat() {
                 content: newMessage,
                 timestamp: timestamp,
             };
+           //  const user1Index = 11;  // 정확한 값으로 수정
+           //  const user2Index = 12; // 정확한 값으로 수정
+           //  const foodId = 13;
+           //
+           //
+           // ensureChatRoomExists(chatRoomId, user1Index, user2Index, foodId);
 
             stompClient.send(`/app/chat.room/${chatRoomId}/sendMessage`, {}, JSON.stringify(chatMessage));
             setLastMessageTimestamp(timestamp);
@@ -67,7 +87,7 @@ function Chat() {
                 <div className="messagesContainer" id="messagesContainer" ref={messagesContainerRef}>
                     {messageList.map((msg, index) => (
                         <div key={index} className={`chatContent ${msg.sender === userId ? "me" : "them"}`}>
-                            {msg.sender !== userId && <img src="/images/userImage.png" alt={`${msg.sender}`}/>}
+                            {msg.sender !== userId && <img src="/img/fooding.png" alt={`${msg.sender}`}/>}
                             <div className="messageArea">
                                 <div className="messageInfo">
                                     <div className="sender">{msg.sender === userId ? "" : msg.sender}</div>

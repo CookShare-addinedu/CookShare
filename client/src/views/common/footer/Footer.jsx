@@ -2,7 +2,11 @@ import './Footer.scss';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHouse, faComments, faStore} from "@fortawesome/free-solid-svg-icons";
 import {NavLink} from "react-router-dom";
+import useSSEConnection from "../../Notification/useSSEConnection";
+import '../../Notification/NotificationMessage.scss'
 export default function Footer() {
+    const {totalChatUnreadCount} = useSSEConnection();
+
     return (
         <footer>
             <ul>
@@ -13,8 +17,14 @@ export default function Footer() {
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to={''}>
-                        <span><FontAwesomeIcon icon={faComments} /></span>
+                    {/*읽지않은 채팅 메시지 */}
+                    <NavLink to={"/chat/getChatList"} style={{position: "relative"}}>
+                        <span>
+                            <FontAwesomeIcon icon={faComments}/>
+                            {totalChatUnreadCount > 0 && (
+                                <span className="chatUnread-count">{totalChatUnreadCount}</span>
+                            )}
+                        </span>
                         <p>채팅</p>
                     </NavLink>
                 </li>
