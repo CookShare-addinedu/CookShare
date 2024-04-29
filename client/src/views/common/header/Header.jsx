@@ -4,6 +4,8 @@ import {faAngleLeft, faEllipsisVertical, faMagnifyingGlass, faBell} from "@forta
 import useHeaderTitle from "../../../hook/useHeaderTitle";
 import {NavLink, useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
+import Menu from "../../../components/menu/Menu";
+import Drawers from "../../../components/drawer/Drawers";
 
 function Header1() {
     const navigate = useNavigate();
@@ -51,11 +53,16 @@ function Header3() {
                 <h2>{title}</h2>
             </div>
             <div className={'menu'}>
-                <button>
-                    <span>
-                        <FontAwesomeIcon icon={faEllipsisVertical}/>
-                    </span>
-                </button>
+                <Drawers
+                    trigger={
+                        <button>
+                            <span>
+                                <FontAwesomeIcon icon={faEllipsisVertical}/>
+                            </span>
+                        </button>
+                    }
+                    drawerContent={<Menu/>}
+                    />
             </div>
         </header>
     )

@@ -1,6 +1,6 @@
 import { Drawer } from 'rsuite';
 import {cloneElement, useState} from "react";
-import Address from "../adress/Address";
+import './Drawers.scss';
 
 const Drawers = ({title, trigger, drawerContent, onLocationSelect}) => {
     const [open, setOpen] = useState(false);
