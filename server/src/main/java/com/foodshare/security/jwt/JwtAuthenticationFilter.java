@@ -33,40 +33,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Autowired
     public JwtAuthenticationFilter( AuthenticationManager authenticationManager
-                                    , JwtUtil jwtUtil
-                                    , RedisService redisService) {
+            , JwtUtil jwtUtil
+            , RedisService redisService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.redisService = redisService;
         this.setFilterProcessesUrl("/api/user/login");
 
     }
-
-
-
-// HTML 폼 데이터 전송시 사용(JSON 테스트 할 때 값 못받아 온다)
-//    @Override
-//    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-//
-//        String username = request.getParameter("mobileNumber");
-//        String password = request.getParameter("password");
-//
-//        // 로그 추가
-//        System.out.println("Attempting authentication for username: " + username);
-//
-//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-//        try {
-//            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-//            System.out.println("Authentication successful for username: " + username);
-//            return authentication;
-//        } catch (AuthenticationException e) {
-//            System.out.println("Authentication failed for username: " + username + "; Reason: " + e.getMessage());
-//            throw e; // 이 예외를 다시 던져서 Spring Security가 처리하도록 합니다.
-//        }
-//    }
-
-
-
 
     // POST Man 테스트시 사용
     @Override
@@ -89,23 +63,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
-
-    private Cookie createCookie(String name, String value, int maxAge, String path, boolean httpOnly, boolean secure) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(maxAge); // 쿠키의 유효 시간 설정
-        cookie.setPath(path); // 쿠키 경로 설정
-        cookie.setHttpOnly(httpOnly); // JavaScript를 통한 접근 방지
-        cookie.setSecure(secure); // HTTPS를 통해서만 쿠키를 전송
-        return cookie;
-    }
-
-
-
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain, Authentication authentication) throws IOException, ServletException {
-
 
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId =  customUserDetails.getUserId();
@@ -129,6 +90,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 쿠키 생성 및 추가
         String encodedRefreshToken = URLEncoder.encode("Bearer " + refreshToken, StandardCharsets.UTF_8.toString());
         Cookie refreshCookie = new Cookie("Refresh-Token", encodedRefreshToken);
+
+
         // 테스트용 :false ,  원래는 : true
         refreshCookie.setHttpOnly(false);
         refreshCookie.setSecure(false);
@@ -156,13 +119,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         for (Map.Entry<String, Object> entry : tokenDetails.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
-
-        // 클라이언트 : 쿠키에 새 리프레시 토큰 설정
-//        Cookie refreshCookie = new Cookie("Refresh-Token", refreshToken);
-//        refreshCookie.setHttpOnly(true);
-//        refreshCookie.setSecure(true);
-//        refreshCookie.setPath("/");
-//        response.addCookie(refreshCookie);
 
         // 응답 본문을 JSON 형태로 설정
         response.setContentType("application/json;charset=UTF-8");
