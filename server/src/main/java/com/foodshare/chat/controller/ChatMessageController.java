@@ -26,13 +26,12 @@ public class ChatMessageController {
 		log.info("채팅 시작");
 		log.debug(message.toString());
 		log.info("메시지 컨트롤러의 챗 아이디={}", chatRoomId);
-		log.info("메시지 컨트롤러의 챗 메시지={}",  message);
+		log.info("메시지 컨트롤러의 챗 메시지={}", message);
 
 		messageProcessingService.addMessageToChatRoom(message.getChatRoomId(), message.getSender(),
 			message.getContent());
 
 		template.convertAndSend(String.format("/topic/chat/room/%s", chatRoomId), message);
-
 
 		template.convertAndSend(
 			"/topic/chat/room/updates",

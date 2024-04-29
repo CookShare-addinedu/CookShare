@@ -5,9 +5,10 @@ import {NavLink} from "react-router-dom";
 import useSSEConnection from "../../Notification/useSSEConnection";
 import {jwtDecode} from "jwt-decode";
 import {useState} from "react";
+import '../../Notification/NotificationMessage.scss'
 
 export default function Footer() {
-    const {totalUnreadCount} = useSSEConnection();
+    const {totalChatUnreadCount} = useSSEConnection();
 
 
     return (
@@ -20,15 +21,15 @@ export default function Footer() {
                     </NavLink>
                 </li>
                 <li>
+                    {/*읽지않은 채팅 메시지 */}
                     <NavLink to={"/chat/getChatList"} style={{position: "relative"}}>
                         <span>
                             <FontAwesomeIcon icon={faComments}/>
-                            {totalUnreadCount > 0 && (
-                                <span className="unread-count">{totalUnreadCount}</span>
+                            {totalChatUnreadCount > 0 && (
+                                <span className="chatUnread-count">{totalChatUnreadCount}</span>
                             )}
                         </span>
                         <p>채팅</p>
-                        {totalUnreadCount}
                     </NavLink>
                 </li>
                 <li>

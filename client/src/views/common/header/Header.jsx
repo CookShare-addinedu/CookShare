@@ -4,7 +4,8 @@ import {faAngleLeft, faEllipsisVertical, faMagnifyingGlass, faBell} from "@forta
 import useHeaderTitle from "../../../hook/useHeaderTitle";
 import {NavLink, useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
-
+import useSSEConnection from "../../Notification/useSSEConnection";
+import '../../Notification/NotificationMessage.scss'
 function Header1() {
     const navigate = useNavigate();
     const title = useHeaderTitle();
@@ -62,6 +63,8 @@ function Header3() {
 }
 function Header4(){
     const address = useSelector(state => state.address.currentAddress);
+    const {totalNoticeUnreadCount} = useSSEConnection();
+
     return(
         <header className={'header4'}>
             <div className={'address_wrap'}>
@@ -77,8 +80,12 @@ function Header4(){
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to={'/notification'}>
-                            <FontAwesomeIcon icon={faBell}/>
+                        {/*읽지않은 알림 메시지 */}
+                        <NavLink to={'/notification'} style={{ position: "relative" }}>
+                            <FontAwesomeIcon icon={faBell} />
+                            {totalNoticeUnreadCount > 0 && (
+                                <span className="noticeUnread-count">{totalNoticeUnreadCount}</span>
+                            )}
                         </NavLink>
                     </li>
                 </ul>

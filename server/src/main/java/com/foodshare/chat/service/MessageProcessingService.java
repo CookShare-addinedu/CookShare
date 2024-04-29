@@ -44,9 +44,7 @@ public class MessageProcessingService {
 			performDatabaseOperations(chatRoomId, senderId, receiverId, messageContent);
 			sseEmitterService.processNotification(receiverId, senderId, messageContent);
 
-			long totalUnreadCount = mongoQueryBuilder.countTotalUnreadMessages(receiverId);
-			sseEmitterService.sendUnreadCountUpdate(receiverId, totalUnreadCount);
-
+			sseEmitterService.sendAllRelevantUpdates(receiverId);
 
 		} catch (DatabaseServiceUnavailableException e) {
 			throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "데이터베이스 용할 수 없습니다. 나중에 다시 시도해주세요.",
@@ -89,10 +87,12 @@ public class MessageProcessingService {
 
 	private void createAndSaveMessage(String chatRoomId, String sender, String messageContent) {
 		log.info("createAndSaveMessage");
+		String receiver = identifyReceiver(chatRoomId, sender);
 
 		ChatMessage newMessage = ChatMessage.builder()
 			.chatRoomId(chatRoomId)
 			.sender(sender)
+			.receiver(receiver)
 			.content(messageContent)
 			.timestamp(new Date())
 			.build();
@@ -101,20 +101,3 @@ public class MessageProcessingService {
 
 }
 
-// private String identifyReceiver(String chatRoomUrlId, String senderId) {
-// 	log.info("identifyReceiver: chatRoomUrlId={},  senderId={}", chatRoomUrlId, senderId);
-//
-// 	Optional<ChatRoom> chatRoomOpt = chatRoomRepository.findByUrlIdentifier(chatRoomUrlId);
-//
-// 	if (chatRoomOpt.isPresent()) {
-// 		ChatRoom chatRoom = chatRoomOpt.get();
-//
-// 		if (chatRoom.getFirstUser().equals(senderId)) {
-// 			return chatRoom.getSecondUser();
-// 		} else {
-// 			return chatRoom.getFirstUser();
-// 		}
-// 	} else {
-// 		throw new IllegalArgumentException("채팅방을 찾을 수 없습니다.");
-// 	}
-// }

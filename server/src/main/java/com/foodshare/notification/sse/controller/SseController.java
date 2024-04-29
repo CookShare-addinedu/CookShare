@@ -35,6 +35,7 @@ public class SseController {
 	SseEmitterService sseEmitterService;
 	@Autowired
 	MongoQueryBuilder mongoQueryBuilder;
+
 	public SseController(SseEmitters sseEmitters, HeartbeatService heartbeatService) {
 		this.sseEmitters = sseEmitters;
 		this.heartbeatService = heartbeatService;
@@ -56,8 +57,10 @@ public class SseController {
 		try {
 			sseEmitters.sendEvent(newEmitter, "connect", "connected");
 
-			long totalUnreadCount = mongoQueryBuilder.countTotalUnreadMessages(userId);
-			sseEmitterService.sendUnreadCountUpdate(userId, totalUnreadCount);
+			// sseEmitterService.getChatUnreadCountAndSend(userId);
+			//
+			// sseEmitterService.getNoticeUnreadCountAndSend(userId);
+			sseEmitterService. sendAllRelevantUpdates(userId);
 
 		} catch (Exception e) {
 			log.error("SSE 연결 오류: {}", e.getMessage());

@@ -4,81 +4,67 @@ import {jwtDecode} from 'jwt-decode';
 const useSSEConnection = () => {
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState([]);
-    const [totalUnreadCount, setTotalUnreadCount] = useState(0);
+    const [totalChatUnreadCount, setTotalChatUnreadCount] = useState(0);
+    const [totalNoticeUnreadCount, setTotalNoticeUnreadCount] = useState(0);
+
+
     useEffect(() => {
-        let eventSource = null;
-
-        const createEventSource = () => {
-            const token = localStorage.getItem('jwt');
-
-            const decoded = jwtDecode(token);
-            const userId = decoded.mobilenumber;
-
-            const serverUrl = 'http://localhost:8080';
-            const eventSource = new EventSource(`${serverUrl}/sse/connect/${encodeURIComponent(userId)}`);
-
-            eventSource.addEventListener("connect", (event) => {
-                console.log("SSE 연결 성공:", event.data);
-                setIsConnected(true);
-            });
-
-            eventSource.addEventListener("unreadCountUpdate", (event) => {
-                const unreadCount = parseInt(event.data, 10);
-                console.log("읽지 않은 메시지의 총합:", unreadCount);
-                setTotalUnreadCount(unreadCount); // 읽지 않은 메시지 수 상태 업데이트
-            });
-
-            eventSource.addEventListener("notification", (event) => {
-                console.log("Received notification:", event.data); // 이벤트 데이터 확인
-                try {
-                    const notificationData = JSON.parse(event.data);
-                    setMessages((prev) => [...prev, notificationData]); // 상태 업데이트
-                } catch (error) {
-                    console.error("JSON 파싱 오류:", error); // 파싱 오류 처리
-                }
-            });
-
-            eventSource.addEventListener("heartbeat", (event) => {
-                console.log("Heartbeat received:", event.data); // 하트비트 수신
-            });
-
-
-            eventSource.addEventListener("grouped_notification", (event) => {
-                console.log("grouped_notification notification:", event.data); // 이벤트 데이터 확인
-                try {
-                    const notificationData = JSON.parse(event.data);
-                    console.log("파싱된 데이터:", notificationData);
-                    const message = notificationData.message; // 메시지 필드 추출
-                    const count = notificationData.count;
-                    console.log("메시지:", message, "카운트:", count);
-
-                    setMessages((prev) => [...prev, {message, count}]);  // 상태 업데이트
-                } catch (error) {
-                    console.error("JSON 파싱 오류:", error, "원본 데이터:", event.data);
-                }
-            });
-
-
-            eventSource.onerror = (error) => {
-                console.error("SSE 연결 오류:", error);
-                setIsConnected(false);
-            };
-
-            return eventSource;
-        };
-
-        if (!isConnected) {
-            eventSource = createEventSource();
+        if (isConnected) {
+            return;
         }
 
+        const token = localStorage.getItem('jwt');
+        if (!token) {
+            console.error("No token available.");
+            return;
+        }
+
+        const decoded = jwtDecode(token);
+        const userId = decoded.mobilenumber;
+        const serverUrl = 'http://localhost:8080';
+        const eventSource = new EventSource(`${serverUrl}/sse/connect/${encodeURIComponent(userId)}`);
+
+        eventSource.onopen = () => {
+            console.log("SSE 연결 성공");
+            setIsConnected(true);
+        };
+
+        const eventHandlers = {
+            "updateUserStatus": event => {
+                const data = JSON.parse(event.data);
+                setTotalChatUnreadCount(data.unreadChatCount);
+                setTotalNoticeUnreadCount(data.unreadNoticeCount);
+            },
+            "notification": event => {
+                try {
+                    const notificationData = JSON.parse(event.data);
+                    setMessages(prev => [...prev, notificationData]);
+                } catch (error) {
+                    console.error("JSON 파싱 오류:", error);
+                }
+            },
+            "heartbeat": event => {
+                // Heartbeat handling logic if needed
+            },
+        };
+
+        Object.entries(eventHandlers).forEach(([type, handler]) => {
+            eventSource.addEventListener(type, handler);
+        });
+
+        eventSource.onerror = (error) => {
+            console.error("SSE 연결 오류:", error);
+            eventSource.close();
+            setIsConnected(false);
+        };
+
         return () => {
-            if (eventSource) {
-                eventSource.close();
-            }
+            eventSource.close();
+            setIsConnected(false);
         };
     }, []);
 
-    return {messages, isConnected, setMessages , totalUnreadCount};
+    return {messages, isConnected, setMessages, totalChatUnreadCount, totalNoticeUnreadCount};
 };
 
 export default useSSEConnection;

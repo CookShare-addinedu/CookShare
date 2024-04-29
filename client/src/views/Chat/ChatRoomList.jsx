@@ -14,15 +14,6 @@ function ChatRoomList() {
     const decoded = jwtDecode(token);
     const userId = decoded.mobilenumber;
     const userName = decoded.userId;
-    console.log("userName", userName);
-
-
-    console.log("chatRoomList의 토큰", token);
-
-
-    console.log("chatRoomList의 decoded", decoded);
-
-    console.log("chatRoomList의 userId", userId);
 
 
     const fetchRooms = () => {
@@ -43,10 +34,10 @@ function ChatRoomList() {
             .then((response) => {
                 if (Array.isArray(response.data)) { // 응답 데이터가 배열인지 확인
                     setRooms(response.data); // 배열인 경우에만 설정
-                    console.log("리스트룸",response.data);
+
                 } else {
                     setError("채팅방 목록을 가져오는데 실패했습니다. 잘못된 데이터 형식입니다."); // 배열이 아닌 경우 오류 처리
-                    console.log("채팅방 데이터",response.data);
+                    console.log("채팅방 데이터", response.data);
                 }
             })
             .catch(error => {
@@ -57,7 +48,6 @@ function ChatRoomList() {
                     console.error('채팅방 목록을 가져오는데 실패했습니다.', error);
                     setError('채팅방 목록을 가져오는데 실패했습니다.');
                 }
-
             );
     };
 
@@ -95,7 +85,6 @@ function ChatRoomList() {
                     chatRoomId: chatRoomId,
                     userId: userId,
                 };
-                console.log("Sending data to hideRoom API:", hideRequestData);
 
 
                 axios.put(`/api/chat/hideRoom/${chatRoomId}`, hideRequestData)

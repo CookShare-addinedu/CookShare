@@ -2,7 +2,7 @@ import {useState, useEffect, useCallback} from 'react';
 import axios from 'axios';
 
 const useChatDetailList = (chatRoomId, userId) => {
-    console.log("useChatDetailList initialized with:", chatRoomId, userId);
+
     const [messageList, setMessageList] = useState([]);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
@@ -50,12 +50,11 @@ const useChatDetailList = (chatRoomId, userId) => {
             params: {userId, page, size: pageSize}
         })
             .then(response => {
-                console.log("디테일", userId);
-                console.log("chatRoomId", chatRoomId);
+
                 let newMessages = [];
                 if (response.data && Array.isArray(response.data.content)) {
                     newMessages = response.data.content.reverse();
-                    console.log("디테일 뉴메시지",newMessages)
+
                 }
                 if (newMessages.length < pageSize) {
                     setHasMore(false);

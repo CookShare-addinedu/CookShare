@@ -61,6 +61,7 @@ public class WebSecurityConfig {
 					"/register",
 					"/login",
 					"/api/chat/**",
+					"/api/notifications/**",
 					"/ws/**",
 					"/sse/connect/**",
 					"/api/user/login",
