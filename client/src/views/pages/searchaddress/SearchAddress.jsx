@@ -1,4 +1,4 @@
-import Address from "../../../components/adress/Address";
+import Address from "../../../components/address/Address";
 import {useState} from "react";
 import {useDispatch} from "react-redux";
 import {setAddress} from "../../../redux/addressSlice";

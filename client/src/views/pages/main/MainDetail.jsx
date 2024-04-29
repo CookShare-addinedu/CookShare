@@ -7,7 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-regular-svg-icons";
 import Caution from "../../../components/caution/Caution";
 import CautionData from "../../../data/CautionData";
-import MapView from "../../../components/adress/MapView";
+import MapView from "../../../components/address/MapView";
 import {IconButton, SquareButton} from "../../../components/button/Button";
 import {faAngleRight, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import Drawers from "../../../components/drawer/Drawers";

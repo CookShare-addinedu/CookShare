@@ -57,20 +57,20 @@ const MapView = () => {
                 draggable={draggable}
             >
                 <MapMarker className="marker"// 마커를 생성합니다
-                    position={{ lat: 37.54699, lng: 127.09598 }}
-                    image={{
-                        src: "/img/locationdot.svg", // 마커이미지의 주소입니다
-                        size: {
-                            width: 34,
-                            height: 39,
-                        }, // 마커이미지의 크기입니다
-                        options: {
-                            offset: {
-                                x: 27,
-                                y: 44,
-                            }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
-                        },
-                    }}
+                           position={{ lat: 37.54699, lng: 127.09598 }}
+                           image={{
+                               src: "/img/locationdot.svg", // 마커이미지의 주소입니다
+                               size: {
+                                   width: 34,
+                                   height: 39,
+                               }, // 마커이미지의 크기입니다
+                               options: {
+                                   offset: {
+                                       x: 27,
+                                       y: 44,
+                                   }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+                               },
+                           }}
                 />
                 <CustomOverlayMap
                     position={{ lat: 37.54699, lng: 127.09598 }}

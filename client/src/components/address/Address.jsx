@@ -8,7 +8,7 @@ const Address = ({ onLocationSelect }) => {
     useKakaoLoader()
 
     useEffect(() => {
-        if(!window.daum || window.daum.Postcode) {
+        if(!window.daum || !window.daum.Postcode) {
             const script = document.createElement('script');
             script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
             document.head.appendChild(script);
