@@ -9,6 +9,8 @@ export default function SearchAddress() {
     const navigate = useNavigate();
     const [addressLocal, setAddressLocal] = useState('');
     const handleLocationSelect = (selectAddress) => {
+        console.log('Selected address:', selectAddress); // 값 확인
+        console.log('Action object:', setAddress(selectAddress)); // 액션 객체 확인
         setAddressLocal(selectAddress);
         dispatch(setAddress(selectAddress));
         navigate('/main');

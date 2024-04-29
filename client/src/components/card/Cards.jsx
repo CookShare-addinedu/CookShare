@@ -1,28 +1,41 @@
 import {Box, Card, Flex, Text} from '@radix-ui/themes';
+import './Cards.scss';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHeart} from "@fortawesome/free-regular-svg-icons";
+import Badge from "../badge/Badge";
 export default function Cards({food}) {
     return(
-        <Flex gap="3" direction="column">
-            <Box width="350px">
-                <Card size="1">
-                    <Flex gap="3" align="center">
-                        <img
-                            src={food.imageUrls?.[0] || 'default-image.jpg'} // food.imageUrls가 정의되어 있지 않거나 비어있으면 기본 이미지 사용
-                            alt={food.title}
-                            style={{
-                                display: 'block',
-                                objectFit: 'cover',
-                                width: '100%',
-                                height: 140,
-                                backgroundColor: 'var(--gray-5)',
-                            }}
-                        />
-                        <Box>
-                            <Text as="div" size="2" weight="bold">
-                                {food.title}
-                            </Text>
-                            <Text as="div" size="2" color="gray">
-                                {food.description}
-                            </Text>
+        <Flex className={'card_wrap'} gap="3" direction="column">
+            <Box className={'card_box'}>
+                <Card className={'card'} size="1">
+                    <Flex className={'card_layout'} gap="3" align="center">
+                        <div className={'img_wrap'}>
+                            <img
+                                src={food.imageUrls?.[0] || './../img/cookshare.svg'}
+                                alt={food.title}
+                            />
+                        </div>
+                        <Box className={'content'}>
+                            <div className={'text_wrap'}>
+                                <div className={'title'}>
+                                    <h4>{food.title}</h4>
+                                    <p className={'date'}>{food.createdAt}1시간전</p>
+                                </div>
+                                <div className={'description'}>
+                                    <p>{food.description}</p>
+                                    <p>
+                                        <span>#피자 #나눔</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div className={'icon_wrap'}>
+                                <Badge food={food}/>
+                                <p className={'like'}>
+                                    <FontAwesomeIcon icon={faHeart}/>
+                                    <span>1</span>
+                                    <span>{food.likes}</span>
+                                </p>
+                            </div>
                         </Box>
                     </Flex>
                 </Card>

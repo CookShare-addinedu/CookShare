@@ -1,72 +1,121 @@
-// MainDetail.scss
-.main-detail-container {
-  max-width: 800px; // 적절한 최대 너비 설정
-  margin: auto;
-  padding: 20px;
-  background: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-
-  .main-detail-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
+.main_detail{
+  padding-bottom: 60px;
+  .img_wrap{
+    height: 500px;
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
-  .main-detail-content {
-    padding: 20px;
+  .content_wrap{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 20px;
 
-    .main-detail-profile {
-      // 프로필 스타일
-    }
 
-    .main-detail-title {
-      font-size: 24px;
-      margin-top: 10px;
-    }
+    .user_wrap{
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
 
-    .main-detail-dates {
-      margin-top: 10px;
-      p {
-        margin: 5px 0;
+      .avatar{
+        width: 40px;
+        height: 40px;
+      }
+
+      .user_info{
+        margin-left: 10px;
+
+        .nick_name{
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        .location{
+          margin-top: 0;
+          font-size: 12px;
+          color: #aaa;
+        }
       }
     }
 
-    .main-detail-description,
-    .main-detail-caution,
-    .main-detail-address {
-      margin-top: 10px;
-    }
-
-    .main-detail-map {
-      // 지도 스타일
-    }
-
-    .main-detail-actions {
+    .title_wrap{
       display: flex;
       justify-content: space-between;
-      margin-top: 20px;
+      align-items: center;
+    }
 
-      button {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+    .dates_wrap{
+      span{
+        color: #ff9000;
+      }
+    }
+    .caution_wrap{
+      padding: 10px 0;
+      .caution{
+        width: 100%;
+        background-color: #eee;
+        border-radius: 8px;
 
-        &.main-detail-chat {
-          background-color: #007bff;
-          color: #ffffff;
-        }
+        ul{
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          padding: 20px;
 
-        &.main-detail-edit {
-          background-color: #ffc107;
-          color: #ffffff;
-        }
-
-        &.main-detail-delete {
-          background-color: #dc3545;
-          color: #ffffff;
+          li{
+            strong{
+              position: relative;
+              padding-left: 8px;
+              &::before{
+                display: inline-block;
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 0;
+                transform: translateY(-50%);
+                width: 4px;
+                height: 4px;
+                margin-right: 4px;
+                background-color: #222;
+                border-radius: 50%;
+              }
+            }
+          }
         }
       }
     }
+    .map_wrap{
+      border-top: 1px solid #ddd;
+      .title_wrap{
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 0;
+      }
+    }
+    .actions_wrap{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      bottom:0;
+      left: auto;
+      z-index: 10;
+      margin: 0 -20px;
+      padding: 10px 20px;
+      max-width: 767px;
+      width: 100%;
+      background-color: #fff;
+      border-top: 1px solid #ddd;
+
+      a{
+        width: 30%;
+      }
+    }
+
   }
 }
