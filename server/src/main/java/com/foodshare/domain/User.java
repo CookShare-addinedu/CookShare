@@ -2,15 +2,18 @@ package com.foodshare.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
+@Builder
 @Table(name = "users")
 public class User {
     @Id
@@ -45,5 +48,13 @@ public class User {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    // Getters and Setters
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = Timestamp.from(ZonedDateTime.now().toInstant());
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Timestamp.from(ZonedDateTime.now().toInstant());
+    }
 }
