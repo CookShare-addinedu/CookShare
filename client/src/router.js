@@ -10,6 +10,8 @@ import Search from "./views/pages/search/Search";
 import SearchAddress from "./views/pages/searchaddress/SearchAddress";
 import MainDetail from "./views/pages/main/MainDetail";
 import MainForm from "./views/pages/main/MainForm";
+import ChatRoomList from "./views/Chat/ChatRoomList";
+import Chat from "./views/Chat/Chat";
 
 const router = {
     routes: [
@@ -82,8 +84,19 @@ const router = {
             title: null,
             header: null,
             footer: null
-        }
+        },
+        {
+            path: '/chat/getChatList',
+            component: <ChatRoomList/>,
+            header: <Header4/>,
+            footer: <Footer/>
+        },
+        {
+            path: '/chat/getChat/:chatRoomId',
+            component: <Chat/>,
+            header: <Header4/>,
 
+        },
 
     ]
 }
