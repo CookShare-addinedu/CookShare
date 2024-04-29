@@ -1,0 +1,154 @@
+import React, {useEffect, useState} from 'react';
+import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
+import {Link} from "react-router-dom";
+import './ChatRoomList.scss'
+
+import useWebSocketConnection from "./useWebSocketConnection";
+
+function ChatRoomList() {
+    const [rooms, setRooms] = useState([]);
+    const [selectedRooms, setSelectedRooms] = useState([]);
+    const [error, setError] = useState('');
+    const token = localStorage.getItem('jwt');
+    const decoded = jwtDecode(token);
+    const userId = decoded.mobilenumber;
+
+
+    console.log("chatRoomList의 토큰", token);
+
+
+    console.log("chatRoomList의 decoded", decoded);
+
+    console.log("chatRoomList의 userId", userId);
+
+
+    const fetchRooms = () => {
+        if (!token) {
+            setError('로그인이 필요합니다.');
+            return;
+        }
+
+        axios.get('/api/chat/ListRooms', {
+            headers: {
+         //      'Authorization': `Bearer ${token}`
+            },
+            params: {
+                userId: decoded.mobilenumber,
+
+            }
+        })
+            .then((response) => {
+                if (Array.isArray(response.data)) { // 응답 데이터가 배열인지 확인
+                    setRooms(response.data); // 배열인 경우에만 설정
+                } else {
+                    setError("채팅방 목록을 가져오는데 실패했습니다. 잘못된 데이터 형식입니다."); // 배열이 아닌 경우 오류 처리
+                    console.log("채팅방 데이터",response.data);
+                }
+            })
+            .catch(error => {
+                if (error.response && error.response.status === 401) {
+                    console.error("인증되지 않았습니다. 로그인이 필요합니다."); // 오류 처리
+                    setError("로그인이 필요합니다.");
+                }
+                console.error('채팅방 목록을 가져오는데 실패했습니다.', error);
+                setError('채팅방 목록을 가져오는데 실패했습니다.');
+            }
+
+            );
+    };
+
+    useEffect(() => {
+        fetchRooms();
+    }, []);
+
+    const stompClient = useWebSocketConnection(
+        'http://localhost:8080/ws',
+        '/topic/chat/room/updates',
+        () => {
+            console.log("채팅방 목록 업데이트 수신");
+            fetchRooms();
+        }
+    );
+
+
+    const toggleRoomSelection = (chatRoomId) => {
+        if (selectedRooms.includes(chatRoomId)) {
+
+            setSelectedRooms(selectedRooms.filter((id) => id !== chatRoomId)); // 선택 취소
+        } else {
+
+            setSelectedRooms([...selectedRooms, chatRoomId]); // 선택 추가
+        }
+    };
+
+
+    const hideRooms = (chatRoomId) => {
+        if (selectedRooms.length > 0 && window.confirm('선택한 채팅방을 숨기시겠습니까?')) {
+            console.log("if  hideRooms")
+
+            selectedRooms.forEach((chatRoomId) => {
+                const hideRequestData = {
+                    chatRoomId: chatRoomId,
+                    userId: userId,
+                };
+                console.log("Sending data to hideRoom API:", hideRequestData);
+
+
+                axios.put(`/api/hideRoom/${chatRoomId}`, hideRequestData)
+                    .then(() => {
+                        fetchRooms();
+                    })
+                    .catch(error => {
+                        console.error('채팅방 숨기기에 실패했습니다.', error);
+                        console.log(JSON.stringify(hideRequestData));
+                    });
+
+            });
+            setSelectedRooms([]);
+        }
+    };
+
+
+    if (error) {
+        return <div>오류: {error}</div>;
+    }
+
+
+    return (
+        <div className="chat-room-list-container">
+            <h1>채팅방 목록</h1>
+            <button onClick={hideRooms}>선택한 채팅방 숨기기</button>
+            {/* 버튼 클릭 이벤트 */}
+            <ul className="chat-room-list">
+                {rooms.map(chatRoom => (
+                    <li key={chatRoom.chatRoomId} className="chat-room">
+                        <input
+                            type="checkbox"
+                            checked={selectedRooms.includes(chatRoom.chatRoomId)}
+                            onChange={() => toggleRoomSelection(chatRoom.chatRoomId)}
+                        />
+                        <Link to={`/chat/GetChat/${chatRoom.chatRoomId}`} className="chat-room-link">
+                            <img src="/images/userImage.png" alt="User" className="chat-room-image"/>
+                            <div className="chat-room-info">
+                                <p className="chat-room-name">{chatRoom.chatRoomId}</p>
+                                <p className="chat-room-last-message">{chatRoom.lastMessage}</p>
+                                <p className="chat-room-time">{new Date(chatRoom.lastMessageTimestamp).toLocaleString()}</p>
+                            </div>
+                        </Link>
+                        <div className="chat-room-actions">
+                            {chatRoom.unreadCount > 0 && (
+                                <div className="chat-room-unread-indicator">
+                                    {chatRoom.unreadCount}
+                                </div>
+                            )}
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+
+}
+
+export default ChatRoomList;

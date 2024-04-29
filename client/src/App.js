@@ -1,27 +1,53 @@
 import './style/style.scss';
-import {useMediaQuery} from "react-responsive";
-import {Route, Routes} from "react-router-dom";
-import Login from "./views/auth/login/Login";
-import Register from "./views/auth/register/Register";
-import Footer from "./views/common/footer/Footer";
-import {Header1, Header2, Header3, Header4} from "./views/common/header/Header";
-import SplashScreen from "./views/pages/SplashScreen";
-
-
+import {matchPath, Route, Routes, useLocation} from "react-router-dom";
+import {useEffect, useState} from "react";
+import router from "./router";
 function App() {
-    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+    const location = useLocation();
+    const [currentHeader, setCurrentHeader] = useState(null);
+    const [currentFooter, setCurrentFooter] = useState(null);
+
+    function matchCustomPath(routePath, currentPath) {
+        const routeParts = routePath.split('/');
+        const currentParts = currentPath.split('/');
+        if (routeParts.length !== currentParts.length) return false;
+
+        return routeParts.every((part, index) => {
+            return part.startsWith(':') || part === currentParts[index];
+        });
+    }
+
+    useEffect(() => {
+        const route = router.routes.find(route =>
+            matchCustomPath(route.path, location.pathname)
+        );
+        console.log('route:', route);
+        console.log('location.pathname:', location.pathname);
+        if (route) {
+            setCurrentHeader(route.header);
+            setCurrentFooter(route.footer);
+        }else{
+            console.log("No matching route found for:", location.pathname);
+        }
+
+    }, [location]);
+
+
+    const isOnboarding = location.pathname === '/onBoarding';
+
     return (
         <>
-            {isMobile ?  <Header1/> : <h1>푸드쉐어Desktop</h1>}
-            <Routes>
-                <Route path="/" element={<SplashScreen/>} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/" element={<Board />} />
-            </Routes>
-            <Footer/>
+            <main className={isOnboarding ? 'noPadding' : ''}>
+                {currentHeader}
+                <Routes>
+                    {router.routes.map((route, index) => (
+                        <Route path={route.path} element={route.component} key={index} />
+                    ))}
+                </Routes>
+                {currentFooter}
+            </main>
         </>
-  );
+    );
 }
 
 export default App;

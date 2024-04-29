@@ -6,6 +6,18 @@ build/
 !**/src/test/**/build/
 src/main/resources/application.properties
 
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -21,6 +33,9 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### VS Code ###
+.vscode/
 
 ### user secure info ###
 .env
