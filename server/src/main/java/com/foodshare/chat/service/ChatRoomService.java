@@ -2,7 +2,9 @@ package com.foodshare.chat.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -12,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.foodshare.chat.annotation.LogExecutionTime;
+import com.foodshare.chat.dto.ChatRoomCreationDto;
 import com.foodshare.chat.dto.ChatRoomDto;
 import com.foodshare.chat.mapper.ChatDataMapper;
 import com.foodshare.chat.repository.ChatMessageRepository;
@@ -19,6 +22,11 @@ import com.foodshare.chat.repository.ChatRoomRepository;
 import com.foodshare.domain.ChatMessage;
 import com.foodshare.domain.ChatRoom;
 import com.foodshare.chat.utils.ValidationUtils;
+import com.foodshare.domain.User;
+import com.foodshare.notification.service.NotificationService;
+import com.foodshare.notification.sse.service.SseEmitterService;
+import com.foodshare.security.repository.UserRepository;
+import com.foodshare.security.service.UserServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +39,15 @@ public class ChatRoomService {
 	private final VisibilityService visibilityService;
 	private final ChatDataMapper chatDataMapper;
 	private final ChatMessageRepository chatMessageRepository;
-	private final MongoTemplate mongoTemplate;
+	private final UserServiceImpl userService;
+	private final MongoQueryBuilder mongoQueryBuilder;
 
 	@LogExecutionTime
-
 	public List<ChatRoomDto> listChatRoomsForUser(String userId) {
-		log.info("listChatRoomsForUser");
+		log.debug("listChatRoomsForUser: userId={}", userId);
 
 		Set<String> hiddenRoomIds = visibilityService.getHiddenRoomIds(userId);
+
 		List<ChatRoomDto> chatRooms = listAvailableChatRooms(userId, hiddenRoomIds);
 
 		updateUnreadCounts(chatRooms, userId);
@@ -46,53 +55,74 @@ public class ChatRoomService {
 		return chatRooms;
 	}
 
-	public ChatRoom createChatRoom(String firstUserId, String secondUserId) {
-		log.info("createChatRoom");
-
-		ValidationUtils.validateNotEmpty(firstUserId, "firstUserId");
-		ValidationUtils.validateNotEmpty(secondUserId, "secondUserId");
-		ChatRoom chatRoom = ChatRoom.builder()
-			.firstUser(firstUserId)
-			.secondUser(secondUserId)
-			.build();
-		return chatRoomRepository.save(chatRoom);
-	}
-
-	public long countUnreadMessages(String chatRoomId, String userId) {
-		Query query = new Query(Criteria.where("chatRoomId").is(chatRoomId)
-			.and("sender").ne(userId)
-			.and("isRead").is(false));
-
-		return mongoTemplate.count(query, ChatMessage.class);
-	}
-
 	private ChatRoomDto convertRoomToDto(ChatRoom room) {
-		log.info(" convertRoomToDto");
-		ChatMessage lastMessage = chatMessageRepository.findFirstByChatRoomIdOrderByTimestampDesc(room.getId())
+		log.debug("convertRoomToDto: roomId={}", room.getUrlIdentifier());
+
+		ChatMessage lastMessage = chatMessageRepository.findFirstByChatRoomIdOrderByTimestampDesc(
+				room.getUrlIdentifier())
 			.orElse(ChatMessage.builder()
-				.chatRoomId(room.getId())
+				.chatRoomId(room.getUrlIdentifier())
 				.sender("")
-				.content("메시지를 입력하세요")
+				.content("빈 메시지")
 				.timestamp(new Date())
 				.isRead(false)
 				.build());
+		log.debug("마지막 메시지: {}", lastMessage);
+
 		return chatDataMapper.toChatRoomDto(room, lastMessage);
 	}
 
 	private List<ChatRoomDto> listAvailableChatRooms(String userId, Set<String> hiddenRoomIds) {
-		log.info(" listAvailableChatRooms");
+		log.debug(" listAvailableChatRooms");
 		return chatRoomRepository.findByIdContaining(userId).stream()
-			.filter(room -> !hiddenRoomIds.contains(room.getId()))
+			.filter(room -> !hiddenRoomIds.contains(room.getUrlIdentifier()))
 			.map(this::convertRoomToDto)
 			.collect(Collectors.toList());
 	}
 
 	private void updateUnreadCounts(List<ChatRoomDto> chatRooms, String userId) {
 		chatRooms.forEach(room -> {
-			long unreadCount = countUnreadMessages(room.getChatRoomId(), userId);
+			long unreadCount = mongoQueryBuilder.countUnreadMessages(room.getChatRoomId(), userId);
 			room.setUnreadCount(unreadCount);
-			log.info("읽지않은 메시지 숫자 = {}", unreadCount);
+			log.debug("채팅방 ID={}, 읽지 않은 메시지 수={}", room.getChatRoomId(), unreadCount);
 		});
+	}
+
+	public ChatRoom createChatRoom(String firstUserId, String secondUserId, Long foodId, String chatRoomId,
+		String chaRoomUrlId) {
+		log.debug("createChatRoom");
+		ValidationUtils.validateNotEmpty(firstUserId, "firstUserId");
+		ValidationUtils.validateNotEmpty(secondUserId, "secondUserId");
+
+		ChatRoom chatRoom = ChatRoom.builder()
+			.id(chatRoomId)
+			.firstUser(firstUserId)
+			.secondUser(secondUserId)
+			.foodId(foodId)
+			.urlIdentifier(chaRoomUrlId)
+			.build();
+		log.debug("chatRoomId={}", chatRoom);
+		return chatRoomRepository.save(chatRoom);
+	}
+
+	public ChatRoom findOrCreateChatRoom(String firstUserId, String secondUserId, Long foodId) {
+		Optional<User> firstUserNickName = userService.findByMobileNumber(firstUserId);
+		Optional<User> secondUserNickName = userService.findByMobileNumber(secondUserId);
+		String chatRoomUrlId = firstUserNickName + "_" + secondUserNickName;
+
+		Optional<ChatRoom> existingChatRoom = findByUrlIdentifier(chatRoomUrlId);
+		return existingChatRoom.orElseGet(() -> {
+			String chatRoomId = firstUserId + "_" + secondUserId;
+			return createChatRoom(firstUserId, secondUserId, foodId, chatRoomId, chatRoomUrlId);
+		});
+	}
+
+	public ChatRoomCreationDto toChatRoomCreationDto(ChatRoom room) {
+		return chatDataMapper.toChatRoomCreationDto(room);
+	}
+
+	public Optional<ChatRoom> findByUrlIdentifier(String chatRoomUrlId) {
+		return chatRoomRepository.findByUrlIdentifier(chatRoomUrlId);
 	}
 
 }
