@@ -25,13 +25,11 @@ import java.util.*;
 import static com.foodshare.security.jwt.SecurityConstants.EXPIRATION_TIME;
 import static com.foodshare.security.jwt.SecurityConstants.REFRESH_EXPIRATION_TIME;
 
-
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final RedisService redisService;
 
-    @Autowired
     public JwtAuthenticationFilter( AuthenticationManager authenticationManager
             , JwtUtil jwtUtil
             , RedisService redisService) {

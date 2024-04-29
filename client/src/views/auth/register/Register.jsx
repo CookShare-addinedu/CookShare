@@ -3,6 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useDebounce} from "../../../hook/useDebounce";
 import axios from "axios";
 import AddressDrawer from "../../../components/drawer/AddressDrawer";
+import {useNavigate} from "react-router-dom";
 export default function Register() {
     const initVal = useRef({
         nickname: '',
@@ -15,7 +16,7 @@ export default function Register() {
 
     const [Val, setVal] = useState(initVal.current);
     const [Error, setError] = useState({});
-
+    const navigate = useNavigate();
     const [serverAuthNumber, setServerAuthNumber] = useState("");
     const [verificationStatus, setVerificationStatus] = useState(false);
     const [authButtonLabel, setAuthButtonLabel] = useState('인증번호 전송');
@@ -86,55 +87,36 @@ export default function Register() {
         try {
             const response = await axios.get('/api/user/checkNickName', {params: {nickname: Val.nickname}});
             if (response.data.isUnique) {
-                console.log('사용 가능한 닉네임입니다');
                 alert('사용 가능한 닉네임입니다');
             } else {
-                console.log('이미 사용중인 닉네임입니다');
                 alert('이미 사용중인 닉네임입니다');
             }
 
         } catch (error) {
-            console.log('Nickname Check Failed', error);
             alert('서버와 연결이 안됐습니다.');
         }
     }
 
     // 휴대폰 번호 인증 요청
-    // const handleSendAuthNumber = async (event) => {
-    //     event.preventDefault();
-    //     try {
-    //         const response = await axios.post('/memberPhoneCheck', {mobileNumber: Val.mobileNumber});
-    //         const checkNum = response.data.checkNum;
-    //         if (checkNum !== undefined) {
-    //             alert('6자리 인증번호를 발송했습니다');
-    //             setServerAuthNumber(checkNum);
-    //             setAuthButtonLabel('인증번호 재전송');
-    //             setAuthClassName('text_btn');
-    //             startTimer();
-    //         } else {
-    //             alert('서버 응답에 인증번호가 없습니다');
-    //         }
-    //     } catch (error) {
-    //         console.log('Auth Number Send Failed', error);
-    //     }
-    // }
-
-    // Fake API call to simulate server response
-    const handleSendAuthNumber = () => {
-        // Simulate network response
-        setTimeout(() => {
-            if (Math.random() > 0.5) { // 50% 확률로 성공 가정
-                const fakeAuthNumber = "123456"; // 예제 인증번호
-                setServerAuthNumber(fakeAuthNumber);
+    const handleSendAuthNumber = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await axios.post('/memberPhoneCheck', {mobileNumber: Val.mobileNumber});
+            const checkNum = response.data.checkNum;
+            if (checkNum !== undefined) {
                 alert('6자리 인증번호를 발송했습니다');
+                setServerAuthNumber(checkNum);
                 setAuthButtonLabel('인증번호 재전송');
                 setAuthClassName('text_btn');
                 startTimer();
             } else {
-                alert('인증번호 발송 실패');
+                alert('서버 응답에 인증번호가 없습니다');
             }
-        }, 1000); // 1초 후 응답 모방
-    };
+        } catch (error) {
+            console.log('Auth Number Send Failed', error);
+        }
+    }
+
     const startTimer = () => {
         setCountdown(180);
         clearInterval(timerRef.current);
@@ -186,6 +168,7 @@ export default function Register() {
             const response = await axios.post('/api/user/register', Val);
             if (response.status === 200) {
                 alert('회원가입 성공');
+                navigate('/login');
             } else {
                 alert('회원가입 실패');
             }
@@ -324,7 +307,7 @@ export default function Register() {
                         placeholder="인증번호 입력"
                     />
                     {countdown && <span className="timer">{formatTime(countdown)}</span>}
-                    <button onClick={checkVerificationCode}>
+                    <button type="button" onClick={checkVerificationCode}>
                         <span>인증번호 확인</span>
                     </button>
                 </div>
