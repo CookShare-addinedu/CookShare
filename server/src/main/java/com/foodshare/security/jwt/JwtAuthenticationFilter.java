@@ -110,13 +110,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.addHeader( "Authorization", "Bearer " + token);
 
         // 서버 : Redis에 refreshToken 저장
-        System.out.println("토큰발급한 번호: " + username);
         redisService.saveToken(username, refreshToken, REFRESH_EXPIRATION_TIME);
 
-        // 콘솔 출력용도
-        for (Map.Entry<String, Object> entry : tokenDetails.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
 
         // 응답 본문을 JSON 형태로 설정
         response.setContentType("application/json;charset=UTF-8");

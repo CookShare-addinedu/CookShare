@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleRight, faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import {NavLink, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
+import {jwtDecode} from "jwt-decode";
 
 export default function Login (){
     // const dispatch = useDispatch();
@@ -61,6 +62,12 @@ export default function Login (){
                 localStorage.setItem('jwt', token);
                 // localStorage.setItem('jwt', response.data.token );
                 console.log('로그인 성공, JWT저장됨')
+                console.log(token);
+                const decoded = jwtDecode(token);
+
+                const userId = decoded.mobilenumber;
+                console.log(decoded);
+                console.log(userId);
                 navigate('/main');
             }else{
                 console.log('로그인 실패:', response.status, response.statusText);

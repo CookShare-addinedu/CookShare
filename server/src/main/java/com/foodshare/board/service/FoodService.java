@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,16 +21,22 @@ import com.foodshare.domain.Category;
 import com.foodshare.domain.Food;
 import com.foodshare.domain.FoodImage;
 import com.foodshare.board.mapper.EntityMapper;
+import com.foodshare.domain.User;
+import com.foodshare.security.dto.CustomUserDetails;
+import com.foodshare.security.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class FoodService {
 	private final FoodRepository foodRepository;
 	private final FoodImageRepository foodImageRepository;
 	private final CategoryRepository categoryRepository;
+	private final UserRepository userRepository;
 	private final EntityMapper entityMapper;
 	public Page<FoodDTO> getAllFoods(Pageable pageable) {
 		Page<Food> pageFoods = foodRepository.findAll(pageable);
@@ -48,10 +57,15 @@ public class FoodService {
 	}
 
 	public Food create(FoodDTO foodDTO) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepository.findById(((CustomUserDetails) authentication.getPrincipal()).getUserId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		log.info("user 값을 토큰에서 가져옵니다" + user);
 		Category category = entityMapper.convertToCategory(foodDTO.getCategory());
 		category = categoryRepository.save(category);
 
 		Food food = entityMapper.convertToFood(foodDTO);
+		food.setGiver(user);
+		food.setLocation(user.getLocation());
 		food.setCategory(category);
 		food = foodRepository.save(food);
 

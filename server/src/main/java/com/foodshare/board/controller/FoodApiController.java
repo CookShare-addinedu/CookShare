@@ -1,9 +1,10 @@
 package com.foodshare.board.controller;
 
+import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,20 +42,23 @@ public class FoodApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<FoodDTO>> getAllFoods(@PageableDefault(size = 20) Pageable pageable) {
+	public ResponseEntity<Page<FoodDTO>> getAllFoods(
+		@PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+	) {
 		Page<FoodDTO> foodDTOs = foodService.getAllFoods(pageable);
 		return ResponseEntity.ok(foodDTOs);
 	}
 
 	@PostMapping
-	public ResponseEntity<?> create(@ModelAttribute FoodDTO foodDTO) {
+	public ResponseEntity<?> create(@ModelAttribute(name="formData") FoodDTO foodDTO) {
+		log.info("foodDTO 토큰처리 이후에 컨트롤러로 넘어옴" + foodDTO);
 		foodDTO.setImageUrls(processUploadedFiles(foodDTO.getImages()));
 		Food createdFood = foodService.create(foodDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdFood);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@PathVariable("id") Long id, @ModelAttribute FoodDTO foodDTO) {
+	public ResponseEntity<?> update(@PathVariable("id") Long id, @ModelAttribute(name="formData") FoodDTO foodDTO) {
 		log.info("Updating food with id: {}", id);
 		FoodDTO existingFoodDTO = foodService.read(id);
 		if (foodDTO.getImages() != null && !foodDTO.getImages().isEmpty()) {
@@ -73,7 +77,7 @@ public class FoodApiController {
 	}
 
 	private List<String> processUploadedFiles(List<MultipartFile> images) {
-		List<String> fileDownloadUrls = null;
+		List<String> fileDownloadUrls = new ArrayList<>();
 		try {
 			fileDownloadUrls = fileStorageService.storeFiles(images);
 		} catch (FileStorageException e) {

@@ -12,7 +12,8 @@ import {format} from "date-fns";
 import {SquareButton} from "../../../components/button/Button";
 import Select from "../../../components/select/Select";
 import Drawers from "../../../components/drawer/Drawers";
-import Address from "../../../components/adress/Address";
+import Address from "../../../components/address/Address";
+import { debounce } from 'lodash';
 
 
 const MainForm = () => {
@@ -41,9 +42,25 @@ const MainForm = () => {
         });
     };
 
+    const handleResize = debounce(() => {
+        if (swiperRef.current && swiperRef.current.swiper) {
+            swiperRef.current.swiper.update();
+        }
+    }, 100); // 100밀리초 동안 debounce 처리
+
     useEffect(() => {
-        console.log('Updated foodData:', foodData);
-    }, [foodData]);
+        const resizeObserver = new ResizeObserver(entries => {
+            handleResize();
+        });
+
+        if (swiperRef.current) {
+            resizeObserver.observe(swiperRef.current);
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, []);
 
     useEffect(() => {
         console.log(initialData);
@@ -142,12 +159,25 @@ const MainForm = () => {
                 response = await axios.put(`/api/foods/${initialData.foodId}`, formData);
             } else {
                 // 새 데이터 추가 (POST 요청)
-                console.log(initialData);
-                console.log("추가 요청들어옴");
-                response = await axios.post('/api/foods', formData);
+                console.log("추가 요청들어옴" + formData);
+                const token = localStorage.getItem('jwt');
+                response = await axios.post('/api/foods', formData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                console.log("서버로 포스팅 요청함" + response.data);
+
             }
-            console.log(response.data);
-            navigate(`/main`); // 성공적으로 처리 후 해당 음식 상세 페이지로 이동
+
+            if (response.data.content) {
+                console.log("성공적으로 처리되었습니다.");
+                navigate(`/main`); // 성공적으로 처리 후 메인 페이지로 이동
+            } else {
+                console.error('서버 처리 실패: ', response.data.message);
+                // 사용자에게 오류 메시지 표시 등의 처리
+            }
+
         } catch (error) {
             console.error('Error submitting food data', error);
         }
@@ -178,6 +208,9 @@ const MainForm = () => {
                         slidesPerView={'auto'}
                         spaceBetween={10}
                         centeredSlides={false}
+                        observer={true} // 슬라이더와 자식 요소의 변경을 감지
+                        observeParents={true} // 슬라이더의 부모 요소 변경을 감지
+                        updateOnWindowResize={false} // 윈도우 리사이즈 시 자동 업데이트 비활성화
                     >
                         {images.map((image, index) => (
                             <SwiperSlide key={index}>

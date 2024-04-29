@@ -25,6 +25,7 @@ public interface EntityMapper {
 		@Mapping(target = "category", source = "category.name"),
 		@Mapping(target = "makeByDate", source = "food.makeByDate", qualifiedByName = "timestampToLocalDate"),
 		@Mapping(target = "eatByDate", source = "food.eatByDate", qualifiedByName = "timestampToLocalDate"),
+		@Mapping(target = "createdAt", source = "food.createdAt", qualifiedByName = "timestampToLocalDate"),
 		@Mapping(target = "title", source = "food.title"),
 		@Mapping(target = "description", source = "food.description")
 	})
