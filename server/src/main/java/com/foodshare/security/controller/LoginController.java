@@ -3,26 +3,19 @@ package com.foodshare.security.controller;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.foodshare.domain.User;
 import com.foodshare.security.jwt.JwtUtil;
 import com.foodshare.security.jwt.SecurityConstants;
-import com.foodshare.security.jwt.AuthenticationRequest;
 import com.foodshare.security.service.RedisService;
 import com.foodshare.security.service.UserService;
 import com.foodshare.security.service.LoginService;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLEncoder;
@@ -32,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.foodshare.security.jwt.SecurityConstants.EXPIRATION_TIME;
 import static com.foodshare.security.jwt.SecurityConstants.REFRESH_EXPIRATION_TIME;
-import static com.mysql.cj.conf.PropertyKey.logger;
 
 @Slf4j
 @RestController
@@ -74,7 +66,7 @@ public class LoginController {
     }
 
     @GetMapping("/checkNickName")
-    public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
+    public ResponseEntity<?> checkNickname(@RequestParam(name = "nickname") String nickname) {
         System.out.println("Received nickname: " + nickname);
         boolean isDuplicate = loginService.checkNicknameDuplicate(nickname);
         if (isDuplicate) {
