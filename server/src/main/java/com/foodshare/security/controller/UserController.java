@@ -6,23 +6,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
     @Autowired
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        if (userService.findByMobileNumber(user.getMobileNumber()).isPresent()) {
+    public ResponseEntity<User> registerUser(@RequestBody RegisterRequest request) {
+        User user = User.builder()
+                .nickName(request.getNickname())
+                .password(request.getPassword())
+                .location(request.getLocation())
+                .mobileNumber(request.getMobileNumber())
+                .role("user")
+                .build();
+        User registeredUser = userService.registerUser(user);
+
+        if (registeredUser != null) {
+            return ResponseEntity.ok(registeredUser);
+        } else {
             return ResponseEntity.badRequest().build();
         }
-        User registeredUser = userService.registerUser(user);
-        return ResponseEntity.ok(registeredUser);
     }
+
 
     @GetMapping("/Allusers")
     public ResponseEntity<List<User>> getAllUsers() {

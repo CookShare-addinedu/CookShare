@@ -17,7 +17,7 @@ export const useScrollManagement = (
             if (isFirstLoaded && messageList.length > 0) {
                 container.scrollTop = container.scrollHeight;
                 setIsFirstLoaded(false);
-            }
+            } 
         };
         firstLoadedScrollDown();
     }, [messageList, isFirstLoaded, setIsFirstLoaded]);
