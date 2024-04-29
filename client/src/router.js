@@ -10,6 +10,7 @@ import Search from "./views/pages/search/Search";
 import SearchAddress from "./views/pages/searchaddress/SearchAddress";
 import MainDetail from "./views/pages/main/MainDetail";
 import MainForm from "./views/pages/main/MainForm";
+import Notifications from "./views/Notification/Notifications";
 
 const router = {
     routes: [
@@ -82,7 +83,14 @@ const router = {
             title: null,
             header: null,
             footer: null
+        },
+        {
+            path: '/notification',
+            component: <Notifications/>,
+            header: <Header4/>,
+
         }
+
 
 
     ]
