@@ -1,55 +1,53 @@
 import './style/style.scss';
-import {Route, Routes, useLocation} from "react-router-dom";
-import {useEffect} from "react";
+import {matchPath, Route, Routes, useLocation} from "react-router-dom";
+import {useEffect, useState} from "react";
 import router from "./router";
-import Main from "./views/pages/main/Main";
-import MainDetail from "./views/pages/main/MainDetail";
-import MainForm from "./views/pages/main/MainForm";
-import {isTokenValid} from "./views/Notification/utils/isTokenValid";
-import SSEComponent from "./views/Notification/SSEComponent";
-import ChatButton from "./views/Chat/ChatButton";
-import Notifications from "./views/Notification/Notifications";
-
-
 function App() {
-
     const location = useLocation();
-    const isOnboarding = location.pathname === '/';
-    // const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+    const [currentHeader, setCurrentHeader] = useState(null);
+    const [currentFooter, setCurrentFooter] = useState(null);
+
+    function matchCustomPath(routePath, currentPath) {
+        const routeParts = routePath.split('/');
+        const currentParts = currentPath.split('/');
+        if (routeParts.length !== currentParts.length) return false;
+
+        return routeParts.every((part, index) => {
+            return part.startsWith(':') || part === currentParts[index];
+        });
+    }
+
     useEffect(() => {
-        getComponent(location, "header");
-        getComponent(location, "footer");
+        const route = router.routes.find(route =>
+            matchCustomPath(route.path, location.pathname)
+        );
+        console.log('route:', route);
+        console.log('location.pathname:', location.pathname);
+        if (route) {
+            setCurrentHeader(route.header);
+            setCurrentFooter(route.footer);
+        }else{
+            console.log("No matching route found for:", location.pathname);
+        }
+
     }, [location]);
 
-    const getComponent = (location, type) => {
-        for (let i = 0; i < router.routes.length; i++) {
-            if (router.routes[i].path === location.pathname) {
 
-                return type === "header" ? router.routes[i].header : router.routes[i].footer
-            }
-        }
-        return type === "header" ? null : null
-    }
+    const isOnboarding = location.pathname === '/onBoarding';
+
     return (
         <>
-
             <main className={isOnboarding ? 'noPadding' : ''}>
-                {getComponent(location, "header")}
+                {currentHeader}
                 <Routes>
-                    <Route path="/main" element={<Main/>}/>
-                    <Route path="/foods/:id" element={<MainDetail/>}/>
-                    <Route path="/add" element={<MainForm/>}/>
-                    <Route path="/edit-food/:id" element={<MainForm/>}/>
-                    <Route path="/notification" element={<Notifications/>}/>
-                    <Route path="/test-chat-button" element={<ChatButton/>}/>
                     {router.routes.map((route, index) => (
-                        <Route path={route.path} element={route.component} key={index}/>
+                        <Route path={route.path} element={route.component} key={index} />
                     ))}
                 </Routes>
-                {getComponent(location, "footer")}
+                {currentFooter}
             </main>
         </>
-    )
+    );
 }
 
 export default App;

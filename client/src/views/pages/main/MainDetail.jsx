@@ -1,93 +1,97 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import {useNavigate, useParams} from 'react-router-dom';
 import './MainDetail.scss';
+import { Avatar } from "rsuite";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import {NavLink, useParams} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHeart} from "@fortawesome/free-regular-svg-icons";
+import Caution from "../../../components/caution/Caution";
+import CautionData from "../../../data/CautionData";
+import MapView from "../../../components/adress/MapView";
+import {IconButton, SquareButton} from "../../../components/button/Button";
+import {faAngleRight, faArrowRight} from "@fortawesome/free-solid-svg-icons";
+import Drawers from "../../../components/drawer/Drawers";
 
-function MainDetail() {
-    const { id } = useParams();
-    const [food, setFood] = useState({});
-    const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+export default function MainDetail() {
+    const {id} = useParams();
+    const [Food, setFood] = useState({});
+    const fullScreenMapStyle = {
+        width: '100vw',
+        height: '100vh',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 1050 // Drawer z-index보다 높거나 같게 설정
+    };
 
     useEffect(() => {
-        console.log("Requested ID:", id); // 디버깅을 위해 요청 ID 출력
-        const fetchFood = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axios.get(`/api/foods/${id}`);
-                setFood(response.data);
-                console.log("id 값으로 읽어와!");
-                console.log(response.data);
-            } catch (error) {
-                console.error('Failed to fetch food details', error);
-                setError('Failed to load food details');
-            } finally {
-                setIsLoading(false);
-            }
-        };
+        fetchFoodsData();
+    }, []);
 
-        fetchFood();
-    }, [id]);
-
-    if (isLoading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
-
-    const handleEdit = () => {
-        navigate(`/edit-food/${id}`, { state: { food: food } });
-    };
-
-    const handleDelete = async () => {
-        if (window.confirm('Are you sure you want to delete this item?')) {
-            try {
-                await axios.delete(`/api/foods/${id}`);
-                navigate('/main'); // 삭제 후 메인 페이지로 리다이렉트
-                console.log("Deleted successfully!");
-            } catch (error) {
-                console.error('Error deleting food', error);
-                setError('Failed to delete the food');
-            }
+    const fetchFoodsData = async () => {
+        console.log('푸드 아이디:', id);
+        try{
+            const response = await axios.get(`/api/foods/${id}`);
+            console.log('받아온 데이터 로그에 출력:', response.data);
+            setFood(response.data);
+        }catch (error){
+            console.log('Falied to fetch data:', error);
         }
-    };
-
-
+    }
     return (
-        <div className="main-detail-container">
-            {food.imageUrls && (
-                <div className="main-detail-image">
-                    <img src={food.imageUrls[0]} alt={food.title}/>
+        <section className={'main_detail'}>
+            <div className={'img_wrap'}>
+                {Food.imageUrls  &&
+                    <img src={Food.imageUrls[0]} alt={Food.title}/>
+                }
+            </div>
+            <div className={'content_wrap'}>
+                <div className={'user_wrap'}>
+                    <Avatar className={'avatar'} circle/>
+                    <div className={'user_info'}>
+                        <p className={'nick_name'}>{Food.writer} 닉네임 자리입니다만</p>
+                        <p className={'location'}>{Food.location}주소자리</p>
+                    </div>
                 </div>
-            )}
-            <div className="main-detail-content">
-                <div className="main-detail-profile">
-                    {/* 프로필 이미지와 닉네임을 여기에 추가하면 좋을 것 같습니다 */}
+                <div className={'title_wrap'}>
+                    <h5>{Food.title}</h5>
+                    <p className={'date'}>{Food.createdAt}1시간전</p>
                 </div>
-                <h1 className="main-detail-title">{food.title}</h1>
-                <div className="main-detail-dates">
-                    <p>제조일: {food.makeByDate}</p>
-                    <p>소비기한: {food.eatByDate}</p>
+                <div className={'dates_wrap'}>
+                    <p><span>소비기한</span>{Food.eatByDate}</p>
                 </div>
-                <div className="main-detail-description">
-                    <p>{food.description}</p>
+                <div className={'description_wrap'}>
+                    <p>{Food.description}</p>
                 </div>
-                <div className="main-detail-caution">
-                    <p>주의사항: {food.caution}</p>
+                <div className={'caution_wrap'}>
+                    <Caution items={CautionData}/>
                 </div>
-                <div className="main-detail-address">
-                    <p>주소: {food.address}</p>
+                <div className={'map_wrap'}>
+                    <div className={'title_wrap'}>
+                        <h6>나눔 희망장소</h6>
+                        <FontAwesomeIcon icon={faAngleRight} />
+                    </div>
+                    <MapView/>
                 </div>
-                <div className="main-detail-map">
-                    {/* 지도 컴포넌트 또는 지도 이미지를 여기에 추가 */}
-                </div>
-                <div className="main-detail-actions">
-                    {/* 별표 이미지와 찜하기 기능을 여기에 추가 */}
-                    <button className="main-detail-chat">채팅하기</button>
-                    <button className="main-detail-edit" onClick={handleEdit}>Edit</button>
-                    <button className="main-detail-delete" onClick={handleDelete}>Delete</button>
+                {/*<Drawers*/}
+                {/*    trigger={*/}
+                {/*        <div className={'map_wrap'}>*/}
+                {/*            <div className={'title_wrap'}>*/}
+                {/*                <h6>나눔 희망장소</h6>*/}
+                {/*                <FontAwesomeIcon icon={faAngleRight} />*/}
+                {/*            </div>*/}
+                {/*            <MapView/>*/}
+                {/*        </div>*/}
+                {/*    }*/}
+                {/*    drawerContent={<MapView zoomable={true} draggable={true}/>}*/}
+                {/*/>*/}
+                <div className={'actions_wrap'}>
+                    <IconButton icon={faHeart}/>
+                    <NavLink to={'/main'}>
+                        <SquareButton name={'채팅하기'}/>
+                    </NavLink>
                 </div>
             </div>
-        </div>
-    );
+        </section>
+    )
 }
-
-export default MainDetail;

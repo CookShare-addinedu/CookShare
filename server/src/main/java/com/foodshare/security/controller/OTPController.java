@@ -5,11 +5,11 @@ import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import net.nurigo.sdk.NurigoApp;
 
@@ -20,17 +20,21 @@ import java.util.Random;
 public class OTPController {
     final DefaultMessageService messageService;
 
-    public OTPController() {
-       this.messageService = NurigoApp.INSTANCE.initialize("NCSIFI4ROLXOUATB", "S0IX1HZM9VHKKCNR2OW80BQNNHWPS9I1", "https://api.coolsms.co.kr");
-
+    public OTPController(@Value("${coolsms.api.key}") String apiKey,
+                         @Value("${coolsms.api.secret}") String apiSecret) {
+        this.messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.coolsms.co.kr");
     }
 
 
     @PostMapping("/memberPhoneCheck")
     public ResponseEntity<Map<String, Object>> memberPhoneCheck(@RequestBody Map<String, Object> payload) {
-        String toPhoneNumber = (String) payload.get("to");
+        String toPhoneNumber = (String) payload.get("mobileNumber");
+        if (toPhoneNumber == null || toPhoneNumber.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "휴대폰 번호가 제공되지 않았습니다."));
+        }
 
         String checkNum = generateCheckNum();
+
 
         Message message = new Message();
         message.setFrom("01025404366");

@@ -1,15 +1,15 @@
 import './Register.scss'
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useDebounce} from "../../../hook/useDebounce";
 import axios from "axios";
-import Address from "../../../components/adress/Address";
+import AddressDrawer from "../../../components/drawer/AddressDrawer";
 export default function Register() {
     const initVal = useRef({
         nickname: '',
         password: '',
         passwordConfirm: '',
-        address: '',
-        tel: '',
+        location: '',
+        mobileNumber: '',
         authNumber: ''
     });
 
@@ -36,7 +36,7 @@ export default function Register() {
     const handleChange = (event) => {
         const { name, value } = event.target;
 
-        if (name === 'tel' || name === 'authNumber') {
+        if (name === 'mobileNumber' || name === 'authNumber') {
             if (!value.match(/^\d*$/)) {
                 event.preventDefault();
                 return;
@@ -62,22 +62,22 @@ export default function Register() {
         };
         feedbacks.password = {
             valid: values.password.length >= 8,
-            message: values.password.length >= 8 ? "비밀번호가 유효합니다." : "비밀번호는 8글자 이상이어야 합니다."
+            message: values.password.length >= 8 ? "비밀번호가 유효합니다." : "특수문자,영문,숫자 포함해서 8글자 이상 입력하세요"
         };
         feedbacks.passwordConfirm = {
             valid: values.password === values.passwordConfirm,
             message: values.password === values.passwordConfirm ? "비밀번호가 일치합니다." : "비밀번호가 일치하지 않습니다."
         };
-        feedbacks.tel = {
-            valid: values.tel.match(/^\d{10,11}$/),
-            message: values.tel.match(/^\d{10,11}$/) ? "전화번호가 유효합니다." : "전화번호 형식이 올바르지 않습니다."
+        feedbacks.mobileNumber = {
+            valid: values.mobileNumber.match(/^\d{10,11}$/),
+            message: values.mobileNumber.match(/^\d{10,11}$/) ? "전화번호가 유효합니다." : "전화번호 형식이 올바르지 않습니다."
         };
         return feedbacks;
     };
-    const handleLocationSelect = (selectedAddress) => {
+    const handleLocationSelect = (selectedLocation) => {
         setVal(prevVal => ({
             ...prevVal,
-            address: selectedAddress
+            location: selectedLocation
         }));
     }
     // 중복 닉네임 체크
@@ -100,24 +100,41 @@ export default function Register() {
     }
 
     // 휴대폰 번호 인증 요청
-    const handleSendAuthNumber = async (event) => {
-        event.preventDefault();
-        try {
-            const response = await axios.post('/memberPhoneCheck', {tel: Val.tel});
-            const checkNum = response.data.checkNum;
-            if (checkNum !== undefined) {
+    // const handleSendAuthNumber = async (event) => {
+    //     event.preventDefault();
+    //     try {
+    //         const response = await axios.post('/memberPhoneCheck', {mobileNumber: Val.mobileNumber});
+    //         const checkNum = response.data.checkNum;
+    //         if (checkNum !== undefined) {
+    //             alert('6자리 인증번호를 발송했습니다');
+    //             setServerAuthNumber(checkNum);
+    //             setAuthButtonLabel('인증번호 재전송');
+    //             setAuthClassName('text_btn');
+    //             startTimer();
+    //         } else {
+    //             alert('서버 응답에 인증번호가 없습니다');
+    //         }
+    //     } catch (error) {
+    //         console.log('Auth Number Send Failed', error);
+    //     }
+    // }
+
+    // Fake API call to simulate server response
+    const handleSendAuthNumber = () => {
+        // Simulate network response
+        setTimeout(() => {
+            if (Math.random() > 0.5) { // 50% 확률로 성공 가정
+                const fakeAuthNumber = "123456"; // 예제 인증번호
+                setServerAuthNumber(fakeAuthNumber);
                 alert('6자리 인증번호를 발송했습니다');
-                setServerAuthNumber(checkNum);
                 setAuthButtonLabel('인증번호 재전송');
                 setAuthClassName('text_btn');
                 startTimer();
             } else {
-                alert('서버 응답에 인증번호가 없습니다');
+                alert('인증번호 발송 실패');
             }
-        } catch (error) {
-            console.log('Auth Number Send Failed', error);
-        }
-    }
+        }, 1000); // 1초 후 응답 모방
+    };
     const startTimer = () => {
         setCountdown(180);
         clearInterval(timerRef.current);
@@ -162,7 +179,7 @@ export default function Register() {
             setVerificationStatus(false);
         }
     }
-        // 회원가입 인증요청
+    // 회원가입 인증요청
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -202,17 +219,15 @@ export default function Register() {
             Val.nickname.length >= 2 &&
             Val.password.length >= 8 &&
             Val.password === Val.passwordConfirm &&
-            Val.tel.match(/^\d{10,11}$/) &&
+            Val.mobileNumber.match(/^\d{10,11}$/) &&
             Val.authNumber.length === 6 &&
             verificationStatus
         );
     };
-
     useEffect(() => {
         setError(check(DebounceVal));
         setBtnDisabled(!isFormValid());
     }, [DebounceVal]);
-
     return (
         <form className={"register"} onSubmit={handleSubmit}>
             <div className={'field'}>
@@ -266,10 +281,10 @@ export default function Register() {
             </div>
 
             <div className={'field'}>
-                <label htmlFor="address" className={"a11y-hidden"}>주소</label>
-                <Address
-                    value={Val.address}
-                    onChange={handleChange}
+                <label htmlFor="location" className={"a11y-hidden"}>주소</label>
+                <AddressDrawer
+                    title="주소 검색"
+                    placeholder="주소를 입력해주세요"
                     onLocationSelect={handleLocationSelect}
                 />
             </div>
@@ -279,9 +294,9 @@ export default function Register() {
                     <label htmlFor="phoneNumber" className={"a11y-hidden"}>휴대폰 번호</label>
                     <input
                         type="text"
-                        id="tel"
-                        name="tel"
-                        value={Val.tel}
+                        id="mobileNumber"
+                        name="mobileNumber"
+                        value={Val.mobileNumber}
                         maxLength={11}
                         onChange={handleChange}
                         placeholder="휴대폰 번호를 입력해주세요"

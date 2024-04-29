@@ -1,20 +1,15 @@
 import Login from "./views/auth/login/Login";
-import {Header1, Header2, Header3, Header4, Header5} from "./views/common/header/Header";
-import Footer from "./views/common/footer/Footer";
-
-
-
-
-import OnBoarding from "./views/pages/onboarding/OnBoarding";
-
 import Register from "./views/auth/register/Register";
+import {Header1, Header2, Header3, Header4} from "./views/common/header/Header";
+import Footer from "./views/common/footer/Footer";
+import Main from "./views/pages/main/Main";
+import OnBoarding from "./views/pages/onboarding/OnBoarding";
+import Mypage from "./views/pages/mypage/Mypage";
+import Drawers from "./components/drawer/Drawers";
 import Search from "./views/pages/search/Search";
 import SearchAddress from "./views/pages/searchaddress/SearchAddress";
-import MyPage from "./views/pages/MyPage/MyPage";
-
-import Chat from "./views/Chat/Chat";
-import ChatRoomList from "./views/Chat/ChatRoomList";
-
+import MainDetail from "./views/pages/main/MainDetail";
+import MainForm from "./views/pages/main/MainForm";
 
 const router = {
     routes: [
@@ -30,7 +25,28 @@ const router = {
             component: <Register/>,
             title: '회원가입',
             header:<Header1/>,
-            footer:null,
+            footer:<Footer/>,
+        },
+        {
+            path: '/main',
+            component: <Main/>,
+            title: null,
+            header:<Header4/>,
+            footer:<Footer/>
+        },
+        {
+            path: '/main/foods/:id',
+            component: <MainDetail/>,
+            title: null,
+            header:<Header3/>,
+            footer:null
+        },
+        {
+            path: '/main/add',
+            component: <MainForm/>,
+            title: null,
+            header:<Header1/>,
+            footer:null
         },
         {
             path: '/',
@@ -41,10 +57,17 @@ const router = {
         },
         {
             path: '/mypage',
-            component: <MyPage/>,
+            component: <Mypage/>,
             title: '나의 냉장고',
             header: <Header1/>,
             footer:<Footer/>
+        },
+        {
+            path: '/drawer',
+            component: <Drawers/>,
+            title: '팝업테스트중이올시다',
+            header: <Header1/>,
+            footer: <Footer/>
         },
         {
             path: '/search',
