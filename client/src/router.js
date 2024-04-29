@@ -1,14 +1,15 @@
 import Login from "./views/auth/login/Login";
-import {Header1, Header2, Header3, Header4, Header5} from "./views/common/header/Header";
+import Register from "./views/auth/register/Register";
+import {Header1, Header2, Header3, Header4} from "./views/common/header/Header";
 import Footer from "./views/common/footer/Footer";
-
-import Chat from "./views/Chat/Chat";
-import ChatRoomList from "./views/Chat/ChatRoomList";
-
-
+import Main from "./views/pages/main/Main";
 import OnBoarding from "./views/pages/onboarding/OnBoarding";
 import Mypage from "./views/pages/mypage/Mypage";
-import Main from "./views/pages/main/Main";
+import Drawers from "./components/drawer/Drawers";
+import Search from "./views/pages/search/Search";
+import SearchAddress from "./views/pages/searchaddress/SearchAddress";
+import MainDetail from "./views/pages/main/MainDetail";
+import MainForm from "./views/pages/main/MainForm";
 
 const router = {
     routes: [
@@ -19,19 +20,33 @@ const router = {
             header:<Header1/>,
             footer:null
         },
-        // {
-        //     path: '/register',
-        //     component: <Register/>,
-        //     title: '회원가입',
-        //     header:<Header1/>,
-        //     footer:<Footer/>,
-        // },
+        {
+            path: '/register',
+            component: <Register/>,
+            title: '회원가입',
+            header:<Header1/>,
+            footer:<Footer/>,
+        },
         {
             path: '/main',
             component: <Main/>,
             title: null,
             header:<Header4/>,
             footer:<Footer/>
+        },
+        {
+            path: '/main/foods/:id',
+            component: <MainDetail/>,
+            title: null,
+            header:<Header3/>,
+            footer:null
+        },
+        {
+            path: '/main/add',
+            component: <MainForm/>,
+            title: null,
+            header:<Header1/>,
+            footer:null
         },
         {
             path: '/',
@@ -47,32 +62,27 @@ const router = {
             header: <Header1/>,
             footer:<Footer/>
         },
-        // {
-        //     path: '/search',
-        //     component: <Search/>,
-        //     title: null,
-        //     header: null,
-        //     footer: null
-        // },
-        // {
-        //     path: '/searchAddress',
-        //     component: <SearchAddress/>,
-        //     title: null,
-        //     header: null,
-        //     footer: null
-        // }
-        // {
-        //     path: '/chat/GetChatList',
-        //     component: <ChatRoomList/>,
-        //     header: <Header5/>,
-        //     footer: <Footer/>
-        // },
-        // {
-        //     path: '/chat/GetChat/:chatRoomId',
-        //     component: <Chat/>,
-        //     header: <Header5/>,
-        //     footer: <Footer/>
-        // },
+        {
+            path: '/drawer',
+            component: <Drawers/>,
+            title: '팝업테스트중이올시다',
+            header: <Header1/>,
+            footer: <Footer/>
+        },
+        {
+            path: '/search',
+            component: <Search/>,
+            title: null,
+            header: null,
+            footer: null
+        },
+        {
+            path: '/searchAddress',
+            component: <SearchAddress/>,
+            title: null,
+            header: null,
+            footer: null
+        }
 
 
     ]
