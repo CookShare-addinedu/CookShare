@@ -2,6 +2,7 @@ package com.foodshare.notification.sse.component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -26,16 +27,20 @@ public class SseEmitters {
 		return emitters.get(userId);
 	}
 
-	public void sendToAll(String eventName, Object data) {
-		List<String> toRemove = new ArrayList<>();
-		emitters.forEach((userId, emitter) -> {
-			try {
-				emitter.send(SseEmitter.event().name(eventName).data(data));
-			} catch (Exception e) {
-				toRemove.add(userId);
-			}
+	public void removeExistingEmitter(String userId) {
+		Optional<SseEmitter> existingEmitterOpt = Optional.ofNullable(emitters.get(userId));
+		existingEmitterOpt.ifPresent(existingEmitter -> {
+			existingEmitter.complete();
+			emitters.remove(userId, existingEmitter);
 		});
-		toRemove.forEach(emitters::remove);
+	}
+
+	public void sendEvent(SseEmitter emitter, String eventName, String data) {
+		try {
+			emitter.send(SseEmitter.event().name(eventName).data(data));
+		} catch (Exception e) {
+			throw new RuntimeException("SSE 이벤트 전송 오류", e);
+		}
 	}
 }
 
