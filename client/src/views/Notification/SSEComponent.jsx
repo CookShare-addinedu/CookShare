@@ -4,7 +4,7 @@ import NotificationMessage from "./NotificationMessage";
 
 
 const SSEComponent = () => {
-    const {messages, isConnected,setMessages} = useSSEConnection();
+    const {messages, isConnected, setMessages} = useSSEConnection();
 
     useEffect(() => {
         console.log("SSE Messages:", messages); // 상태 업데이트 확인
@@ -13,16 +13,19 @@ const SSEComponent = () => {
         <div>
             {isConnected ? (
                 <>
-                    {messages.map((msg, index) => (
-                        <NotificationMessage
-                            key={index}
-                            message={msg.message} /* 알림 메시지 표시 */
-                            onClose={() => setMessages((prev) => prev.filter((_, i) => i !== index))} /* 닫기 */
-                        />
-                    ))}
+                    {messages.map((msg, index) => {
+                        const count = msg.count || 0;
+                        return (
+                            <NotificationMessage
+                                key={index}
+                                message={count > 0 ? `${msg.message} (메시지 수: ${count})` : msg.message}
+                                onClose={() => setMessages((prev) => prev.filter((_, i) => i !== index))} // 닫기
+                            />
+                        );
+                    })}
                 </>
             ) : (
-                <div></div> 
+                <div></div>
             )}
         </div>
     );
