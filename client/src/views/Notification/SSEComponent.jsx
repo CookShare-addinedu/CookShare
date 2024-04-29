@@ -7,7 +7,7 @@ const SSEComponent = () => {
     const {messages, isConnected, setMessages} = useSSEConnection();
 
     useEffect(() => {
-        console.log("SSE Messages:", messages); // 상태 업데이트 확인
+
     }, [messages]);
     return (
         <div>
