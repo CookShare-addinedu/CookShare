@@ -12,9 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRoomCreationDto {
-	private String foodId;
+	private String id;
+	private Long foodId;
 	private String firstUserMobileNumber;
 	private String secondUserMobileNumber;
-	private String identifier;
+	private String urlIdentifier;
 	private Date createdAt;
 }

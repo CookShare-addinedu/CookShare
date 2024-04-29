@@ -25,13 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 public class VisibilityService {
 	private final UserChatRoomVisibilityRepository userChatRoomVisibilityRepository;
 	private final MongoTemplate mongoTemplate;
-
+	private final MongoQueryBuilder mongoQueryBuilder;
 	@LogExecutionTime
 	public void setRoomHidden(String userId, String chatRoomId) {
 		log.info("setRoomHidden: userId={}, chatRoomId ID={}", userId, chatRoomId);
 
 		UserChatRoomVisibility visibility = findOrCreateVisibility(userId, chatRoomId);
 		updateVisibilityToHidden(visibility);
+		mongoQueryBuilder.updateMessagesAsRead(chatRoomId, userId);
 	}
 
 	public UserChatRoomVisibility findOrCreateVisibility(String userId, String chatRoomId) {
@@ -56,17 +57,7 @@ public class VisibilityService {
 		log.info("unHideChatRoomIfNeeded:  userId={}, chatRoomId ID={}", userId, chatRoomId);
 
 		DbErrorHandlingExecutor.executeDatabaseOperation(() ->
-			updateChatRoomVisibility(userId, chatRoomId), "채팅방 숨김 해제 실패");
-	}
-
-	private void updateChatRoomVisibility(String userId, String chatRoomId) {
-		log.info("updateChatRoomVisibility:  userId={}, chatRoomId ID={}", userId, chatRoomId);
-
-		Query query = new Query(Criteria.where("userId").is(userId).and("chatRoomId").is(chatRoomId));
-		Update update = new Update().set("isHidden", false);
-
-		mongoTemplate.updateFirst(query, update, UserChatRoomVisibility.class);
-
+			mongoQueryBuilder.updateChatRoomVisibility(userId, chatRoomId), "채팅방 숨김 해제 실패");
 	}
 
 	public Set<String> getHiddenRoomIds(String userId) {
