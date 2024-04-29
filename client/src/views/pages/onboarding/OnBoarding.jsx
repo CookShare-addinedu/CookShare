@@ -5,6 +5,7 @@ import 'swiper/css/pagination';
 import {Pagination} from "swiper/modules";
 import {useRef} from "react";
 import {NavLink} from "react-router-dom";
+import {SquareButton} from "../../../components/button/Button";
 
 export default function OnBoarding() {
     const swiperRef = useRef(null);
@@ -26,7 +27,7 @@ export default function OnBoarding() {
                             slidesPerView: 1,
                         },
                     }}
-                    >
+            >
                 <SwiperSlide className={'swiper_slide'}>
                     <header>
                         <div>
@@ -73,11 +74,9 @@ export default function OnBoarding() {
                         </div>
                     </div>
                     <div className={'btn_wrap'}>
-                        <button>
-                            <NavLink to={'/login'}>
-                                <span>시작하기</span>
-                            </NavLink>
-                        </button>
+                        <NavLink to={'/login'}>
+                            <SquareButton name={'시작하기'}/>
+                        </NavLink>
                     </div>
                 </SwiperSlide>
             </Swiper>

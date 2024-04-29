@@ -22,6 +22,7 @@ main{
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  max-width: 767px;
   min-height: 100vh;
   padding: 50px 0;
 
@@ -33,7 +34,11 @@ ul, ol, li{
 
 a{
   text-decoration: none;
-  color: inherit;
+  color: #222;
+}
+a:hover{
+  text-decoration: none;
+  color: #222;
 }
 
 button{

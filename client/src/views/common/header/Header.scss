@@ -11,6 +11,7 @@ header{
     height: 48px;
     padding: 8px 20px;
     background: #fff;
+    border-bottom: 1px solid #eee;
 
     .prev{
         button{
@@ -51,7 +52,6 @@ header{
     .address_wrap {
         a {
             display: block;
-            border: 1px solid #ff9000;
             padding: 10px;
 
             span {
