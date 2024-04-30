@@ -59,13 +59,13 @@ public class FoodService {
 	public Food create(FoodDTO foodDTO) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = userRepository.findById(((CustomUserDetails) authentication.getPrincipal()).getUserId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-		log.info("user 값을 토큰에서 가져옵니다" + user);
+		foodDTO.setGiver(user);
+		log.info("User value retrieved from token: {}", user);
+
 		Category category = entityMapper.convertToCategory(foodDTO.getCategory());
 		category = categoryRepository.save(category);
 
 		Food food = entityMapper.convertToFood(foodDTO);
-		food.setGiver(user);
-		food.setLocation(user.getLocation());
 		food.setCategory(category);
 		food = foodRepository.save(food);
 

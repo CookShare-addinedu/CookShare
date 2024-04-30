@@ -170,12 +170,11 @@ const MainForm = () => {
 
             }
 
-            if (response.data.content) {
+            if (response.status === 201) {
                 console.log("성공적으로 처리되었습니다.");
                 navigate(`/main`); // 성공적으로 처리 후 메인 페이지로 이동
             } else {
                 console.error('서버 처리 실패: ', response.data.message);
-                // 사용자에게 오류 메시지 표시 등의 처리
             }
 
         } catch (error) {

@@ -17,8 +17,10 @@ import com.foodshare.domain.Food;
 import com.foodshare.domain.FoodImage;
 import com.foodshare.board.dto.FoodDTO;
 
+
 @Mapper(componentModel = "spring")
 public interface EntityMapper {
+
 	@Mappings({
 		@Mapping(target = "foodId", source = "food.foodId"),
 		@Mapping(target = "imageUrls", expression = "java(mapImagePaths(foodImages))"),
@@ -27,7 +29,9 @@ public interface EntityMapper {
 		@Mapping(target = "eatByDate", source = "food.eatByDate", qualifiedByName = "timestampToLocalDate"),
 		@Mapping(target = "createdAt", source = "food.createdAt", qualifiedByName = "timestampToLocalDate"),
 		@Mapping(target = "title", source = "food.title"),
-		@Mapping(target = "description", source = "food.description")
+		@Mapping(target = "description", source = "food.description"),
+		@Mapping(target = "giver", source = "food.giver"),
+		@Mapping(target = "location", source = "food.location")  // 직접 지정 또는 자동 추출
 	})
 	FoodDTO convertToFoodDTO(Food food, List<FoodImage> foodImages, Category category);
 
@@ -44,9 +48,9 @@ public interface EntityMapper {
 	}
 
 	@Mapping(target = "foodId", ignore = true)
-	@Mapping(target = "location", ignore = true)
+	@Mapping(target = "location", source = "foodDTO.location")
 	@Mapping(target = "category", ignore = true)
-	@Mapping(target = "giver", ignore = true)
+	@Mapping(target = "giver", source = "foodDTO.giver")
 	@Mapping(target = "receiver", ignore = true)
 	@Mapping(target = "views", constant = "0")
 	@Mapping(target = "likes", constant = "0")
