@@ -2,26 +2,30 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import './Chat.scss';
 import {jwtDecode} from 'jwt-decode';
 import useChatDetailList from "./useChatDetailList";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {useScrollManagement} from "./useScrollManagement";
 import useWebSocketConnection from "./useWebSocketConnection";
 import axios from "axios";
 
 
 function Chat() {
-    const {chatRoomId} = useParams(); // URL에서 roomId 추출 . app.js ChatRoomList
-
-
     const [newMessage, setNewMessage] = useState("");
-
+    const [chatRoomId, setChatRoomId] = useState(null);
     const [isFirstLoaded, setIsFirstLoaded] = useState(true);
     const [lastMessageTimestamp, setLastMessageTimestamp] = useState(null); // 마지막으로 전송된 메시지의 ID 또는 타임스탬프를 저장
     const [hasUserScrolled, setHasUserScrolled] = useState(false);
     const messagesContainerRef = useRef(null);
 
-    const token = localStorage.getItem('jwt');
-    const decoded = jwtDecode(token);
-    const userId = decoded.mobileNumber;
+    const [searchParams] = useSearchParams();
+    const { foodId, userId } = useParams(); // URL 파라미터에서 foodId와 userId를 추출합니다.
+    const tokenId = jwtDecode(localStorage.getItem('jwt')).userId;
+
+    useEffect(() => {
+        if (foodId && userId) {
+            checkAndCreateChatRoom();
+        }
+    }, [foodId, userId]);
+
 
     const {messageList, isLoading, loadChatMessages, hasMore, addMessageList} = useChatDetailList(chatRoomId, userId);
 
@@ -42,20 +46,29 @@ function Chat() {
     }, []);
 
 
-    const ensureChatRoomExists = async (chatRoomId, user1Index, user2Index, foodId) => {
-        try {
-            await axios.post('/api/chat/createRoom', { chatRoomId,user1Index, user2Index, foodId });
-        } catch (error) {
-            console.error('채팅방 생성 중 오류 발생:', error);
-            throw error;
+    const checkAndCreateChatRoom = async () => {
+        if (!chatRoomId) {
+            try {
+                console.log("채팅방 개설해주세요");
+                console.log(tokenId);
+                console.log(userId);
+                console.log(foodId);
+                const response = await axios.post('/api/chat/createRoom', {
+                    firstUserMobileNumber: tokenId,
+                    secondUserMobileNumber: userId,
+                    foodId: foodId
+                });
+                setChatRoomId(response.data.chatRoomId);
+            } catch (error) {
+                console.error('채팅방 생성 중 오류 발생:', error);
+            }
         }
     };
 
-
-
-
-
-    const sendMessage = () => {
+    const sendMessage = async () => {
+        if (!chatRoomId) {
+            await checkAndCreateChatRoom();
+        }
         if (stompClient && stompClient.connected && newMessage.trim() !== '') {
             const timestamp = new Date().toISOString();
             const chatMessage = {
@@ -64,12 +77,6 @@ function Chat() {
                 content: newMessage,
                 timestamp: timestamp,
             };
-           //  const user1Index = 11;  // 정확한 값으로 수정
-           //  const user2Index = 12; // 정확한 값으로 수정
-           //  const foodId = 13;
-           //
-           //
-           // ensureChatRoomExists(chatRoomId, user1Index, user2Index, foodId);
 
             stompClient.send(`/app/chat.room/${chatRoomId}/sendMessage`, {}, JSON.stringify(chatMessage));
             setLastMessageTimestamp(timestamp);

@@ -92,7 +92,8 @@ const router = {
             footer: <Footer/>
         },
         {
-            path: '/chat/getChat/:chatRoomId',
+            // path: '/chat/getChat/:chatRoomId',
+            path: '/chat/:foodId/:userId',
             component: <Chat/>,
             header: <Header4/>,
 
