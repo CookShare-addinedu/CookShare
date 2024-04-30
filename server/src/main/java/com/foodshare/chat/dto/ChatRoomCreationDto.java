@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRoomCreationDto {
-	private String id;
+	private String chatRoomId;
 	private String foodId;
 	private String firstUserMobileNumber;
 	private String secondUserMobileNumber;

@@ -26,6 +26,7 @@ public class VisibilityService {
 	private final UserChatRoomVisibilityRepository userChatRoomVisibilityRepository;
 	private final MongoTemplate mongoTemplate;
 	private final MongoQueryBuilder mongoQueryBuilder;
+
 	@LogExecutionTime
 	public void setRoomHidden(String userId, String chatRoomId) {
 		log.info("setRoomHidden: userId={}, chatRoomId ID={}", userId, chatRoomId);

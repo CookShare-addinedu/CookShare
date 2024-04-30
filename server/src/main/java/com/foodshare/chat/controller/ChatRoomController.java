@@ -131,6 +131,7 @@ public class ChatRoomController {
 
 			ChatRoomCreationDto chatRoomDto = chatRoomService.toChatRoomCreationDto(chatRoom);
 
+			log.info("chatRoomDto: {}", chatRoomDto);
 			return ResponseEntity.ok(chatRoomDto);
 		} catch (Exception e) {
 			log.error("채팅방 생성 중 오류 발생", e);

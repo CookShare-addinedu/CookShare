@@ -5,15 +5,14 @@ import {jwtDecode} from 'jwt-decode';
 const ChatButton = ({ foodId, giverId}) => {
     const navigate = useNavigate();
 
-    console.log("푸드아이디",foodId);
-    console.log("기버아이디",giverId);
+
 
 
     const token = localStorage.getItem('jwt');
     const decoded = jwtDecode(token);
     const userId = decoded.mobileNumber;
 
-    console.log("채팅건사람",userId);
+
     const handleCreateChatRoom = () => {
         if (window.confirm("사용자와 채팅하시겠습니까?")) {
             axios.post('/api/chat/createRoom', {
@@ -22,8 +21,13 @@ const ChatButton = ({ foodId, giverId}) => {
                 foodId: foodId
             })
                 .then(response => {
-                    const newChatRoomId = response.data.chatRoomId;
-                    navigate(`/chat/GetChat/${newChatRoomId}`);  // 채팅 컴포넌트로 이동
+                    const newChatRoomId = response.data.urlIdentifier;
+                    console.log("newChatRoomId",newChatRoomId)
+                    if(newChatRoomId) {
+                        navigate(`/chat/GetChat/${newChatRoomId}`);  // 채팅 컴포넌트로 이동
+                    } else {
+                        console.error("Chat room ID is not provided in the response");
+                    }
                 })
                 .catch(error => {
                     console.error("Failed to create chat room:", error);

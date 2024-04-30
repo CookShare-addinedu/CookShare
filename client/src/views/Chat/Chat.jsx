@@ -8,9 +8,8 @@ import useWebSocketConnection from "./useWebSocketConnection";
 import axios from "axios";
 
 
-function Chat({  foodId, giverId  }) {
-    const { chatRoomId: roomIdFromUrl } = useParams();
-    const [chatRoomId, setChatRoomId] = useState(roomIdFromUrl || null);
+function Chat() {
+    const {chatRoomId} = useParams(); // URL에서 roomId 추출 . app.js ChatRoomList
 
     const [newMessage, setNewMessage] = useState("");
 
@@ -37,44 +36,17 @@ function Chat({  foodId, giverId  }) {
         hasUserScrolled, setHasUserScrolled, userId);
 
 
-    useEffect((chatRoomId) => {
+    useEffect(() => {
         loadChatMessages();
-    }, [chatRoomId]);
+    }, []);
 
 
-    const createChatRoom = () => {
-        axios.post('/api/chat/createRoom', {
-            firstUserMobileNumber: giverId,
-            secondUserMobileNumber: userId,
-            foodId:foodId
-        })
-            .then(response => {
-                const newChatRoomId = response.data.chatRoomId;
-
-                setChatRoomId(newChatRoomId);
-                sendMessage(newChatRoomId);
-            })
-            .catch(error => {
-                console.error("Failed to create chat room:", error);
-            });
-    };
-
-
-
-
-
-    const sendMessage = (roomId) => {
-        if (!roomId) {
-            console.error("No room ID available for sending message.");
-            return;
-        }
-
+    const sendMessage = () => {
         if (stompClient && stompClient.connected && newMessage.trim() !== '') {
             const timestamp = new Date().toISOString();
             const chatMessage = {
-                chatRoomId: roomId,
-                firstUserMobileNumber: giverId,
-                secondUserMobileNumber: userId,
+                chatRoomId: chatRoomId,
+                sender: userId,
                 content: newMessage,
                 timestamp: timestamp,
             };
@@ -86,17 +58,6 @@ function Chat({  foodId, giverId  }) {
             console.log("메시지를 전송할 수 없습니다.");
         }
     };
-
-
-    const handleSendMessage = () => {
-        if (!newMessage.trim()) return;
-        if (!chatRoomId) {
-            createChatRoom();
-        } else {
-            sendMessage();
-        }
-    };
-
 
 
     return (
@@ -135,7 +96,7 @@ function Chat({  foodId, giverId  }) {
                                    sendMessage();
                                }
                            }}/>
-                    <button id="chatBtn" onClick={handleSendMessage }>보내기</button>
+                    <button id="chatBtn" onClick={sendMessage}>보내기</button>
                 </div>
             </div>
         </div>

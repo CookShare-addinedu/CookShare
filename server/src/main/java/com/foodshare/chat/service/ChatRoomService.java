@@ -89,7 +89,7 @@ public class ChatRoomService {
 	}
 
 	public ChatRoom createChatRoom(String firstUserId, String secondUserId, String foodId, String chatRoomId,
-		String chaRoomUrlId) {
+		String urlIdentifier) {
 		log.debug("createChatRoom");
 		ValidationUtils.validateNotEmpty(firstUserId, "firstUserId");
 		ValidationUtils.validateNotEmpty(secondUserId, "secondUserId");
@@ -99,31 +99,29 @@ public class ChatRoomService {
 			.firstUser(firstUserId)
 			.secondUser(secondUserId)
 			.foodId(foodId)
-			.urlIdentifier(chaRoomUrlId)
+			.urlIdentifier(urlIdentifier)
 			.build();
 		log.debug("chatRoomId={}", chatRoom);
 		return chatRoomRepository.save(chatRoom);
 	}
 
 	public ChatRoom findOrCreateChatRoom(String firstUserId, String secondUserId, String foodId) {
-		log.info("채팅방 서비스 레이어 들어왔습니다");
+		log.info("채팅방 서비스 레이어에 들어왔습니다");
 
-		String firstUserNickname = userService.findByMobileNumber(firstUserId)
-			.map(User::getNickName)  // User 객체에서 닉네임 정보 추출
-			.orElseThrow(() -> new IllegalStateException("First user not found"));
+		User firstUser = userService.findByMobileNumber(firstUserId)
+			.orElseThrow(() -> new IllegalStateException("첫 번째 사용자를 찾을 수 없습니다."));
+		User secondUser = userService.findByMobileNumber(secondUserId)
+			.orElseThrow(() -> new IllegalStateException("두 번째 사용자를 찾을 수 없습니다."));
 
-		String secondUserNickname = userService.findByMobileNumber(secondUserId)
-			.map(User::getNickName)  // User 객체에서 닉네임 정보 추출
-			.orElseThrow(() -> new IllegalStateException("Second user not found"));
+		String chatRoomId = firstUserId + "_" + secondUserId;  // 사용자 ID 조합으로 chatRoomId 생성
+		log.info("챗서비스에서 chatRoomId={}", chatRoomId);
+		String urlIdentifier = firstUser.getNickName() + "_" + secondUser.getNickName();  // 닉네임 조합으로 urlIdentifier 생성
 
-		String chatRoomUrlId = firstUserNickname + "_" + secondUserNickname;  // 닉네임을 사용하여 urlIdentifier 생성
-
-		Optional<ChatRoom> existingChatRoom = findByUrlIdentifier(chatRoomUrlId);
+		Optional<ChatRoom> existingChatRoom = findByUrlIdentifier(urlIdentifier);
 		log.info("existingChatRoom: {}", existingChatRoom);
-		return existingChatRoom.orElseGet(() -> {
-			String chatRoomId = UUID.randomUUID().toString();  // UUID를 사용하여 고유한 chatRoomId 생성
-			return createChatRoom(firstUserId, secondUserId, foodId, chatRoomId, chatRoomUrlId);
-		});
+
+		return existingChatRoom.orElseGet(
+			() -> createChatRoom(firstUserId, secondUserId, foodId, chatRoomId, urlIdentifier));
 	}
 
 	public ChatRoomCreationDto toChatRoomCreationDto(ChatRoom room) {
