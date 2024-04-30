@@ -123,7 +123,7 @@ public class ChatRoomController {
 		log.info("채팅방 개설 요청 받았습니다");
 		try {
 			String firstUserId = request.getFirstUserMobileNumber();
-			String secondUserId = request.getFirstUserMobileNumber();
+			String secondUserId = request.getSecondUserMobileNumber();
 			String foodId = request.getFoodId();
 			log.info("요청 내용: {}", request);
 

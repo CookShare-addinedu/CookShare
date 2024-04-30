@@ -90,7 +90,7 @@ public class ChatRoomService {
 
 	public ChatRoom createChatRoom(String firstUserId, String secondUserId, String foodId, String chatRoomId,
 		String chaRoomUrlId) {
-		log.info("createChatRoom 채팅방을 개설요청드립니다");
+		log.debug("createChatRoom");
 		ValidationUtils.validateNotEmpty(firstUserId, "firstUserId");
 		ValidationUtils.validateNotEmpty(secondUserId, "secondUserId");
 
@@ -101,20 +101,27 @@ public class ChatRoomService {
 			.foodId(foodId)
 			.urlIdentifier(chaRoomUrlId)
 			.build();
-		log.info("chatRoomId={}", chatRoom);
+		log.debug("chatRoomId={}", chatRoom);
 		return chatRoomRepository.save(chatRoom);
 	}
 
 	public ChatRoom findOrCreateChatRoom(String firstUserId, String secondUserId, String foodId) {
 		log.info("채팅방 서비스 레이어 들어왔습니다");
-		Optional<User> firstUserNickName = userService.findByMobileNumber(firstUserId);
-		Optional<User> secondUserNickName = userService.findByMobileNumber(secondUserId);
-		String chatRoomUrlId = firstUserNickName + "_" + secondUserNickName;
+
+		String firstUserNickname = userService.findByMobileNumber(firstUserId)
+			.map(User::getNickName)  // User 객체에서 닉네임 정보 추출
+			.orElseThrow(() -> new IllegalStateException("First user not found"));
+
+		String secondUserNickname = userService.findByMobileNumber(secondUserId)
+			.map(User::getNickName)  // User 객체에서 닉네임 정보 추출
+			.orElseThrow(() -> new IllegalStateException("Second user not found"));
+
+		String chatRoomUrlId = firstUserNickname + "_" + secondUserNickname;  // 닉네임을 사용하여 urlIdentifier 생성
 
 		Optional<ChatRoom> existingChatRoom = findByUrlIdentifier(chatRoomUrlId);
 		log.info("existingChatRoom: {}", existingChatRoom);
 		return existingChatRoom.orElseGet(() -> {
-			String chatRoomId = firstUserId + "_" + secondUserId;
+			String chatRoomId = UUID.randomUUID().toString();  // UUID를 사용하여 고유한 chatRoomId 생성
 			return createChatRoom(firstUserId, secondUserId, foodId, chatRoomId, chatRoomUrlId);
 		});
 	}

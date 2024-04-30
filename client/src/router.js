@@ -12,6 +12,7 @@ import MainDetail from "./views/pages/main/MainDetail";
 import MainForm from "./views/pages/main/MainForm";
 import ChatRoomList from "./views/Chat/ChatRoomList";
 import Chat from "./views/Chat/Chat";
+import ChatForm from "./views/Chat/ChatButton";
 
 const router = {
     routes: [
@@ -92,9 +93,14 @@ const router = {
             footer: <Footer/>
         },
         {
-            // path: '/chat/getChat/:chatRoomId',
-            path: '/chat/:foodId/:userId',
+            path: '/chat/getChat/:chatRoomId',
             component: <Chat/>,
+            header: <Header4/>,
+
+        },
+        {
+            path: '/chatForm',
+            component: <ChatForm/>,
             header: <Header4/>,
 
         },
