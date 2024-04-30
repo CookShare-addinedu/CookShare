@@ -23,6 +23,7 @@ public class ChatMessage {
 	@Indexed
 	private String chatRoomId;
 	private String sender;
+	private String receiver;
 	private String content;
 
 	@Indexed(direction = IndexDirection.DESCENDING)

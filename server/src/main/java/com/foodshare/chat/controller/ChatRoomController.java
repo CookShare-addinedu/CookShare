@@ -62,6 +62,7 @@ public class ChatRoomController {
 			}
 
 			Slice<ChatMessageDto> messages = chatRoomMessageService.listMessagesInChatRoom(
+				// chatRoomOpt.get().getUrlIdentifier(), userId, page, size);
 				chatRoomOpt.get().getUrlIdentifier(), userId, page, size);
 
 			if (messages.isEmpty()) {
@@ -119,11 +120,11 @@ public class ChatRoomController {
 	// 채팅방 생성
 	@PostMapping("/createRoom")
 	public ResponseEntity<ChatRoomCreationDto> createRoom(@RequestBody ChatRoomCreateRequest request) {
-
+		log.info("채팅방 개설 요청 받았습니다");
 		try {
-			String firstUserId = request.getUser1Index();
-			String secondUserId = request.getUser2Index();
-			Long foodId = request.getFoodId();
+			String firstUserId = request.getFirstUserMobileNumber();
+			String secondUserId = request.getFirstUserMobileNumber();
+			String foodId = request.getFoodId();
 			log.info("요청 내용: {}", request);
 
 			ChatRoom chatRoom = chatRoomService.findOrCreateChatRoom(firstUserId, secondUserId, foodId);
