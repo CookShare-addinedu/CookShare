@@ -10,9 +10,12 @@ function ChatRoomList() {
     const [rooms, setRooms] = useState([]);
     const [selectedRooms, setSelectedRooms] = useState([]);
     const [error, setError] = useState('');
+
     const token = localStorage.getItem('jwt');
     const decoded = jwtDecode(token);
     const userId = decoded.mobileNumber;
+
+
     const userName = decoded.userId;
 
 
@@ -32,17 +35,17 @@ function ChatRoomList() {
             }
         })
             .then((response) => {
-                if (Array.isArray(response.data)) { // 응답 데이터가 배열인지 확인
-                    setRooms(response.data); // 배열인 경우에만 설정
+                if (Array.isArray(response.data)) {
+                    setRooms(response.data);
 
                 } else {
-                    setError("채팅방 목록을 가져오는데 실패했습니다. 잘못된 데이터 형식입니다."); // 배열이 아닌 경우 오류 처리
+                    setError("채팅방 목록을 가져오는데 실패했습니다. 잘못된 데이터 형식입니다.");
                     console.log("채팅방 데이터", response.data);
                 }
             })
             .catch(error => {
                     if (error.response && error.response.status === 401) {
-                        console.error("인증되지 않았습니다. 로그인이 필요합니다."); // 오류 처리
+                        console.error("인증되지 않았습니다. 로그인이 필요합니다.");
                         setError("로그인이 필요합니다.");
                     }
                     console.error('채팅방 목록을 가져오는데 실패했습니다.', error);
@@ -68,10 +71,10 @@ function ChatRoomList() {
     const toggleRoomSelection = (chatRoomId) => {
         if (selectedRooms.includes(chatRoomId)) {
 
-            setSelectedRooms(selectedRooms.filter((id) => id !== chatRoomId)); // 선택 취소
+            setSelectedRooms(selectedRooms.filter((id) => id !== chatRoomId));
         } else {
 
-            setSelectedRooms([...selectedRooms, chatRoomId]); // 선택 추가
+            setSelectedRooms([...selectedRooms, chatRoomId]);
         }
     };
 

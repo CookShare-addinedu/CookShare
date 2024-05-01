@@ -7,10 +7,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,8 +30,6 @@ import com.foodshare.chat.service.VisibilityService;
 
 import com.foodshare.chat.utils.ValidationUtils;
 import com.foodshare.domain.ChatRoom;
-import com.foodshare.security.dto.CustomUserDetails;
-// import com.foodshare.security.dto.UserPrincipal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,15 +45,7 @@ public class ChatRoomController {
 	private final ChatRoomMessageService chatRoomMessageService;
 	private final VisibilityService visibilityService;
 	private final MongoQueryBuilder mongoQueryBuilder;
-	private Long getUserIdFromAuthentication() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		log.info("인증자는 도대체 값이 어떻게 되는거야?!" + authentication);
-		if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-			return ((CustomUserDetails) authentication.getPrincipal()).getUserId();
-		} else {
-			throw new UsernameNotFoundException("Authentication failed - no valid user found.");
-		}
-	}
+
 	@GetMapping("/detailRoom/{chatRoomId}/messages")
 	public ResponseEntity<Slice<ChatMessageDto>> listChatRoomMessages(
 		@PathVariable("chatRoomId") String chatRoomUrlId,
@@ -76,14 +62,13 @@ public class ChatRoomController {
 			}
 
 			Slice<ChatMessageDto> messages = chatRoomMessageService.listMessagesInChatRoom(
-				// chatRoomOpt.get().getUrlIdentifier(), userId, page, size);
 				chatRoomOpt.get().getUrlIdentifier(), userId, page, size);
 
 			if (messages.isEmpty()) {
 				return ResponseEntity.noContent().build();
 			}
-
 			return ResponseEntity.ok(messages);
+
 		} catch (Exception e) {
 			log.error("메시지 상세 조회 중 오류 발생", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -95,7 +80,6 @@ public class ChatRoomController {
 		try {
 			String chatRoomId = ValidationUtils.validateNotEmpty(chatRequestDto.getChatRoomId(), "chatRoomId");
 			String userId = ValidationUtils.validateNotEmpty(chatRequestDto.getUserId(), "userId");
-
 			mongoQueryBuilder.updateMessagesAsRead(chatRoomId, userId);
 			return ResponseEntity.ok().build();
 		} catch (Exception e) {
@@ -109,10 +93,9 @@ public class ChatRoomController {
 		try {
 			log.info("채팅 목록 조회 시작");
 			List<ChatRoomDto> chatRoomDtos = chatRoomService.listChatRoomsForUser(userId);
-
-			return ResponseEntity.ok(chatRoomDtos); // 성공 응답
+			return ResponseEntity.ok(chatRoomDtos);
 		} catch (Exception e) {
-			log.error("채팅 목록 조회 중 오류 발생", e); // 예외 로그
+			log.error("채팅 목록 조회 중 오류 발생", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // 예외 처리
 		}
 	}
@@ -134,17 +117,17 @@ public class ChatRoomController {
 	// 채팅방 생성
 	@PostMapping("/createRoom")
 	public ResponseEntity<ChatRoomCreationDto> createRoom(@RequestBody ChatRoomCreateRequest request) {
-		log.info("채팅방 개설 요청 받았습니다");
 		try {
-			Long firstUserId = getUserIdFromAuthentication();
-			Long secondUserId = Long.valueOf(request.getSecondUserId());
+			String firstUserId = request.getFirstUserMobileNumber();
+			String secondUserId = request.getSecondUserMobileNumber();
 			String foodId = request.getFoodId();
-			log.info("요청 내용: {}", request);
+			log.debug("요청 내용: {}", request);
 
 			ChatRoom chatRoom = chatRoomService.findOrCreateChatRoom(firstUserId, secondUserId, foodId);
 
 			ChatRoomCreationDto chatRoomDto = chatRoomService.toChatRoomCreationDto(chatRoom);
 
+			log.debug("chatRoomDto: {}", chatRoomDto);
 			return ResponseEntity.ok(chatRoomDto);
 		} catch (Exception e) {
 			log.error("채팅방 생성 중 오류 발생", e);

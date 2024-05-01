@@ -48,9 +48,7 @@ public class ChatDataMapperImpl implements ChatDataMapper {
 		try {
 			// ChatRoomCreationDto 변환 로직 구현 아직 안함
 			return ChatRoomCreationDto.builder()
-				.id(room.getId())
-				.firstUserMobileNumber(room.getFirstUser())
-				.secondUserMobileNumber(room.getSecondUser())
+
 				.foodId(room.getFoodId())
 				.urlIdentifier(room.getUrlIdentifier())
 				.build();

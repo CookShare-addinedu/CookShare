@@ -11,8 +11,10 @@ import MapView from "../../../components/address/MapView";
 import {IconButton, SquareButton} from "../../../components/button/Button";
 import {faAngleRight, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import Drawers from "../../../components/drawer/Drawers";
+
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import ChatButton from "../../Chat/ChatButton";
 
 export default function MainDetail() {
     const {id} = useParams();
@@ -87,6 +89,13 @@ export default function MainDetail() {
         }
     };
 
+    if (!food || !food.giver || !food.giver.mobileNumber) {
+        return <div>Loading...</div>; // 데이터가 로드되기를 기다리는 동안 로딩 표시
+    }
+
+
+
+    console.log("giver.mobileNumber",food.giver.mobileNumber);
 
     return (
         <section className={'main_detail'}>
@@ -102,11 +111,14 @@ export default function MainDetail() {
                         {/*<p className={'nick_name'}>{food.giver.nickname} 닉네임 자리입니다만</p>*/}
                         <p className={'nick_name'}>닉네임 자리입니다만</p>
                         <p className={'location'}>{food.location}</p>
+                        <p className={'nick_name'}>{food.writer} 닉네임 자리입니다만</p>
+                        <p className={'location'}>{food.location}주소자리</p>
                     </div>
                 </div>
                 <div className={'title_wrap'}>
                     <h5>{food.title}</h5>
                     {food.createdAt && <p className={'date'}>{formatTimeAgo(food.createdAt)}</p>}
+                    <p className={'date'}>{food.createdAt}1시간전</p>
                 </div>
                 <div className={'dates_wrap'}>
                     <p><span>소비기한</span>{food.eatByDate}</p>
@@ -142,11 +154,15 @@ export default function MainDetail() {
                         onClick={toggleFavorite}
                         style={{ color: isFavorited ? 'red' : 'grey' }}
                     />
-
                     {/*<NavLink to={`/chat/${food.foodId}/${food.giver.userId}`}>*/}
                     <NavLink to={`/chat/${food.foodId}`}>
                         <SquareButton name={'채팅하기'} />
                     </NavLink>
+                    <section className={'main_detail'}>
+                        <div className={'actions_wrap'}>
+                            <ChatButton foodId={food.foodId} giverId={food.giver.mobileNumber} />
+                        </div>
+                    </section>
                 </div>
             </div>
         </section>
