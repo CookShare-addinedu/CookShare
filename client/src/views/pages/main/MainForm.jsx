@@ -29,16 +29,31 @@ const MainForm = () => {
     // const [images, setImages] = useState([]);
 
     useEffect(() => {
-        console.log("초기데이터 확인:", initialData);
-        if (!isEqual(foodData,initialData)) {
-            if(initialData.imageUrls) {
-                const imageObjects = initialData.imageUrls.map(url => ({url, file: null}));
-                dispatch(setFood({...initialData, images: imageObjects}));
-            }else{
-                dispatch(setFood(initialData));
-            }
+        if (initialData) {
+            dispatch(setFood(initialData));
         }
-    }, [dispatch, initialData]);
+
+        const newFoodData = {
+            ...initialData,
+            images: initialData.imageUrls ? initialData.imageUrls.map(url => ({url, file: null})) : []
+        };
+
+        dispatch(setFood(newFoodData));
+    },[dispatch]);
+
+//     console.log("초기데이터 확인:", initialData);
+//     if (!isEqual(foodData, initialData)) {
+//         if (initialData?.imageUrls) {
+//             const newFoodData = {
+//                 ...initialData,
+//                 images: initialData.imageUrls.map(url => ({url, file: null})),
+//             }
+//             dispatch(setFood(newFoodData));
+//         } else {
+//             dispatch(setFood(initialData));
+//         }
+//     }
+// }, [dispatch, initialData, foodData]);
 
     const handleChange = useCallback((e) => {
         const {name, value} = e.target;
@@ -128,51 +143,48 @@ const MainForm = () => {
 
 
     const handleSubmit = async (e) => {
-        console.log("Form data before submit:", foodData);
         e.preventDefault();
         const formData = new FormData();
-        formData.append('makeByDate', foodData.makeByDate);
-        formData.append('eatByDate', foodData.eatByDate);
-
-        Object.keys(foodData).forEach(key => {
-            if(key !== 'images'){
-                formData.append(key, foodData[key]);
+        formData.append('title', foodData.title);
+        formData.append('description', foodData.description);
+        formData.append('makeByDate', format(foodData.makeByDate, 'yyyy-MM-dd'));
+        formData.append('eatByDate', format(foodData.eatByDate, 'yyyy-MM-dd'));
+        // 이미지 파일 체크 및 추가
+        foodData.images.forEach((image, index) => {
+            if (image.file) { // 파일이 실제로 존재하는지 확인
+                formData.append(`images[${index}]`, image.file);
+                console.log(`Image added to formData: images[${index}]`, image.file);
             }
         });
 
-        if (images.length > 0) {
-            foodData.images.forEach(image => {
-                if (image.file) { // 'image.file'이 존재하는 경우만 추가
-                    formData.append('images', image.file);
-                }
-            });
+        console.log("FormData 내용 검사:");
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
         }
 
+
+
+        const method = foodData.foodId ? 'PUT' : 'POST';
+        const url = foodData.foodId ? `/api/foods/${foodData.foodId}` : '/api/foods';
+        const token = localStorage.getItem('jwt');
+
         try {
-            console.log('foodData.id', foodData.id);
-            console.log('foodData', foodData);
-            const method = foodData.id ? 'PUT' : 'POST';
-            const url = foodData.id ? `/api/foods/${foodData.id}` : '/api/foods';
-            const token = localStorage.getItem('jwt');
-            console.log('url',url );
             const response = await axios({
                 method: method,
                 url: url,
                 data: formData,
                 headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
+                    Authorization: `Bearer ${token}`
                 }
-            })
-            console.log('서버 응답',response.data);
-            // dispatch(clearFood());foodData
+            });
+            console.log('서버 응답', response.data);
             navigate('/main');
         } catch (error) {
-            console.error('Error submitting food data', error);
-            alert('제출 중 오류가 발생했습니다' + (error.response?.data?.message || error.message));
-            console.log(error.response); // 서버 응답에 대한 자세한 로그 출력
+            console.error('Error submitting food data:', error);
+            alert('제출 중 오류가 발생했습니다: ' + (error.response?.data?.message || error.message));
         }
     };
+
 
 
 
