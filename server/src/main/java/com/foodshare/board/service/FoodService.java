@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,16 +21,22 @@ import com.foodshare.domain.Category;
 import com.foodshare.domain.Food;
 import com.foodshare.domain.FoodImage;
 import com.foodshare.board.mapper.EntityMapper;
+import com.foodshare.domain.User;
+import com.foodshare.security.dto.CustomUserDetails;
+import com.foodshare.security.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class FoodService {
 	private final FoodRepository foodRepository;
 	private final FoodImageRepository foodImageRepository;
 	private final CategoryRepository categoryRepository;
+	private final UserRepository userRepository;
 	private final EntityMapper entityMapper;
 	public Page<FoodDTO> getAllFoods(Pageable pageable) {
 		Page<Food> pageFoods = foodRepository.findAll(pageable);
@@ -40,14 +49,19 @@ public class FoodService {
 
 	public FoodDTO read(Long id) {
 		Food food = foodRepository.findById(id)
-			.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+				.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
 		List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
 		Category category = categoryRepository.findById(food.getCategory().getCategoryId())
-			.orElseThrow(() -> new NotFoundException("Category not found"));
+				.orElseThrow(() -> new NotFoundException("Category not found"));
 		return entityMapper.convertToFoodDTO(food, foodImages, category);
 	}
 
 	public Food create(FoodDTO foodDTO) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepository.findById(((CustomUserDetails) authentication.getPrincipal()).getUserId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		foodDTO.setGiver(user);
+		log.info("User value retrieved from token: {}", user);
+
 		Category category = entityMapper.convertToCategory(foodDTO.getCategory());
 		category = categoryRepository.save(category);
 
@@ -65,7 +79,7 @@ public class FoodService {
 	public Food update(Long id, FoodDTO foodDTO) throws NotFoundException {
 
 		Food existingFood = foodRepository.findById(id)
-			.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+				.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
 
 		// 기존 Food 엔티티 업데이트
 		existingFood.setTitle(foodDTO.getTitle());
@@ -74,7 +88,7 @@ public class FoodService {
 
 		// Category 업데이트
 		Category category = categoryRepository.findById(existingFood.getCategory().getCategoryId())
-			.orElseThrow(() -> new NotFoundException("Category not found"));
+				.orElseThrow(() -> new NotFoundException("Category not found"));
 		category.setName(foodDTO.getCategory());
 		categoryRepository.save(category);
 		existingFood.setCategory(category);
@@ -100,7 +114,7 @@ public class FoodService {
 	public void delete(Long id) throws NotFoundException {
 		// 음식 정보를 찾기
 		Food existingFood = foodRepository.findById(id)
-			.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+				.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
 
 		// 관련된 이미지 삭제
 		List<FoodImage> images = foodImageRepository.findByFoodFoodId(existingFood.getFoodId());

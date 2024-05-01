@@ -37,7 +37,7 @@ function Header2() {
         </header>
     )
 }
-function Header3() {
+function Header3({food}) {
     const navigate = useNavigate();
     const title = useHeaderTitle();
     return(
@@ -61,7 +61,7 @@ function Header3() {
                             </span>
                         </button>
                     }
-                    drawerContent={<Menu/>}
+                    drawerContent={<Menu food={food} />}
                     />
             </div>
         </header>

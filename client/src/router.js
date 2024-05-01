@@ -42,6 +42,13 @@ const router = {
             footer:null
         },
         {
+            path: '/main/update/:id',
+            component: <MainForm/>,
+            title: null,
+            header:<Header1/>,
+            footer:null
+        },
+        {
             path: '/main/add',
             component: <MainForm/>,
             title: null,

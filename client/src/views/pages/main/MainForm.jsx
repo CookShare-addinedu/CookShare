@@ -13,72 +13,42 @@ import {SquareButton} from "../../../components/button/Button";
 import Select from "../../../components/select/Select";
 import Drawers from "../../../components/drawer/Drawers";
 import Address from "../../../components/adress/Address";
+import {useDispatch, useSelector} from "react-redux";
+import {clearFood, setFood} from "../../../redux/foodSlice";
 
 
 const MainForm = () => {
-    const location = useLocation();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const currentLocation  = useLocation();
     const swiperRef = useRef(null);
-    const initialData = location.state?.food;
-    const [images, setImages] = useState([]); // 이미지 파일 목록 상태 추가
-    const [foodData, setFoodData] = useState({
-        category:'한식',
-        makeByDate: '',
-        eatByDate: '',
-        status: '',
-        title: '',
-        description: '',
-        location:''
-    });
-
-    const handleRemoveImage = (index) => {
-        setImages(prevImages => {
-            const newImages = prevImages.filter((_, i) => i !== index);
-            if (swiperRef.current && swiperRef.current.swiper) {
-                swiperRef.current.swiper.update();
-            }
-            return newImages;
-        });
-    };
+    const initialData = currentLocation.state?.food;
+    const foodData = useSelector(state => state.food.value)
+    const [images, setImages] = useState([]);
 
     useEffect(() => {
-        console.log('Updated foodData:', foodData);
-    }, [foodData]);
-
-    useEffect(() => {
-        console.log(initialData);
-        if (initialData) {
-            setFoodData({
-                category: initialData.category,
-                makeByDate: initialData.makeByDate,
-                eatByDate: initialData.eatByDate,
-                status: initialData.status,
-                title: initialData.title,
-                description: initialData.description,
-                location:initialData.location
-            });
-            setSelectedStatus(initialData.status); // 상태를 설정합니다.
-
-            // 이미지 URL을 이미지 미리보기 배열에 추가합니다.
-            // 가정: initialData.imageUrls는 이미지 URL 문자열 배열입니다.
-            if (initialData.imageUrls) {
-                setImages(initialData.imageUrls.map(url => ({ url })));
-            }
+        //     console.log("초기데이터 확인:", initialData);
+        //     if (initialData) {
+        //         dispatch(setFood(currentLocation.state.food));
+        //     }
+        // }, [initialData, dispatch]);
+        console.log("초기데이터 확인:", initialData);
+        if (!foodData && initialData) {
+            dispatch(setFood(initialData));
+            setImages(initialData.imageUrls?.map(url => ({ url })) || []);
         }
-    }, [initialData]);
+        // else {
+            // No initial data, clear the form
+            // dispatch(clearFood());
+            // setImages([]);
+        // }
+    }, [dispatch, foodData, initialData]);
 
     const handleChange = (e) => {
-        setFoodData({ ...foodData, [e.target.name]: e.target.value });
+        const {name, value} = e.target;
+        dispatch(setFood({...foodData, [name]: value}));
     };
 
-    const [selectedStatus, setSelectedStatus] = useState("");
-
-    // const handleStatusChange = (statusValue) => {
-    //     setFoodData({ ...foodData, status: statusValue });
-    //     setSelectedStatus(statusValue); // 버튼의 스타일을 변경하기 위해 선택된 상태를 설정합니다.
-    // };
-    //
-    // 이미지 변경 핸들러를 수정합니다.
     const handleImageChange = (e) => {
         if (e.target.files) {
             // 로컬에서 선택된 이미지 파일들의 배열을 생성합니다.
@@ -87,40 +57,103 @@ const MainForm = () => {
                 url: URL.createObjectURL(file)
             }));
             // 기존 이미지와 새로운 이미지를 결합합니다.
-            setImages(prevImages => [...prevImages, ...fileImages].slice(0, 5));
+            setImages([...images, ...fileImages].slice(0, 5));
         }
     };
-
-    const handleMakeByDateChange = (dateValue) => {
-        const formattedDate = dateValue ? format(dateValue, 'yyyy-MM-dd') : '';
-        setFoodData(prevData => ({
-            ...prevData,
-            makeByDate: formattedDate
-        }));
+    const handleRemoveImage = (index) => {
+        const newImages = images.filter((_, i) => i !== index);
+        setImages(newImages);
     };
 
-    const handleEatByDateChange = (dateValue) => {
+    // const handleRemoveImage = (index) => {
+    //     setImages(prevImages => {
+    //         const newImages = prevImages.filter((_, i) => i !== index);
+    //         if (swiperRef.current && swiperRef.current.swiper) {
+    //             swiperRef.current.swiper.update();
+    //         }
+    //         return newImages;
+    //     });
+    // };
+    const handleDateChange = (name, dateValue) => {
         const formattedDate = dateValue ? format(dateValue, 'yyyy-MM-dd') : '';
-        setFoodData(prevData => ({
-            ...prevData,
-            eatByDate: formattedDate
-        }));
+        dispatch(setFood({ ...foodData, [name]: formattedDate }));
     };
+
+
+    //     if (initialData) {
+    //         const completeData = {
+    //             title: initialData.title || '',
+    //             description: initialData.description || '',
+    //             location: initialData.location || '',
+    //             makeByDate: initialData.makeByDate || '',
+    //             eatByDate: initialData.eatByDate || '',
+    //             category: initialData.category || '',
+    //             images: initialData.images || []
+    //         };
+    //         console.log("완성된 데이터:", completeData);
+    //         dispatch(setFood(completeData));
+    //         setImages(initialData.images?.map(url => ({ url })) || []);
+    //     }else{
+    //         console.log("초기 데이터가 정의되지 않았습니다");
+    //         dispatch(clearFood()); // 데이터가 없는 경우 명시적으로 상태를 초기화
+    //     }
+    // }, [initialData, dispatch]);
+
+    useEffect(() => {
+        console.log('Redux로부터 업데이트된 food data:', foodData);
+    }, [foodData]); // foodData가 변경될 때마다 실행
+
+    useEffect(() => {
+        if (!foodData && initialData) {
+            console.log("Setting initial food data from location state");
+            dispatch(setFood(currentLocation.state.food));
+        }
+    }, [currentLocation.state, dispatch, foodData]);
+
+
+
+    useEffect(() => {
+        if (initialData) {
+            dispatch(setFood(initialData));
+            setImages(initialData.imageUrls.map(url => ({ url })) || []);
+        }
+    }, [initialData, dispatch]);
+
+    // useEffect(() =>{
+    //     if(!foodData && initialData){
+    //         dispatch(setFood(initialData));
+    //         if(initialData.imageUrls){
+    //             setImages(initialData.imageUrls.map(url => url));
+    //         }
+    //
+    //     }
+    // },[dispatch, initialData, foodData]);
+
+
+
+
+
+
+
+    // const handleDateChange = (name, dateValue) =>{
+    //     const formattedDate = dateValue? format(dateValue, 'yyyy-MM-dd') : '';
+    //     dispatch(setFood({...foodData, [name]: formattedDate}));
+    // }
 
     const handleLocationSelect = (selectedLocation) => {
-        setFoodData(prevVal => ({
-            ...prevVal,
-            location: selectedLocation
-        }));
+        dispatch(setFood({...foodData, location: selectedLocation}));
     }
 
     const handleSubmit = async (e) => {
+        console.log("Form data before submit:", foodData);
         e.preventDefault();
-
         const formData = new FormData();
-
         formData.append('makeByDate', foodData.makeByDate);
         formData.append('eatByDate', foodData.eatByDate);
+
+        Object.keys(foodData).forEach(key => {
+            formData.append(key, foodData[key]);
+        });
 
         if (images.length > 0) {
             images.forEach(image => {
@@ -130,28 +163,107 @@ const MainForm = () => {
             });
         }
 
-        Object.keys(foodData).forEach(key => {
-            formData.append(key, foodData[key]);
-        });
 
         try {
-            let response;
-            if (initialData?.foodId) {
-                // 데이터 수정 (PUT 요청)
-                console.log("수정 요청들어옴");
-                response = await axios.put(`/api/foods/${initialData.foodId}`, formData);
-            } else {
-                // 새 데이터 추가 (POST 요청)
-                console.log(initialData);
-                console.log("추가 요청들어옴");
-                response = await axios.post('/api/foods', formData);
-            }
-            console.log(response.data);
-            navigate(`/main`); // 성공적으로 처리 후 해당 음식 상세 페이지로 이동
+            console.log('foodData.id', foodData.id);
+            console.log('foodData', foodData);
+            const method = foodData.id? 'PUT' : 'POST';
+            const url = foodData.id ? `/api/foods/${foodData.id}` : '/api/foods';
+            const token = localStorage.getItem('jwt');
+            console.log('url',url );
+            const response = await axios({
+                method: method,
+                url: url,
+                data: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            console.log('서버 응답',response.data);
+
+            // dispatch(clearFood());foodData
+            navigate('/main');
         } catch (error) {
             console.error('Error submitting food data', error);
+            console.log(error.response); // 서버 응답에 대한 자세한 로그 출력
         }
     };
+
+
+
+
+
+
+
+
+
+    //     let response;
+    //     if (initialData?.foodId) {
+    //         // 데이터 수정 (PUT 요청)
+    //         console.log("수정 요청들어옴");
+    //         response = await axios.put(`/api/foods/${initialData.foodId}`, formData);
+    //     } else {
+    //         // 새 데이터 추가 (POST 요청)
+    //         console.log(initialData);
+    //         console.log("추가 요청들어옴");
+    //         response = await axios.post('/api/foods', formData);
+    //     }
+    //     console.log(response.data);
+    //     navigate(`/main`); // 성공적으로 처리 후 해당 음식 상세 페이지로 이동
+    // } catch (error) {
+    //     console.error('Error submitting food data', error);
+    // }
+
+
+
+    // useEffect(() => {
+    //     console.log('Updated food:', foodData);
+    // }, [foodData]);
+
+    // useEffect(() => {
+    //     console.log(initialData);
+    //     if (initialData) {
+    //         setFood({
+    //             category: initialData.category,
+    //             makeByDate: initialData.makeByDate,
+    //             eatByDate: initialData.eatByDate,
+    //             status: initialData.status,
+    //             title: initialData.title,
+    //             description: initialData.description,
+    //             location:initialData.location
+    //         });
+    //         setSelectedStatus(initialData.status); // 상태를 설정합니다.
+    //
+    //         // 이미지 URL을 이미지 미리보기 배열에 추가합니다.
+    //         // 가정: initialData.imageUrls는 이미지 URL 문자열 배열입니다.
+    //         if (initialData.imageUrls) {
+    //             setImages(initialData.imageUrls.map(url => ({ url })));
+    //         }
+    //     }
+    // }, [initialData]);
+
+
+
+    // const [selectedStatus, setSelectedStatus] = useState("");
+
+
+
+    // const handleMakeByDateChange = (dateValue) => {
+    //     const formattedDate = dateValue ? format(dateValue, 'yyyy-MM-dd') : '';
+    //     setFood(prevData => ({
+    //         ...prevData,
+    //         makeByDate: formattedDate
+    //     }));
+    // };
+    //
+    // const handleEatByDateChange = (dateValue) => {
+    //     const formattedDate = dateValue ? format(dateValue, 'yyyy-MM-dd') : '';
+    //     setFood(prevData => ({
+    //         ...prevData,
+    //         eatByDate: formattedDate
+    //     }));
+    // };
+
 
     return (
         <div className="form_wrap">
@@ -202,8 +314,10 @@ const MainForm = () => {
                             oneTap
                             name="makeByDate"
                             id="makeByDate"
-                            value={foodData.makeByDate ? new Date(foodData.makeByDate) : null}
-                            onChange={handleMakeByDateChange}
+                            // value={food.makeByDate ? new Date(food.makeByDate) : null}
+                            // value={new Date(foodData.makeByDate)}
+                            value={foodData && foodData.makeByDate ? new Date(foodData.makeByDate) : null}
+                            onChange={value => handleDateChange('makeByDate', value)}
                         />
                     </div>
 
@@ -216,29 +330,20 @@ const MainForm = () => {
                             name="eatByDate"
                             id="eatByDate"
                             value={foodData.eatByDate ? new Date(foodData.eatByDate) : null}
-                            onChange={handleEatByDateChange}
+                            // value={new Date(foodData.eatByDate)}
+
+                            onChange={value => handleDateChange('eatByDate', value)}
                         />
                     </div>
                 </div>
-                {/*<div className="form_group status_type">*/}
-                {/*    <label>거래방식</label>*/}
-                {/*    <div className="status-buttons">*/}
-                {/*        /!* 각 버튼의 className에 선택된 상태를 기반으로 조건부 스타일을 적용합니다. *!/*/}
-                {/*        <button type="button" className={`status-button ${selectedStatus === '나눔하기' ? 'selected' : ''}`}*/}
-                {/*                onClick={() => handleStatusChange('나눔하기')}>나눔하기*/}
-                {/*        </button>*/}
-                {/*        <button type="button" className={`status-button ${selectedStatus === '교환하기' ? 'selected' : ''}`}*/}
-                {/*                onClick={() => handleStatusChange('교환하기')}>교환하기*/}
-                {/*        </button>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
+
                 <div className="form_group">
                     <label htmlFor="title" className={'a11y-hidden'}>제목</label>
                     <input
                         className={'title'}
                         name="title"
                         id="title"
-                        value={foodData.title}
+                        value={foodData.title || ''}
                         onChange={handleChange}
                         placeholder="글 제목"
                     />
@@ -249,7 +354,7 @@ const MainForm = () => {
                         className={'description'}
                         name="description"
                         id="description"
-                        value={foodData.description}
+                        value={foodData.description || ''}
                         onChange={handleChange}
                         placeholder="내용을 입력해주세요"
                     />
@@ -259,7 +364,7 @@ const MainForm = () => {
                     <Select
                         name="category"
                         id="category"
-                        value={foodData.category}
+                        value={foodData.category || ''}
                         onChange={(value) => {
                             handleChange({
                                 target: {
