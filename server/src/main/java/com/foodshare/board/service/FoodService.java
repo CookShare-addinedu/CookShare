@@ -2,6 +2,7 @@ package com.foodshare.board.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.foodshare.board.dto.FoodDTO;
 import com.foodshare.board.exception.NotFoundException;
 import com.foodshare.board.repository.CategoryRepository;
-import com.foodshare.board.repository.FavoriteFoodRepository;
+import com.foodshare.board.repository.FavoriteRepository;
 import com.foodshare.board.repository.FoodImageRepository;
 import com.foodshare.board.repository.FoodRepository;
 import com.foodshare.domain.Category;
@@ -39,26 +40,44 @@ public class FoodService {
 	private final FoodImageRepository foodImageRepository;
 	private final CategoryRepository categoryRepository;
 	private final UserRepository userRepository;
-	private final FavoriteFoodRepository favoriteFoodRepository;
+	private final FavoriteRepository favoriteRepository;
 	private final EntityMapper entityMapper;
+
+	private Long getUserIdFromAuthentication() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		log.info("인증자는 도대체 값이 어떻게 되는거야?!" + authentication);
+		log.info("인증자는 도대체 값이 어떻게 되는거야?!" + authentication.getPrincipal());
+		log.info("인증자는 도대체 값이 어떻게 되는거야?!" + ((CustomUserDetails)authentication.getPrincipal()));
+		log.info("인증자는 도대체 값이 어떻게 되는거야?!" + ((CustomUserDetails)authentication.getPrincipal()).getUserId());
+		if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+			return ((CustomUserDetails) authentication.getPrincipal()).getUserId();
+		} else {
+			throw new UsernameNotFoundException("Authentication failed - no valid user found.");
+		}
+	}
 	public Page<FoodDTO> getAllFoods(Pageable pageable) {
-		Page<Food> pageFoods = foodRepository.findAll(pageable);
-		return pageFoods.map(food -> {
+		log.info("Service Getting all foods with pageable: {}", pageable);
+		return foodRepository.findAll(pageable).map(food -> {
 			List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
-			Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElse(null);
-			FavoriteFood favoriteFood = favoriteFoodRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
-			return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood);
+			Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElseThrow(() -> new NotFoundException("Category not found"));
+			Optional<FavoriteFood> favoriteFood = favoriteRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), getUserIdFromAuthentication());
+			long favoriteCount = favoriteRepository.countByFoodFoodId(food.getFoodId());
+			FoodDTO foodDTO = entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.orElse(null));
+			foodDTO.setLikes((int) favoriteCount);
+			return foodDTO;
 		});
 	}
 
 	public FoodDTO read(Long id) {
-		Food food = foodRepository.findById(id)
-			.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+		log.info("Service Reading food with id: {}", id);
+		Food food = foodRepository.findById(id).orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
 		List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
-		Category category = categoryRepository.findById(food.getCategory().getCategoryId())
-			.orElseThrow(() -> new NotFoundException("Category not found"));
-		FavoriteFood favoriteFood = favoriteFoodRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
-		return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood);
+		Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElseThrow(() -> new NotFoundException("Category not found"));
+		Optional<FavoriteFood> favoriteFood = favoriteRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), getUserIdFromAuthentication());
+		long favoriteCount = favoriteRepository.countByFoodFoodId(food.getFoodId());
+		FoodDTO foodDTO = entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.orElse(null));
+		foodDTO.setLikes((int) favoriteCount);
+		return foodDTO;
 	}
 
 	public Food create(FoodDTO foodDTO) {
@@ -78,6 +97,9 @@ public class FoodService {
 		if (foodImage != null) {
 			foodImageRepository.save(foodImage);
 		}
+
+		FavoriteFood favoriteFood = entityMapper.convertToFavoriteFood(foodDTO, food);
+		favoriteRepository.save(favoriteFood);
 		return food;
 	}
 
@@ -145,8 +167,12 @@ public class FoodService {
 				Long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
 				List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
 				Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElse(null);
-				FavoriteFood favoriteFood = favoriteFoodRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), userId);
-				return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood);
+				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+				User user = userRepository.findById(((CustomUserDetails) authentication.getPrincipal()).getUserId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+				Optional<FavoriteFood> favoriteFood = favoriteRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(),
+					user.getUserId());
+				return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.get());
 			}).collect(Collectors.toList());
 	}
 

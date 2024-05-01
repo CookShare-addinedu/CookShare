@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FavoriteFoodDTO {
+public class FavoriteDTO {
 	private Long userId;
 	private Long foodId;
 	private Boolean isFavorite; // 찜 추가 또는 삭제를 위한 플래그

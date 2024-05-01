@@ -34,9 +34,9 @@ public interface EntityMapper {
 		@Mapping(target = "giver", source = "food.giver"),
 		@Mapping(target = "location", source = "food.location"),  // 직접 지정 또는 자동 추출
 		@Mapping(target = "likes", source = "food.likes"),
-		@Mapping(target = "isFavorite", source = "favoritefood.isFavorite"),
+		@Mapping(target = "isFavorite", source = "favoriteFood.isFavorite"),
 	})
-	FoodDTO convertToFoodDTO(Food food, List<FoodImage> foodImages, Category category, FavoriteFood favoritefood);
+	FoodDTO convertToFoodDTO(Food food, List<FoodImage> foodImages, Category category, FavoriteFood favoriteFood);
 
 	default List<String> mapImagePaths(List<FoodImage> foodImages) {
 		if (foodImages == null) return Collections.emptyList();
@@ -70,18 +70,18 @@ public interface EntityMapper {
 	@Named("convertToFoodImage")
 	default FoodImage convertToFoodImage(FoodDTO foodDTO, Food food) {
 		if (foodDTO.getImageUrls() == null) return null;
-		FoodImage foodImage = FoodImage.builder()
+		return FoodImage.builder()
 			.imagePaths(foodDTO.getImageUrls())
 			.food(food)
 			.createdAt(Timestamp.from(Instant.now()))
 			.updatedAt(Timestamp.from(Instant.now()))
 			.build();
-		return foodImage;
 	}
 
 	@Named("convertToCategory")
 	default Category convertToCategory(String categoryName) {
-		Category category = Category.builder()
+		Category category;
+		category = Category.builder()
 			.name(categoryName)
 			.createdAt(Timestamp.from(Instant.now()))
 			.updatedAt(Timestamp.from(Instant.now()))
@@ -89,9 +89,10 @@ public interface EntityMapper {
 		return category;
 	}
 
-	@Named("converToFavoriteFood")
+	@Named("convertToFavoriteFood")
 	default FavoriteFood convertToFavoriteFood(FoodDTO foodDTO, Food food) {
-		FavoriteFood favoriteFood = FavoriteFood.builder()
+		FavoriteFood favoriteFood;
+		favoriteFood = FavoriteFood.builder()
 			.isFavorite(foodDTO.getIsFavorite())
 			.user(foodDTO.getGiver())
 			.food(food)
