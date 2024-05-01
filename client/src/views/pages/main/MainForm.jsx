@@ -149,6 +149,8 @@ const MainForm = () => {
         formData.append('description', foodData.description);
         formData.append('makeByDate', format(foodData.makeByDate, 'yyyy-MM-dd'));
         formData.append('eatByDate', format(foodData.eatByDate, 'yyyy-MM-dd'));
+        formData.append('category', foodData.category);
+        formData.append('location', foodData.location);
         // 이미지 파일 체크 및 추가
         foodData.images.forEach((image, index) => {
             if (image.file) { // 파일이 실제로 존재하는지 확인
