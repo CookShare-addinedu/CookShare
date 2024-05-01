@@ -21,10 +21,10 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    public Optional<User> findByMobileNumber(String mobileNumber) {
-        return userRepository.findByMobileNumber(mobileNumber);
-    }
+    // @Override
+    // public Optional<User> findByMobileNumber(String mobileNumber) {
+    //     return userRepository.findByMobileNumber(mobileNumber);
+    // }
 
     @Override
     public User registerUser(User user) {
@@ -68,8 +68,9 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("번호로 등록된 유저가 없습니다: " + mobileNumber);
         }
     }
-
-
+    public Optional<User> findByUserId(Long userId) {
+        return userRepository.findByUserId(userId);
+    }
 }
 
 

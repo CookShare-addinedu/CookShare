@@ -16,9 +16,8 @@ function Chat() {
     const [hasUserScrolled, setHasUserScrolled] = useState(false);
     const messagesContainerRef = useRef(null);
 
-    const [searchParams] = useSearchParams();
     const { foodId, userId } = useParams(); // URL 파라미터에서 foodId와 userId를 추출합니다.
-    const tokenId = jwtDecode(localStorage.getItem('jwt')).userId;
+    // const tokenId = jwtDecode(localStorage.getItem('jwt')).userId;
 
     useEffect(() => {
         if (foodId && userId) {
@@ -49,16 +48,20 @@ function Chat() {
     const checkAndCreateChatRoom = async () => {
         if (!chatRoomId) {
             try {
-                console.log("채팅방 개설해주세요");
-                console.log(tokenId);
-                console.log(userId);
-                console.log(foodId);
+                console.log("채팅방 생성을 요청합니다.");
                 const response = await axios.post('/api/chat/createRoom', {
-                    firstUserMobileNumber: tokenId,
-                    secondUserMobileNumber: userId,
+                    // firstUserId: tokenId,  // 현재 사용자 ID
+                    secondUserId: userId, // 상대방 사용자 ID
                     foodId: foodId
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('jwt')}`
+                    }
                 });
-                setChatRoomId(response.data.chatRoomId);
+                if (response.data.chatRoomId) {
+                    setChatRoomId(response.data.chatRoomId);
+                    console.log("채팅방 ID 설정:", response.data.chatRoomId);
+                }
             } catch (error) {
                 console.error('채팅방 생성 중 오류 발생:', error);
             }
@@ -67,18 +70,18 @@ function Chat() {
 
     const sendMessage = async () => {
         if (!chatRoomId) {
-            await checkAndCreateChatRoom();
+            await checkAndCreateChatRoom(); // 채팅방 생성이 필요한 경우, 생성을 시도합니다.
         }
-        if (stompClient && stompClient.connected && newMessage.trim() !== '') {
+        if (chatRoomId && stompClient && stompClient.connected && newMessage.trim() !== '') {
             const timestamp = new Date().toISOString();
             const chatMessage = {
                 chatRoomId: chatRoomId,
-                sender: userId,
+                // sender: tokenId, // JWT로부터 추출된 사용자 ID
                 content: newMessage,
                 timestamp: timestamp,
             };
 
-            stompClient.send(`/app/chat.room/${chatRoomId}/sendMessage`, {}, JSON.stringify(chatMessage));
+            stompClient.send(`/app/chat/room/${chatRoomId}/sendMessage`, {}, JSON.stringify(chatMessage));
             setLastMessageTimestamp(timestamp);
             setNewMessage('');
         } else {
@@ -129,10 +132,4 @@ function Chat() {
         </div>
     );
 }
-
 export default Chat;
-
-
-
-
-

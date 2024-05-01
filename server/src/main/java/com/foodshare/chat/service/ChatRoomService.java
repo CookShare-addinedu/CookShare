@@ -88,16 +88,16 @@ public class ChatRoomService {
 		});
 	}
 
-	public ChatRoom createChatRoom(String firstUserId, String secondUserId, String foodId, String chatRoomId,
+	public ChatRoom createChatRoom(Long firstUserId, Long secondUserId, String foodId, String chatRoomId,
 		String chaRoomUrlId) {
 		log.info("createChatRoom 채팅방을 개설요청드립니다");
-		ValidationUtils.validateNotEmpty(firstUserId, "firstUserId");
-		ValidationUtils.validateNotEmpty(secondUserId, "secondUserId");
+		ValidationUtils.validateNotEmpty(firstUserId.toString(), "firstUserId");
+		ValidationUtils.validateNotEmpty(secondUserId.toString(), "secondUserId");
 
 		ChatRoom chatRoom = ChatRoom.builder()
 			.id(chatRoomId)
-			.firstUser(firstUserId)
-			.secondUser(secondUserId)
+			.firstUser(firstUserId.toString())
+			.secondUser(secondUserId.toString())
 			.foodId(foodId)
 			.urlIdentifier(chaRoomUrlId)
 			.build();
@@ -105,11 +105,12 @@ public class ChatRoomService {
 		return chatRoomRepository.save(chatRoom);
 	}
 
-	public ChatRoom findOrCreateChatRoom(String firstUserId, String secondUserId, String foodId) {
-		log.info("채팅방 서비스 레이어 들어왔습니다");
-		Optional<User> firstUserNickName = userService.findByMobileNumber(firstUserId);
-		Optional<User> secondUserNickName = userService.findByMobileNumber(secondUserId);
-		String chatRoomUrlId = firstUserNickName + "_" + secondUserNickName;
+	public ChatRoom findOrCreateChatRoom(Long firstUserId, Long secondUserId, String foodId) {
+		log.info("채팅방 서비스 레이어 들어왔습니다" + firstUserId + " - " + secondUserId);
+		Optional<User> firstUser = userService.findByUserId(firstUserId);
+		Optional<User> secondUser = userService.findByUserId(secondUserId);
+		String chatRoomUrlId = firstUser.get().getUserId() + "_" + secondUser.get().getUserId();
+		log.info(firstUser + " " + secondUser);
 
 		Optional<ChatRoom> existingChatRoom = findByUrlIdentifier(chatRoomUrlId);
 		log.info("existingChatRoom: {}", existingChatRoom);

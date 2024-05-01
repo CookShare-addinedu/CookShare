@@ -7,6 +7,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,7 @@ import com.foodshare.chat.service.VisibilityService;
 
 import com.foodshare.chat.utils.ValidationUtils;
 import com.foodshare.domain.ChatRoom;
+import com.foodshare.security.dto.UserPrincipal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -119,11 +121,11 @@ public class ChatRoomController {
 
 	// 채팅방 생성
 	@PostMapping("/createRoom")
-	public ResponseEntity<ChatRoomCreationDto> createRoom(@RequestBody ChatRoomCreateRequest request) {
+	public ResponseEntity<ChatRoomCreationDto> createRoom(@AuthenticationPrincipal UserPrincipal currentUser, @RequestBody ChatRoomCreateRequest request) {
 		log.info("채팅방 개설 요청 받았습니다");
 		try {
-			String firstUserId = request.getFirstUserMobileNumber();
-			String secondUserId = request.getFirstUserMobileNumber();
+			Long firstUserId = currentUser.getId();
+			Long secondUserId = Long.valueOf(request.getSecondUserId());
 			String foodId = request.getFoodId();
 			log.info("요청 내용: {}", request);
 

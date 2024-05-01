@@ -21,7 +21,7 @@ public class ChatMessageController {
 	private final SimpMessagingTemplate template;
 	private final MessageProcessingService messageProcessingService;
 
-	@MessageMapping("/chat.room/{chatRoomId}/sendMessage")
+	@MessageMapping("/chat/room/{chatRoomId}/sendMessage")
 	public void message(@DestinationVariable String chatRoomId, @Payload ChatMessageDto message) {
 		log.info("채팅 시작");
 		log.debug(message.toString());
