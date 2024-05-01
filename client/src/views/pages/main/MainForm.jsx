@@ -15,7 +15,6 @@ import Drawers from "../../../components/drawer/Drawers";
 import Address from "../../../components/adress/Address";
 import {useDispatch, useSelector} from "react-redux";
 import {addImage, clearFood, removeImage, setFood} from "../../../redux/foodSlice";
-import {isEqual} from "lodash";
 
 
 const MainForm = () => {
@@ -41,20 +40,6 @@ const MainForm = () => {
         dispatch(setFood(newFoodData));
     },[dispatch]);
 
-//     console.log("초기데이터 확인:", initialData);
-//     if (!isEqual(foodData, initialData)) {
-//         if (initialData?.imageUrls) {
-//             const newFoodData = {
-//                 ...initialData,
-//                 images: initialData.imageUrls.map(url => ({url, file: null})),
-//             }
-//             dispatch(setFood(newFoodData));
-//         } else {
-//             dispatch(setFood(initialData));
-//         }
-//     }
-// }, [dispatch, initialData, foodData]);
-
     const handleChange = useCallback((e) => {
         const {name, value} = e.target;
         dispatch(setFood({...foodData, [name]: value}));
@@ -76,16 +61,6 @@ const MainForm = () => {
             swiperRef.current.swiper.update();
         }
     };
-
-    //     setImages(prevImages => {
-    // const handleRemoveImage = (index) => {
-    //         const newImages = prevImages.filter((_, i) => i !== index);
-    //         if (swiperRef.current && swiperRef.current.swiper) {
-    //             swiperRef.current.swiper.update();
-    //         }
-    //         return newImages;
-    //     });
-    // };
     const handleDateChange = (name, dateValue) => {
         const formattedDate = dateValue ? format(dateValue, 'yyyy-MM-dd') : '';
         dispatch(setFood({ ...foodData, [name]: formattedDate }));
@@ -95,51 +70,9 @@ const MainForm = () => {
         dispatch(setFood({...foodData, location: selectedLocation}));
     }
 
-
-    //     if (initialData) {
-    //         const completeData = {
-    //             title: initialData.title || '',
-    //             description: initialData.description || '',
-    //             location: initialData.location || '',
-    //             makeByDate: initialData.makeByDate || '',
-    //             eatByDate: initialData.eatByDate || '',
-    //             category: initialData.category || '',
-    //             images: initialData.images || []
-    //         };
-    //         console.log("완성된 데이터:", completeData);
-    //         dispatch(setFood(completeData));
-    //         setImages(initialData.images?.map(url => ({ url })) || []);
-    //     }else{
-    //         console.log("초기 데이터가 정의되지 않았습니다");
-    //         dispatch(clearFood()); // 데이터가 없는 경우 명시적으로 상태를 초기화
-    //     }
-    // }, [initialData, dispatch]);
-
     useEffect(() => {
         console.log('Redux로부터 업데이트된 food data:', foodData);
     }, [foodData]); // foodData가 변경될 때마다 실행
-
-    // useEffect(() =>{
-    //     if(!foodData && initialData){
-    //         dispatch(setFood(initialData));
-    //         if(initialData.imageUrls){
-    //             setImages(initialData.imageUrls.map(url => url));
-    //         }
-    //
-    //     }
-    // },[dispatch, initialData, foodData]);
-
-
-
-
-
-
-
-    // const handleDateChange = (name, dateValue) =>{
-    //     const formattedDate = dateValue? format(dateValue, 'yyyy-MM-dd') : '';
-    //     dispatch(setFood({...foodData, [name]: formattedDate}));
-    // }
-
 
 
     const handleSubmit = async (e) => {
@@ -186,83 +119,6 @@ const MainForm = () => {
             alert('제출 중 오류가 발생했습니다: ' + (error.response?.data?.message || error.message));
         }
     };
-
-
-
-
-
-
-
-
-
-
-    //     let response;
-    //     if (initialData?.foodId) {
-    //         // 데이터 수정 (PUT 요청)
-    //         console.log("수정 요청들어옴");
-    //         response = await axios.put(`/api/foods/${initialData.foodId}`, formData);
-    //     } else {
-    //         // 새 데이터 추가 (POST 요청)
-    //         console.log(initialData);
-    //         console.log("추가 요청들어옴");
-    //         response = await axios.post('/api/foods', formData);
-    //     }
-    //     console.log(response.data);
-    //     navigate(`/main`); // 성공적으로 처리 후 해당 음식 상세 페이지로 이동
-    // } catch (error) {
-    //     console.error('Error submitting food data', error);
-    // }
-
-
-
-    // useEffect(() => {
-    //     console.log('Updated food:', foodData);
-    // }, [foodData]);
-
-    // useEffect(() => {
-    //     console.log(initialData);
-    //     if (initialData) {
-    //         setFood({
-    //             category: initialData.category,
-    //             makeByDate: initialData.makeByDate,
-    //             eatByDate: initialData.eatByDate,
-    //             status: initialData.status,
-    //             title: initialData.title,
-    //             description: initialData.description,
-    //             location:initialData.location
-    //         });
-    //         setSelectedStatus(initialData.status); // 상태를 설정합니다.
-    //
-    //         // 이미지 URL을 이미지 미리보기 배열에 추가합니다.
-    //         // 가정: initialData.imageUrls는 이미지 URL 문자열 배열입니다.
-    //         if (initialData.imageUrls) {
-    //             setImages(initialData.imageUrls.map(url => ({ url })));
-    //         }
-    //     }
-    // }, [initialData]);
-
-
-
-    // const [selectedStatus, setSelectedStatus] = useState("");
-
-
-
-    // const handleMakeByDateChange = (dateValue) => {
-    //     const formattedDate = dateValue ? format(dateValue, 'yyyy-MM-dd') : '';
-    //     setFood(prevData => ({
-    //         ...prevData,
-    //         makeByDate: formattedDate
-    //     }));
-    // };
-    //
-    // const handleEatByDateChange = (dateValue) => {
-    //     const formattedDate = dateValue ? format(dateValue, 'yyyy-MM-dd') : '';
-    //     setFood(prevData => ({
-    //         ...prevData,
-    //         eatByDate: formattedDate
-    //     }));
-    // };
-
 
     return (
         <div className="form_wrap">
