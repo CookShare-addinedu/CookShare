@@ -39,6 +39,15 @@ public class NotificationService {
 		return String.format("%s 사용자가 채팅을 보냈습니다:", sender.getMobileNumber());
 	}
 
+	public Notification createRoomCreationNotification(String receiverMobileNumber, String senderMobileNumber) {
+		User receiver = findUserByMobileNumber(receiverMobileNumber);
+		User sender = findUserByMobileNumber(senderMobileNumber);
+
+		String notificationMessage = String.format("%s 사용자와의 채팅방이 생성되었습니다", sender.getNickName());
+
+		return createNotification(receiver, notificationMessage);
+	}
+
 	private Notification createNotification(User receiver, String message) {
 		Notification notification = Notification.builder()
 			.user(receiver)

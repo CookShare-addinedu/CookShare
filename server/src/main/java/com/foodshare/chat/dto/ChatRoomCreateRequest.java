@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomCreateRequest {
-	private String user1Index;
-	private String user2Index;
-	private Long foodId;
+	private String firstUserMobileNumber;
+	private String secondUserMobileNumber;
+	private String foodId;
 }

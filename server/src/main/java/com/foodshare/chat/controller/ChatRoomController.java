@@ -67,8 +67,8 @@ public class ChatRoomController {
 			if (messages.isEmpty()) {
 				return ResponseEntity.noContent().build();
 			}
-
 			return ResponseEntity.ok(messages);
+
 		} catch (Exception e) {
 			log.error("메시지 상세 조회 중 오류 발생", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -80,7 +80,6 @@ public class ChatRoomController {
 		try {
 			String chatRoomId = ValidationUtils.validateNotEmpty(chatRequestDto.getChatRoomId(), "chatRoomId");
 			String userId = ValidationUtils.validateNotEmpty(chatRequestDto.getUserId(), "userId");
-
 			mongoQueryBuilder.updateMessagesAsRead(chatRoomId, userId);
 			return ResponseEntity.ok().build();
 		} catch (Exception e) {
@@ -94,10 +93,9 @@ public class ChatRoomController {
 		try {
 			log.info("채팅 목록 조회 시작");
 			List<ChatRoomDto> chatRoomDtos = chatRoomService.listChatRoomsForUser(userId);
-
-			return ResponseEntity.ok(chatRoomDtos); // 성공 응답
+			return ResponseEntity.ok(chatRoomDtos);
 		} catch (Exception e) {
-			log.error("채팅 목록 조회 중 오류 발생", e); // 예외 로그
+			log.error("채팅 목록 조회 중 오류 발생", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // 예외 처리
 		}
 	}
@@ -119,17 +117,17 @@ public class ChatRoomController {
 	// 채팅방 생성
 	@PostMapping("/createRoom")
 	public ResponseEntity<ChatRoomCreationDto> createRoom(@RequestBody ChatRoomCreateRequest request) {
-
 		try {
-			String firstUserId = request.getUser1Index();
-			String secondUserId = request.getUser2Index();
-			Long foodId = request.getFoodId();
-			log.info("요청 내용: {}", request);
+			String firstUserId = request.getFirstUserMobileNumber();
+			String secondUserId = request.getSecondUserMobileNumber();
+			String foodId = request.getFoodId();
+			log.debug("요청 내용: {}", request);
 
 			ChatRoom chatRoom = chatRoomService.findOrCreateChatRoom(firstUserId, secondUserId, foodId);
 
 			ChatRoomCreationDto chatRoomDto = chatRoomService.toChatRoomCreationDto(chatRoom);
 
+			log.debug("chatRoomDto: {}", chatRoomDto);
 			return ResponseEntity.ok(chatRoomDto);
 		} catch (Exception e) {
 			log.error("채팅방 생성 중 오류 발생", e);
