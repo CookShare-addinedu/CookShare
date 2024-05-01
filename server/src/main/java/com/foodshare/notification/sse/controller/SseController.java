@@ -56,11 +56,7 @@ public class SseController {
 
 		try {
 			sseEmitters.sendEvent(newEmitter, "connect", "connected");
-
-			// sseEmitterService.getChatUnreadCountAndSend(userId);
-			//
-			// sseEmitterService.getNoticeUnreadCountAndSend(userId);
-			sseEmitterService. sendAllRelevantUpdates(userId);
+			sseEmitterService.sendAllRelevantUpdates(userId);
 
 		} catch (Exception e) {
 			log.error("SSE 연결 오류: {}", e.getMessage());
