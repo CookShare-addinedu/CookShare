@@ -10,6 +10,9 @@ export const foodSlice = createSlice({
             eatByDate: '',
             category: '한식',
             images: [],
+            giver:{
+                nickName: '',
+            }
         }
     },
     reducers: {
