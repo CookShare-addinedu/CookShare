@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRoomCreationDto {
-	private String id;
-	private Long foodId;
+	private String chatRoomId;
+	private String foodId;
 	private String firstUserMobileNumber;
 	private String secondUserMobileNumber;
 	private String urlIdentifier;
