@@ -31,10 +31,10 @@ public class Notification {
 	private String message;
 
 	@Column(name = "is_read")
-	private Boolean isRead;
+	private boolean isRead;
 
 	@Column(name = "is_sent")
-	private Boolean isSent = false;
+	private boolean isSent;
 
 	@Column(name = "created_at")
 	private Timestamp createdAt;

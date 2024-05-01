@@ -65,7 +65,7 @@ public class NotificationService {
 	public void updateNotificationAsRead(Long notificationId) {
 		Notification notification = notificationRepository.findById(notificationId)
 			.orElseThrow(() -> new IllegalStateException("Notification not found"));
-		notification.setIsRead(true);
+		notification.setRead(true);
 		notificationRepository.save(notification);
 	}
 

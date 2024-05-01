@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class NotificationDto {
 	private Long notificationId;
 	private String message;
-	private Boolean isRead;
-	private Boolean isSent;
+	private boolean isRead;
+	private boolean isSent;
 	private LocalDateTime createdAt;
 }

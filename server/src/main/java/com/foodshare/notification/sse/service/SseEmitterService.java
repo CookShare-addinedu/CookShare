@@ -53,13 +53,7 @@ public class SseEmitterService {
 
 		log.info("receiverId = {}", receiverId);
 		if (emitter != null) {
-			NotificationDto notificationDto = new NotificationDto(
-				notification.getNotificationId(),
-				notification.getMessage(),
-				notification.getIsRead(),
-				notification.getIsSent(),
-				createdAt
-			);
+			NotificationDto notificationDto = new NotificationDto();
 
 			try {
 				emitter.send(SseEmitter.event()

@@ -7,7 +7,10 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +34,8 @@ import com.foodshare.chat.service.VisibilityService;
 
 import com.foodshare.chat.utils.ValidationUtils;
 import com.foodshare.domain.ChatRoom;
-import com.foodshare.security.dto.UserPrincipal;
+import com.foodshare.security.dto.CustomUserDetails;
+// import com.foodshare.security.dto.UserPrincipal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +51,15 @@ public class ChatRoomController {
 	private final ChatRoomMessageService chatRoomMessageService;
 	private final VisibilityService visibilityService;
 	private final MongoQueryBuilder mongoQueryBuilder;
-
+	private Long getUserIdFromAuthentication() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		log.info("인증자는 도대체 값이 어떻게 되는거야?!" + authentication);
+		if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+			return ((CustomUserDetails) authentication.getPrincipal()).getUserId();
+		} else {
+			throw new UsernameNotFoundException("Authentication failed - no valid user found.");
+		}
+	}
 	@GetMapping("/detailRoom/{chatRoomId}/messages")
 	public ResponseEntity<Slice<ChatMessageDto>> listChatRoomMessages(
 		@PathVariable("chatRoomId") String chatRoomUrlId,
@@ -121,10 +133,10 @@ public class ChatRoomController {
 
 	// 채팅방 생성
 	@PostMapping("/createRoom")
-	public ResponseEntity<ChatRoomCreationDto> createRoom(@AuthenticationPrincipal UserPrincipal currentUser, @RequestBody ChatRoomCreateRequest request) {
+	public ResponseEntity<ChatRoomCreationDto> createRoom(@RequestBody ChatRoomCreateRequest request) {
 		log.info("채팅방 개설 요청 받았습니다");
 		try {
-			Long firstUserId = currentUser.getId();
+			Long firstUserId = getUserIdFromAuthentication();
 			Long secondUserId = Long.valueOf(request.getSecondUserId());
 			String foodId = request.getFoodId();
 			log.info("요청 내용: {}", request);
