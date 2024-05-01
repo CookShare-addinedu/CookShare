@@ -2,7 +2,7 @@ import './MainDetail.scss';
 import { Avatar } from "rsuite";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {NavLink, useParams} from "react-router-dom";
+import {NavLink, useNavigate, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-regular-svg-icons";
 import Caution from "../../../components/caution/Caution";
@@ -26,8 +26,8 @@ export default function MainDetail() {
                     console.log('받아온 데이터 로그에 출력:', response.data);
                     dispatch(setFood(response.data));
                 }catch (error){
-                    console.log('Falied to fetch data:', error);
                     dispatch(clearFood());
+                    console.log('Falied to fetch data:', error);
                 }
             };
             fetchFoodsData();
@@ -40,21 +40,7 @@ export default function MainDetail() {
     if(!foodData){
         return <div>Loading...</div>;
     }
-    //
-    // useEffect(() => {
-    //     fetchFoodsData();
-    // }, []);
 
-    // const fetchFoodsData = async () => {
-    //     console.log('푸드 아이디:', id);
-    //     try{
-    //         const response = await axios.get(`/api/foods/${id}`);
-    //         console.log('받아온 데이터 로그에 출력:', response.data);
-    //         setFood(response.data);
-    //     }catch (error){
-    //         console.log('Falied to fetch data:', error);
-    //     }
-    // }
     return (
         <section className={'main_detail'}>
             <div className={'img_wrap'}>

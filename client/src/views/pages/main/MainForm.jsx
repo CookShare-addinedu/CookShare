@@ -150,7 +150,6 @@ const MainForm = () => {
                             <SwiperSlide key={index}>
                                 <div>
                                     <img src={image.url} alt={`Preview ${index}`}/>
-                                    {/* 이미지 제거 버튼을 추가합니다. */}
                                     <button className={'close'} type="button" onClick={() => handleRemoveImage(index)}>
                                         <FontAwesomeIcon icon={faCircleXmark}/>
                                     </button>
