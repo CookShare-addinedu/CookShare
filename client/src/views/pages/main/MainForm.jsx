@@ -20,53 +20,39 @@ import {clearFood, setFood} from "../../../redux/foodSlice";
 const MainForm = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const currentLocation  = useLocation();
+    const { state }  = useLocation();
     const swiperRef = useRef(null);
-    const initialData = currentLocation.state?.food;
     const foodData = useSelector(state => state.food.value)
+    const initialData = state?.foodData || foodData;
     const [images, setImages] = useState([]);
 
     useEffect(() => {
-        //     console.log("초기데이터 확인:", initialData);
-        //     if (initialData) {
-        //         dispatch(setFood(currentLocation.state.food));
-        //     }
-        // }, [initialData, dispatch]);
         console.log("초기데이터 확인:", initialData);
-        if (!foodData && initialData) {
+        if (initialData) {
             dispatch(setFood(initialData));
             setImages(initialData.imageUrls?.map(url => ({ url })) || []);
         }
-        // else {
-            // No initial data, clear the form
-            // dispatch(clearFood());
-            // setImages([]);
-        // }
-    }, [dispatch, foodData, initialData]);
+    }, [dispatch, initialData]);
 
     const handleChange = (e) => {
         const {name, value} = e.target;
         dispatch(setFood({...foodData, [name]: value}));
     };
-
     const handleImageChange = (e) => {
         if (e.target.files) {
-            // 로컬에서 선택된 이미지 파일들의 배열을 생성합니다.
             const fileImages = Array.from(e.target.files).map(file => ({
                 file,
                 url: URL.createObjectURL(file)
             }));
-            // 기존 이미지와 새로운 이미지를 결합합니다.
             setImages([...images, ...fileImages].slice(0, 5));
         }
     };
     const handleRemoveImage = (index) => {
-        const newImages = images.filter((_, i) => i !== index);
-        setImages(newImages);
+        setImages(images.filter((_, i) => i !== index));
     };
 
-    // const handleRemoveImage = (index) => {
     //     setImages(prevImages => {
+    // const handleRemoveImage = (index) => {
     //         const newImages = prevImages.filter((_, i) => i !== index);
     //         if (swiperRef.current && swiperRef.current.swiper) {
     //             swiperRef.current.swiper.update();
@@ -78,6 +64,10 @@ const MainForm = () => {
         const formattedDate = dateValue ? format(dateValue, 'yyyy-MM-dd') : '';
         dispatch(setFood({ ...foodData, [name]: formattedDate }));
     };
+
+    const handleLocationSelect = (selectedLocation) => {
+        dispatch(setFood({...foodData, location: selectedLocation}));
+    }
 
 
     //     if (initialData) {
@@ -103,22 +93,6 @@ const MainForm = () => {
         console.log('Redux로부터 업데이트된 food data:', foodData);
     }, [foodData]); // foodData가 변경될 때마다 실행
 
-    useEffect(() => {
-        if (!foodData && initialData) {
-            console.log("Setting initial food data from location state");
-            dispatch(setFood(currentLocation.state.food));
-        }
-    }, [currentLocation.state, dispatch, foodData]);
-
-
-
-    useEffect(() => {
-        if (initialData) {
-            dispatch(setFood(initialData));
-            setImages(initialData.imageUrls.map(url => ({ url })) || []);
-        }
-    }, [initialData, dispatch]);
-
     // useEffect(() =>{
     //     if(!foodData && initialData){
     //         dispatch(setFood(initialData));
@@ -140,9 +114,7 @@ const MainForm = () => {
     //     dispatch(setFood({...foodData, [name]: formattedDate}));
     // }
 
-    const handleLocationSelect = (selectedLocation) => {
-        dispatch(setFood({...foodData, location: selectedLocation}));
-    }
+
 
     const handleSubmit = async (e) => {
         console.log("Form data before submit:", foodData);
@@ -162,7 +134,6 @@ const MainForm = () => {
                 }
             });
         }
-
 
         try {
             console.log('foodData.id', foodData.id);
