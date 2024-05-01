@@ -17,9 +17,10 @@ import { ko } from 'date-fns/locale';
 export default function MainDetail() {
     const {id} = useParams();
     const [food, setFood] = useState({ giver: {} }); // 초기 상태에 giver 객체 포함
-    const [isFavorited, setIsFavorited] = useState(false); // 찜 상태
+    const [isFavorited, setIsFavorited] = useState(false); // 초기값은 false로 설정
     const [favoriteCount, setFavoriteCount] = useState(food.likes || 0); // 찜 횟수 초기화
 
+    console.log(isFavorited);
 
     const fullScreenMapStyle = {
         width: '100vw',
@@ -33,10 +34,16 @@ export default function MainDetail() {
     useEffect(() => {
         const fetchFoodsData = async () => {
             try {
-                const response = await axios.get(`/api/foods/${id}`);
+                const response = await axios.get(`/api/foods/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                    },
+
+                });
                 setFood(response.data);
                 setIsFavorited(response.data.isFavorite);
                 setFavoriteCount(response.data.likes);
+                console.log(response.data);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             }
@@ -63,16 +70,23 @@ export default function MainDetail() {
                 method: method,
                 url: `/api/favorites/${food.foodId}`,
                 data: {
-                    userId: food.giver.userId, // 현재 로그인한 사용자 ID
+                    // userId: food.giver.userId, // 현재 로그인한 사용자 ID
                     isFavorite: !isFavorited
+                },
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
                 }
             });
             setIsFavorited(!isFavorited); // 찜 상태 토글
             setFavoriteCount(prev => isFavorited ? prev - 1 : prev + 1); // 찜 횟수 조정
+            console.log(isFavorited);
+            console.log(response);
+
         } catch (error) {
             console.error('Error toggling favorite:', error);
         }
     };
+
 
     return (
         <section className={'main_detail'}>
@@ -85,13 +99,14 @@ export default function MainDetail() {
                 <div className={'user_wrap'}>
                     <Avatar className={'avatar'} circle/>
                     <div className={'user_info'}>
-                        <p className={'nick_name'}>{food.writer} 닉네임 자리입니다만</p>
-                        <p className={'location'}>{food.location}주소자리</p>
+                        {/*<p className={'nick_name'}>{food.giver.nickname} 닉네임 자리입니다만</p>*/}
+                        <p className={'nick_name'}>닉네임 자리입니다만</p>
+                        <p className={'location'}>{food.location}</p>
                     </div>
                 </div>
                 <div className={'title_wrap'}>
                     <h5>{food.title}</h5>
-                    <p className={'date'}>{formatTimeAgo(food.createdAt)}</p>
+                    {food.createdAt && <p className={'date'}>{formatTimeAgo(food.createdAt)}</p>}
                 </div>
                 <div className={'dates_wrap'}>
                     <p><span>소비기한</span>{food.eatByDate}</p>
@@ -125,10 +140,11 @@ export default function MainDetail() {
                     <IconButton
                         icon={faHeart}
                         onClick={toggleFavorite}
-                        name={isFavorited ? '찜하기 취소' : '찜하기'}
                         style={{ color: isFavorited ? 'red' : 'grey' }}
                     />
-                    <NavLink to={`/chat/${food.foodId}/${food.giver.userId}`}>
+
+                    {/*<NavLink to={`/chat/${food.foodId}/${food.giver.userId}`}>*/}
+                    <NavLink to={`/chat/${food.foodId}`}>
                         <SquareButton name={'채팅하기'} />
                     </NavLink>
                 </div>

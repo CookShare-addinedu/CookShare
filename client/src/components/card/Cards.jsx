@@ -13,19 +13,6 @@ export default function Cards({food}) {
         return formatDistanceToNow(date, { addSuffix: true, locale: ko });  // 현재 시간과의 차이를 자연스럽게 표현
     }
 
-    const handleLike = async (foodId) => {
-        const userId = 1; // 예시용 사용자 ID
-        const isFavorite = true; // 찜하기 상태, 실제로는 상태에 따라 변경될 수 있음
-
-        try {
-            const response = await axios.post('/api/favorite', { foodId, userId, isFavorite });
-            console.log('Like status updated:', response.data);
-            // 여기에서 찜하기 상태 업데이트 로직 추가
-        } catch (error) {
-            console.error('Failed to update like status:', error);
-        }
-    };
-
     return(
         <Flex className={'card_wrap'} gap="3" direction="column">
             <Box className={'card_box'}>
@@ -55,12 +42,7 @@ export default function Cards({food}) {
                                 <p className={'like'}>
 
                                     <FontAwesomeIcon icon={faHeart}/>
-                                    <span>1</span>
                                     <span>{food.likes}</span>
-                                    {/*<button onClick={() => handleLike(food.foodId)}>*/}
-                                    {/*    <FontAwesomeIcon icon={food.isFavorite ? solidHeart : regularHeart}/>*/}
-                                    {/*    <span>{food.likesCount}</span>*/}
-                                    {/*</button>*/}
                                 </p>
                             </div>
                         </Box>

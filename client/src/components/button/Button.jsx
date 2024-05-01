@@ -28,11 +28,14 @@ function SquareButton({name}) {
         </button>
     )
 }
-function IconButton({icon}){
+// IconButton 컴포넌트 수정
+function IconButton({ icon, onClick, style }) {
     return (
-        <button className={'icon_button'}>
-            <FontAwesomeIcon icon={icon} />
+        <button className={'icon_button'} style={style} onClick={onClick}>
+            <FontAwesomeIcon icon={icon}/>
         </button>
-    )
+    );
 }
+
+
 export {MypageButton, AddButton, SquareButton, IconButton};
