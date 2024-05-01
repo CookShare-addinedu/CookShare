@@ -45,7 +45,7 @@ const router = {
             path: '/main/update/:id' ,
             component: <MainForm/>,
             title: null,
-            header:<Header3/>,
+            header:<Header1/>,
             footer:null
         },
         {

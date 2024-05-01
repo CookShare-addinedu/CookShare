@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {useLocation, useNavigate} from "react-router-dom";
 import './MainForm.scss';
@@ -14,7 +14,8 @@ import Select from "../../../components/select/Select";
 import Drawers from "../../../components/drawer/Drawers";
 import Address from "../../../components/adress/Address";
 import {useDispatch, useSelector} from "react-redux";
-import {clearFood, setFood} from "../../../redux/foodSlice";
+import {addImage, clearFood, removeImage, setFood} from "../../../redux/foodSlice";
+import {isEqual} from "lodash";
 
 
 const MainForm = () => {
@@ -24,31 +25,41 @@ const MainForm = () => {
     const swiperRef = useRef(null);
     const foodData = useSelector(state => state.food.value)
     const initialData = state?.foodData || foodData;
-    const [images, setImages] = useState([]);
+    const images = useSelector(state => state.food.value.images || []);
+    // const [images, setImages] = useState([]);
 
     useEffect(() => {
         console.log("초기데이터 확인:", initialData);
-        if (initialData) {
-            dispatch(setFood(initialData));
-            setImages(initialData.imageUrls?.map(url => ({ url })) || []);
+        if (!isEqual(foodData,initialData)) {
+            if(initialData.imageUrls) {
+                const imageObjects = initialData.imageUrls.map(url => ({url, file: null}));
+                dispatch(setFood({...initialData, images: imageObjects}));
+            }else{
+                dispatch(setFood(initialData));
+            }
         }
     }, [dispatch, initialData]);
 
-    const handleChange = (e) => {
+    const handleChange = useCallback((e) => {
         const {name, value} = e.target;
         dispatch(setFood({...foodData, [name]: value}));
-    };
+    },[dispatch, foodData]);
     const handleImageChange = (e) => {
         if (e.target.files) {
             const fileImages = Array.from(e.target.files).map(file => ({
                 file,
-                url: URL.createObjectURL(file)
+                url: URL.createObjectURL(file),
             }));
-            setImages([...images, ...fileImages].slice(0, 5));
+            fileImages.forEach(image =>{
+                dispatch(addImage(image));
+            });
         }
     };
     const handleRemoveImage = (index) => {
-        setImages(images.filter((_, i) => i !== index));
+        dispatch(removeImage(index));
+        if(swiperRef.current && swiperRef.current.swiper) {
+            swiperRef.current.swiper.update();
+        }
     };
 
     //     setImages(prevImages => {
@@ -124,11 +135,13 @@ const MainForm = () => {
         formData.append('eatByDate', foodData.eatByDate);
 
         Object.keys(foodData).forEach(key => {
-            formData.append(key, foodData[key]);
+            if(key !== 'images'){
+                formData.append(key, foodData[key]);
+            }
         });
 
         if (images.length > 0) {
-            images.forEach(image => {
+            foodData.images.forEach(image => {
                 if (image.file) { // 'image.file'이 존재하는 경우만 추가
                     formData.append('images', image.file);
                 }
@@ -138,7 +151,7 @@ const MainForm = () => {
         try {
             console.log('foodData.id', foodData.id);
             console.log('foodData', foodData);
-            const method = foodData.id? 'PUT' : 'POST';
+            const method = foodData.id ? 'PUT' : 'POST';
             const url = foodData.id ? `/api/foods/${foodData.id}` : '/api/foods';
             const token = localStorage.getItem('jwt');
             console.log('url',url );
@@ -147,15 +160,16 @@ const MainForm = () => {
                 url: url,
                 data: formData,
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
                 }
             })
             console.log('서버 응답',response.data);
-
             // dispatch(clearFood());foodData
             navigate('/main');
         } catch (error) {
             console.error('Error submitting food data', error);
+            alert('제출 중 오류가 발생했습니다' + (error.response?.data?.message || error.message));
             console.log(error.response); // 서버 응답에 대한 자세한 로그 출력
         }
     };
@@ -262,7 +276,7 @@ const MainForm = () => {
                         spaceBetween={10}
                         centeredSlides={false}
                     >
-                        {images.map((image, index) => (
+                        {images && images.map((image, index) => (
                             <SwiperSlide key={index}>
                                 <div>
                                     <img src={image.url} alt={`Preview ${index}`}/>
@@ -287,7 +301,7 @@ const MainForm = () => {
                             id="makeByDate"
                             // value={food.makeByDate ? new Date(food.makeByDate) : null}
                             // value={new Date(foodData.makeByDate)}
-                            value={foodData && foodData.makeByDate ? new Date(foodData.makeByDate) : null}
+                            value={foodData.makeByDate ? new Date(foodData.makeByDate) : null}
                             onChange={value => handleDateChange('makeByDate', value)}
                         />
                     </div>
@@ -336,6 +350,7 @@ const MainForm = () => {
                         name="category"
                         id="category"
                         value={foodData.category || ''}
+                        debounce={300}
                         onChange={(value) => {
                             handleChange({
                                 target: {

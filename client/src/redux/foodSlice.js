@@ -9,13 +9,22 @@ export const foodSlice = createSlice({
             location: '',
             makeByDate: '',
             eatByDate: '',
-            category: '',
+            category: '한식',
             images: [],
         }
     },
     reducers: {
         setFood: (state, action) => {
             state.value = action.payload;
+        },
+        addImage: (state, action) => {
+            state.value.images.push({
+                file: action.payload.file,
+                url: action.payload.url || URL.createObjectURL(action.payload.file)
+            });
+        },
+        removeImage: (state, action) =>{
+            state.value.images = state.value.images.filter((_, index) => index !== action.payload);
         },
         clearFood: (state) => {
             state.value = {
@@ -31,6 +40,6 @@ export const foodSlice = createSlice({
     },
 });
 
-export const { setFood, clearFood } = foodSlice.actions;
+export const { setFood, clearFood, addImage, removeImage } = foodSlice.actions;
 
 export default foodSlice.reducer;
