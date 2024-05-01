@@ -15,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.foodshare.board.dto.FoodDTO;
 import com.foodshare.board.exception.NotFoundException;
 import com.foodshare.board.repository.CategoryRepository;
+import com.foodshare.board.repository.FavoriteFoodRepository;
 import com.foodshare.board.repository.FoodImageRepository;
 import com.foodshare.board.repository.FoodRepository;
 import com.foodshare.domain.Category;
+import com.foodshare.domain.FavoriteFood;
 import com.foodshare.domain.Food;
 import com.foodshare.domain.FoodImage;
 import com.foodshare.board.mapper.EntityMapper;
@@ -37,13 +39,15 @@ public class FoodService {
 	private final FoodImageRepository foodImageRepository;
 	private final CategoryRepository categoryRepository;
 	private final UserRepository userRepository;
+	private final FavoriteFoodRepository favoriteFoodRepository;
 	private final EntityMapper entityMapper;
 	public Page<FoodDTO> getAllFoods(Pageable pageable) {
 		Page<Food> pageFoods = foodRepository.findAll(pageable);
 		return pageFoods.map(food -> {
 			List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
 			Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElse(null);
-			return entityMapper.convertToFoodDTO(food, foodImages, category);
+			FavoriteFood favoriteFood = favoriteFoodRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
+			return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood);
 		});
 	}
 
@@ -53,7 +57,8 @@ public class FoodService {
 		List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
 		Category category = categoryRepository.findById(food.getCategory().getCategoryId())
 			.orElseThrow(() -> new NotFoundException("Category not found"));
-		return entityMapper.convertToFoodDTO(food, foodImages, category);
+		FavoriteFood favoriteFood = favoriteFoodRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId());
+		return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood);
 	}
 
 	public Food create(FoodDTO foodDTO) {
@@ -132,12 +137,17 @@ public class FoodService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public List<FoodDTO> searchFoods(String query) {
-		List<Food> listFoods = foodRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
-		return listFoods.stream().map(food -> {
-			List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
-			Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElse(null);
-			return entityMapper.convertToFoodDTO(food, foodImages, category);
-		}).collect(Collectors.toList());
+		List<Food> foods = foodRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
+		return foods.stream()
+			.map(food -> {
+				Long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+				List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
+				Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElse(null);
+				FavoriteFood favoriteFood = favoriteFoodRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), userId);
+				return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood);
+			}).collect(Collectors.toList());
 	}
+
 }

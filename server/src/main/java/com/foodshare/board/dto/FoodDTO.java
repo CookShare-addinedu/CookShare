@@ -28,4 +28,6 @@ public class FoodDTO {
 	private String location;
 	private User giver;
 	private User receiver;
+	private Integer likes;
+	private Boolean isFavorite; // 로그인한 유저가 이 음식을 찜했는지 여부
 }
