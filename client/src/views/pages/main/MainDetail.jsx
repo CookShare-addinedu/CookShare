@@ -11,6 +11,8 @@ import MapView from "../../../components/address/MapView";
 import {IconButton, SquareButton} from "../../../components/button/Button";
 import {faAngleRight, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import Drawers from "../../../components/drawer/Drawers";
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 export default function MainDetail() {
     const {id} = useParams();
@@ -37,6 +39,17 @@ export default function MainDetail() {
 
         fetchFoodsData();
     }, [id]);
+
+    function formatTimeAgo(dateStr) {
+        console.log('Date String:', dateStr); // Check what you actually receive as input
+
+        if (!dateStr) {
+            console.error('Invalid or undefined date string');
+            return 'Date unavailable'; // Or some default/fallback value
+        }
+        const date = parseISO(dateStr);  // 서버에서 'yyyy-MM-dd' 형식의 문자열로 받은 날짜를 Date 객체로 변환
+        return formatDistanceToNow(date, { addSuffix: true, locale: ko });  // 현재 시간과의 차이를 자연스럽게 표현
+    }
     return (
         <section className={'main_detail'}>
             <div className={'img_wrap'}>
@@ -54,7 +67,7 @@ export default function MainDetail() {
                 </div>
                 <div className={'title_wrap'}>
                     <h5>{food.title}</h5>
-                    <p className={'date'}>{food.createdAt}1시간전</p>
+                    <p className={'date'}>{formatTimeAgo(food.createdAt)}</p>
                 </div>
                 <div className={'dates_wrap'}>
                     <p><span>소비기한</span>{food.eatByDate}</p>
