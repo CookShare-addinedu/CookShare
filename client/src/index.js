@@ -11,12 +11,13 @@ const root = ReactDOM.createRoot(rootElement);
 const tokenIsValid = isTokenValid();
 
 root.render(
-    <React.StrictMode>
+
         <Provider store={store}>
+            {/*React.StrictMode 지우세요*/}
             <BrowserRouter>
                 {tokenIsValid && <SSEComponent />}
                 <App />
             </BrowserRouter>
         </Provider>
-    </React.StrictMode>
+
 );
