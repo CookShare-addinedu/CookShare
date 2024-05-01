@@ -7,14 +7,16 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-regular-svg-icons";
 import Caution from "../../../components/caution/Caution";
 import CautionData from "../../../data/CautionData";
-import MapView from "../../../components/adress/MapView";
+import MapView from "../../../components/address/MapView";
 import {IconButton, SquareButton} from "../../../components/button/Button";
 import {faAngleRight, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import Drawers from "../../../components/drawer/Drawers";
+import ChatButton from "../../Chat/ChatButton";
 
 export default function MainDetail() {
     const {id} = useParams();
-    const [Food, setFood] = useState({});
+    const [food, setFood] = useState({ giver: {} }); // 초기 상태에 giver 객체 포함
+
     const fullScreenMapStyle = {
         width: '100vw',
         height: '100vh',
@@ -25,43 +27,51 @@ export default function MainDetail() {
     };
 
     useEffect(() => {
-        fetchFoodsData();
-    }, []);
+        const fetchFoodsData = async () => {
+            try {
+                const response = await axios.get(`/api/foods/${id}`);
+                setFood(response.data);
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+            }
+        };
 
-    const fetchFoodsData = async () => {
-        console.log('푸드 아이디:', id);
-        try{
-            const response = await axios.get(`/api/foods/${id}`);
-            console.log('받아온 데이터 로그에 출력:', response.data);
-            setFood(response.data);
-        }catch (error){
-            console.log('Falied to fetch data:', error);
-        }
+        fetchFoodsData();
+    }, [id]);
+
+
+    if (!food || !food.giver || !food.giver.mobileNumber) {
+        return <div>Loading...</div>; // 데이터가 로드되기를 기다리는 동안 로딩 표시
     }
+
+
+
+    console.log("giver.mobileNumber",food.giver.mobileNumber)
+
     return (
         <section className={'main_detail'}>
             <div className={'img_wrap'}>
-                {Food.imageUrls  &&
-                    <img src={Food.imageUrls[0]} alt={Food.title}/>
+                {food.imageUrls  &&
+                    <img src={food.imageUrls[0]} alt={food.title}/>
                 }
             </div>
             <div className={'content_wrap'}>
                 <div className={'user_wrap'}>
                     <Avatar className={'avatar'} circle/>
                     <div className={'user_info'}>
-                        <p className={'nick_name'}>{Food.writer} 닉네임 자리입니다만</p>
-                        <p className={'location'}>{Food.location}주소자리</p>
+                        <p className={'nick_name'}>{food.writer} 닉네임 자리입니다만</p>
+                        <p className={'location'}>{food.location}주소자리</p>
                     </div>
                 </div>
                 <div className={'title_wrap'}>
-                    <h5>{Food.title}</h5>
-                    <p className={'date'}>{Food.createdAt}1시간전</p>
+                    <h5>{food.title}</h5>
+                    <p className={'date'}>{food.createdAt}1시간전</p>
                 </div>
                 <div className={'dates_wrap'}>
-                    <p><span>소비기한</span>{Food.eatByDate}</p>
+                    <p><span>소비기한</span>{food.eatByDate}</p>
                 </div>
                 <div className={'description_wrap'}>
-                    <p>{Food.description}</p>
+                    <p>{food.description}</p>
                 </div>
                 <div className={'caution_wrap'}>
                     <Caution items={CautionData}/>
@@ -86,12 +96,16 @@ export default function MainDetail() {
                 {/*    drawerContent={<MapView zoomable={true} draggable={true}/>}*/}
                 {/*/>*/}
                 <div className={'actions_wrap'}>
-                    <IconButton icon={faHeart}/>
-                    <NavLink to={'/main'}>
-                        <SquareButton name={'채팅하기'}/>
-                    </NavLink>
+                    <section className={'main_detail'}>
+                        <div className={'actions_wrap'}>
+                            <ChatButton foodId={food.foodId} giverId={food.giver.mobileNumber} />
+                        </div>
+                    </section>
                 </div>
             </div>
         </section>
     )
 }
+
+
+

@@ -12,6 +12,7 @@ import MainDetail from "./views/pages/main/MainDetail";
 import MainForm from "./views/pages/main/MainForm";
 import ChatRoomList from "./views/Chat/ChatRoomList";
 import Chat from "./views/Chat/Chat";
+import Notifications from "./views/Notification/Notifications";
 
 const router = {
     routes: [
@@ -97,6 +98,18 @@ const router = {
             header: <Header4/>,
 
         },
+        {
+            path: '/chat/chatForm',
+            component: <ChatForm/>,
+            header: <Header4/>,
+
+        },
+        {
+            path: 'notification',
+            component: <Notifications/>,
+            header: <Header4/>,
+
+        }
 
     ]
 }
