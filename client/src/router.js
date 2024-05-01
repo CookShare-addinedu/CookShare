@@ -20,50 +20,50 @@ const router = {
             path: '/login',
             component: <Login/>,
             title: null,
-            header:<Header1/>,
-            footer:null
+            header: <Header1/>,
+            footer: null
         },
         {
             path: '/register',
             component: <Register/>,
             title: '회원가입',
-            header:<Header1/>,
-            footer:<Footer/>,
+            header: <Header1/>,
+            footer: <Footer/>,
         },
         {
             path: '/main',
             component: <Main/>,
             title: null,
-            header:<Header4/>,
-            footer:<Footer/>
+            header: <Header4/>,
+            footer: <Footer/>
         },
         {
             path: '/main/foods/:id',
             component: <MainDetail/>,
             title: null,
-            header:<Header3/>,
-            footer:null
+            header: <Header3/>,
+            footer: null
         },
         {
             path: '/main/add',
             component: <MainForm/>,
             title: null,
-            header:<Header1/>,
-            footer:null
+            header: <Header1/>,
+            footer: null
         },
         {
             path: '/',
             component: <OnBoarding/>,
             title: null,
-            header:null,
-            footer:null
+            header: null,
+            footer: null
         },
         {
             path: '/mypage',
             component: <Mypage/>,
             title: '나의 냉장고',
             header: <Header1/>,
-            footer:<Footer/>
+            footer: <Footer/>
         },
         {
             path: '/drawer',
@@ -99,17 +99,11 @@ const router = {
 
         },
         {
-            path: '/chat/chatForm',
-            component: <ChatForm/>,
-            header: <Header4/>,
 
-        },
-        {
             path: 'notification',
             component: <Notifications/>,
             header: <Header4/>,
-
-        }
+        },
 
     ]
 }
