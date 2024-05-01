@@ -17,6 +17,9 @@ import { ko } from 'date-fns/locale';
 export default function MainDetail() {
     const {id} = useParams();
     const [food, setFood] = useState({ giver: {} }); // 초기 상태에 giver 객체 포함
+    const [isFavorited, setIsFavorited] = useState(false); // 찜 상태
+    const [favoriteCount, setFavoriteCount] = useState(food.likes || 0); // 찜 횟수 초기화
+
 
     const fullScreenMapStyle = {
         width: '100vw',
@@ -32,6 +35,8 @@ export default function MainDetail() {
             try {
                 const response = await axios.get(`/api/foods/${id}`);
                 setFood(response.data);
+                setIsFavorited(response.data.isFavorite);
+                setFavoriteCount(response.data.likes);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             }
@@ -50,6 +55,25 @@ export default function MainDetail() {
         const date = parseISO(dateStr);  // 서버에서 'yyyy-MM-dd' 형식의 문자열로 받은 날짜를 Date 객체로 변환
         return formatDistanceToNow(date, { addSuffix: true, locale: ko });  // 현재 시간과의 차이를 자연스럽게 표현
     }
+
+    const toggleFavorite = async () => {
+        try {
+            const method = isFavorited ? 'delete' : 'post'; // 현재 찜 상태에 따라 메서드 결정
+            const response = await axios({
+                method: method,
+                url: `/api/favorites/${food.foodId}`,
+                data: {
+                    userId: food.giver.userId, // 현재 로그인한 사용자 ID
+                    isFavorite: !isFavorited
+                }
+            });
+            setIsFavorited(!isFavorited); // 찜 상태 토글
+            setFavoriteCount(prev => isFavorited ? prev - 1 : prev + 1); // 찜 횟수 조정
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
+        }
+    };
+
     return (
         <section className={'main_detail'}>
             <div className={'img_wrap'}>
@@ -98,9 +122,14 @@ export default function MainDetail() {
                 {/*    drawerContent={<MapView zoomable={true} draggable={true}/>}*/}
                 {/*/>*/}
                 <div className={'actions_wrap'}>
+                    <IconButton
+                        icon={faHeart}
+                        onClick={toggleFavorite}
+                        name={isFavorited ? '찜하기 취소' : '찜하기'}
+                        style={{ color: isFavorited ? 'red' : 'grey' }}
+                    />
                     <NavLink to={`/chat/${food.foodId}/${food.giver.userId}`}>
-                        <IconButton icon={faHeart}/>
-                        <SquareButton name={'채팅하기'}/>
+                        <SquareButton name={'채팅하기'} />
                     </NavLink>
                 </div>
             </div>
