@@ -17,6 +17,34 @@ export default function MainDetail() {
     const {id} = useParams();
     const dispatch = useDispatch();
     const foodData = useSelector((state) => state.food.value);
+    const [isFavorited, setIsFavorited] = useState(false);
+    const [favoriteCount, setFavoriteCount] = useState(foodData.likes || 0);
+
+    const toggleFavorite = async () => {
+        try {
+            const method = isFavorited ? 'delete' : 'post'; // 현재 찜 상태에 따라 메서드 결정
+            const response = await axios({
+                method: method,
+                url: `/api/favorites/${foodData.foodId}`,
+                data: {
+                    // userId: food.giver.userId, // 현재 로그인한 사용자 ID
+                    isFavorite: !isFavorited
+                },
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                }
+            });
+            setIsFavorited(!isFavorited); // 찜 상태 토글
+            setFavoriteCount(prev => isFavorited ? prev - 1 : prev + 1); // 찜 횟수 조정
+            console.log(isFavorited);
+            console.log(response);
+
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
+        }
+    };
+
+
 
     useEffect(()=>{
             const fetchFoodsData = async () => {

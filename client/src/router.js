@@ -4,7 +4,7 @@ import {Header1, Header2, Header3, Header4} from "./views/common/header/Header";
 import Footer from "./views/common/footer/Footer";
 import Main from "./views/pages/main/Main";
 import OnBoarding from "./views/pages/onboarding/OnBoarding";
-import Mypage from "./views/pages/mypage/Mypage";
+import MyPage from "./views/pages/mypage/MyPage";
 import Drawers from "./components/drawer/Drawers";
 import Search from "./views/pages/search/Search";
 import SearchAddress from "./views/pages/searchaddress/SearchAddress";
@@ -64,7 +64,7 @@ const router = {
         },
         {
             path: '/mypage',
-            component: <Mypage/>,
+            component: <MyPage/>,
             title: '나의 냉장고',
             header: <Header1/>,
             footer:<Footer/>

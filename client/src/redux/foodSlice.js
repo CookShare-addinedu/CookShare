@@ -36,7 +36,10 @@ export const foodSlice = createSlice({
                 makeByDate: '',
                 eatByDate: '',
                 category: '',
-                images: []
+                images: [],
+                giver:{
+                    nickName: '',
+                }
             };
         },
     },
