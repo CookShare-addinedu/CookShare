@@ -61,7 +61,7 @@ export default function Main() {
                                 )) : '나랑 시켜먹을래?'}
                             {!hasMore && <div>No more data available.</div>}
                             {hasMore && !loading && (
-                                <button onClick={fetchFoodsData}>더보기</button>
+                                <button className={'more'} onClick={fetchFoodsData}>더보기</button>
                             )}
                         </div>
                     </Tabs.Tab>

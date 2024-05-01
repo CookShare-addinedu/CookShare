@@ -9,7 +9,7 @@ export default function Menu() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleClearFood = async () => {
-        if (window.confirm("이 항목을 정말 삭제하시겠습니까?")) {
+        // if (window.confirm("이 항목을 정말 삭제하시겠습니까?")) {
             try {
                 await axios.delete(`/api/foods/${food.foodId}`);
                 dispatch(clearFood());
@@ -18,7 +18,7 @@ export default function Menu() {
                 console.error('Error deleting the food:', error);
                 alert("삭제 중 오류가 발생했습니다.");
             }
-        }
+        // }
     };
     return(
         <div className={'menu'}>
