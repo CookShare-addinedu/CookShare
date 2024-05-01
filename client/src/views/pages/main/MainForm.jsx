@@ -172,6 +172,9 @@ const MainForm = () => {
 
             if (response.status === 201) {
                 console.log("성공적으로 처리되었습니다.");
+                const token =  response.data.token;
+                console.log(token);
+                // localStorage.setItem('jwt', token);
                 navigate(`/main`); // 성공적으로 처리 후 메인 페이지로 이동
             } else {
                 console.error('서버 처리 실패: ', response.data.message);

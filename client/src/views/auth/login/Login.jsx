@@ -55,6 +55,7 @@ export default function Login (){
 
             if (response.status === 200) {
                 const token =  response.data.token;
+                console.log("로그인 성공 jwt발행 " + token);
                 localStorage.setItem('jwt', token);
                 navigate('/main');
             }else{
