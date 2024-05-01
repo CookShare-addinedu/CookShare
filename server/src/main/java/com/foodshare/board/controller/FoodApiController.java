@@ -28,10 +28,10 @@ public class FoodApiController {
 	private final FoodService foodService;
 	private final FileStorageService fileStorageService;
 
-	@GetMapping("/search")
-	public ResponseEntity<List<FoodDTO>> searchFoods(@RequestParam(name = "query") String searchQuery) {
-		log.info("Searching for foods with query: {}", searchQuery);
-		List<FoodDTO> searchResults = foodService.searchFoods(searchQuery);
+	@GetMapping("/search/by-category")
+	public ResponseEntity<List<FoodDTO>> searchFoodsByCategory(@RequestParam(name = "query") String categoryName) {
+		log.info("Searching for foods with category name: {}", categoryName);
+		List<FoodDTO> searchResults = foodService.searchFoodsByCategoryName(categoryName);
 		return ResponseEntity.ok(searchResults);
 	}
 

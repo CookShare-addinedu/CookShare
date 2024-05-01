@@ -72,8 +72,10 @@ public class FoodService {
 		log.info("Service Reading food with id: {}", id);
 		Food food = foodRepository.findById(id).orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
 		List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
-		Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElseThrow(() -> new NotFoundException("Category not found"));
-		Optional<FavoriteFood> favoriteFood = favoriteRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), getUserIdFromAuthentication());
+		Category category;
+		category = categoryRepository.findById(food.getCategory().getCategoryId()).orElseThrow(() -> new NotFoundException("Category not found"));
+		Optional<FavoriteFood> favoriteFood;
+		favoriteFood = favoriteRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), getUserIdFromAuthentication());
 		long favoriteCount = favoriteRepository.countByFoodFoodId(food.getFoodId());
 		FoodDTO foodDTO = entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.orElse(null));
 		foodDTO.setLikes((int) favoriteCount);
@@ -160,19 +162,15 @@ public class FoodService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<FoodDTO> searchFoods(String query) {
-		List<Food> foods = foodRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
+	public List<FoodDTO> searchFoodsByCategoryName(String categoryName) {
+		List<Food> foods = foodRepository.findByCategoryNameContainingIgnoreCase(categoryName);
 		return foods.stream()
 			.map(food -> {
-				Long userId = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
 				List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
 				Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElse(null);
-				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-				User user = userRepository.findById(((CustomUserDetails) authentication.getPrincipal()).getUserId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-				Optional<FavoriteFood> favoriteFood = favoriteRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(),
-					user.getUserId());
-				return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.get());
+				User user = userRepository.findById(getUserIdFromAuthentication().longValue()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+				Optional<FavoriteFood> favoriteFood = favoriteRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), user.getUserId());
+				return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.orElse(null));
 			}).collect(Collectors.toList());
 	}
 

@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import com.foodshare.domain.Category;
 import com.foodshare.domain.Food;
 
 @Repository
@@ -16,4 +18,7 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
 	boolean existsByCategoryCategoryId(Long categoryId);
 
 	List<Food> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String title, String description);
+	List<Food> findByCategoryNameContainingIgnoreCase(String categoryName);
+
+
 }

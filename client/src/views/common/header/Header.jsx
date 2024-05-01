@@ -75,7 +75,7 @@ function Header4(){
             <div className={'menu'}>
                 <ul>
                     <li>
-                        <NavLink to={'/search'}>
+                        <NavLink to={'/search/by-category'}>
                             <FontAwesomeIcon icon={faMagnifyingGlass}/>
                         </NavLink>
                     </li>
