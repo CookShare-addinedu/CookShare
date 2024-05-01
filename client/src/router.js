@@ -98,6 +98,11 @@ const router = {
             header: <Header4/>,
 
         },
+        {
+            path: '/chat/getChat/:chatRoomId',
+            component: <Chat/>,
+            header: <Header4/>,
+        }
 
     ]
 }

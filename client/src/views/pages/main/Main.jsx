@@ -51,6 +51,7 @@ export default function Main() {
         }
     }
 
+
     return (
         <section className={'main'}>
             <Tabs className={'main_tab'} defaultActiveKey="1" appearance="subtle">
