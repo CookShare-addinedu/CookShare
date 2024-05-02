@@ -23,26 +23,26 @@ import com.foodshare.board.dto.FoodDTO;
 public interface EntityMapper {
 
 	@Mappings({
-			@Mapping(target = "foodId", source = "food.foodId"),
-			@Mapping(target = "imageUrls", expression = "java(mapImagePaths(foodImages))"),
-			@Mapping(target = "category", source = "category.name"),
-			@Mapping(target = "makeByDate", source = "food.makeByDate", qualifiedByName = "timestampToLocalDate"),
-			@Mapping(target = "eatByDate", source = "food.eatByDate", qualifiedByName = "timestampToLocalDate"),
-			@Mapping(target = "createdAt", source = "food.createdAt", qualifiedByName = "timestampToLocalDate"),
-			@Mapping(target = "title", source = "food.title"),
-			@Mapping(target = "description", source = "food.description"),
-			@Mapping(target = "giver", source = "food.giver"),
-			@Mapping(target = "location", source = "food.location"),  // 직접 지정 또는 자동 추출
-			@Mapping(target = "likes", source = "food.likes"),
-			@Mapping(target = "isFavorite", source = "favoriteFood.isFavorite"),
+		@Mapping(target = "foodId", source = "food.foodId"),
+		@Mapping(target = "imageUrls", expression = "java(mapImagePaths(foodImages))"),
+		@Mapping(target = "category", source = "category.name"),
+		@Mapping(target = "makeByDate", source = "food.makeByDate", qualifiedByName = "timestampToLocalDate"),
+		@Mapping(target = "eatByDate", source = "food.eatByDate", qualifiedByName = "timestampToLocalDate"),
+		@Mapping(target = "createdAt", source = "food.createdAt", qualifiedByName = "timestampToLocalDate"),
+		@Mapping(target = "title", source = "food.title"),
+		@Mapping(target = "description", source = "food.description"),
+		@Mapping(target = "giver", source = "food.giver"),
+		@Mapping(target = "location", source = "food.location"),  // 직접 지정 또는 자동 추출
+		@Mapping(target = "likes", source = "food.likes"),
+		@Mapping(target = "isFavorite", source = "favoriteFood.isFavorite"),
 	})
 	FoodDTO convertToFoodDTO(Food food, List<FoodImage> foodImages, Category category, FavoriteFood favoriteFood);
 
 	default List<String> mapImagePaths(List<FoodImage> foodImages) {
 		if (foodImages == null) return Collections.emptyList();
 		return foodImages.stream()
-				.flatMap(image -> image.getImagePaths().stream())
-				.collect(Collectors.toList());
+			.flatMap(image -> image.getImagePaths().stream())
+			.collect(Collectors.toList());
 	}
 
 	@Named("timestampToLocalDate")
@@ -71,21 +71,21 @@ public interface EntityMapper {
 	default FoodImage convertToFoodImage(FoodDTO foodDTO, Food food) {
 		if (foodDTO.getImageUrls() == null) return null;
 		return FoodImage.builder()
-				.imagePaths(foodDTO.getImageUrls())
-				.food(food)
-				.createdAt(Timestamp.from(Instant.now()))
-				.updatedAt(Timestamp.from(Instant.now()))
-				.build();
+			.imagePaths(foodDTO.getImageUrls())
+			.food(food)
+			.createdAt(Timestamp.from(Instant.now()))
+			.updatedAt(Timestamp.from(Instant.now()))
+			.build();
 	}
 
 	@Named("convertToCategory")
 	default Category convertToCategory(String categoryName) {
 		Category category;
 		category = Category.builder()
-				.name(categoryName)
-				.createdAt(Timestamp.from(Instant.now()))
-				.updatedAt(Timestamp.from(Instant.now()))
-				.build();
+			.name(categoryName)
+			.createdAt(Timestamp.from(Instant.now()))
+			.updatedAt(Timestamp.from(Instant.now()))
+			.build();
 		return category;
 	}
 
@@ -93,10 +93,10 @@ public interface EntityMapper {
 	default FavoriteFood convertToFavoriteFood(FoodDTO foodDTO, Food food) {
 		FavoriteFood favoriteFood;
 		favoriteFood = FavoriteFood.builder()
-				.isFavorite(foodDTO.getIsFavorite())
-				.user(foodDTO.getGiver())
-				.food(food)
-				.build();
+			.isFavorite(foodDTO.getIsFavorite())
+			.user(foodDTO.getGiver())
+			.food(food)
+			.build();
 		return favoriteFood;
 	}
 }

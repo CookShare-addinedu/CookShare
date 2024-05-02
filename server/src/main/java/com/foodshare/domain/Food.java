@@ -2,7 +2,6 @@ package com.foodshare.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +12,6 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Data
 @Entity
-@Builder
 @Table(name = "foods")
 public class Food {
     @Id

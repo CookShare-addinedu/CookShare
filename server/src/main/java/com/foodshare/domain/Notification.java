@@ -40,4 +40,3 @@ public class Notification {
 	private Timestamp createdAt;
 
 }
-

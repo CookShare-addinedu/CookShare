@@ -10,11 +10,11 @@ import com.foodshare.domain.FavoriteFood;
 @Repository
 public interface FavoriteRepository extends JpaRepository<FavoriteFood, Long> {
 
-    Optional<FavoriteFood> findByFoodFoodIdAndUserUserId(Long foodId, Long userId);
+	Optional<FavoriteFood> findByFoodFoodIdAndUserUserId(Long foodId, Long userId);
 
-    long countByFoodFoodId(Long foodId);
+	long countByFoodFoodId(Long foodId);
 
-    Optional<FavoriteFood> findByFoodFoodId(Long foodId);
+	Optional<FavoriteFood> findByFoodFoodId(Long foodId);
 
-    boolean existsByFoodFoodIdAndUserUserId(Long foodId, Long userId);
+	boolean existsByFoodFoodIdAndUserUserId(Long foodId, Long userId);
 }

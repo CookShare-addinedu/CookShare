@@ -41,36 +41,36 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/{mobileNumber}")
-    public ResponseEntity<User> getUserByMobileName(@PathVariable String mobileNumber) {
-        Optional<User> user = userService.findByMobileNumber(mobileNumber);
-        return user.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+    // @GetMapping("/{mobileNumber}")
+    // public ResponseEntity<User> getUserByMobileName(@PathVariable String mobileNumber) {
+    //     Optional<User> user = userService.findByMobileNumber(mobileNumber);
+    //     return user.map(ResponseEntity::ok)
+    //             .orElseGet(() -> ResponseEntity.notFound().build());
+    // }
 
-    @PutMapping("/update/{mobileNumber}")
-    public ResponseEntity<User> updateUser(@PathVariable String mobileNumber, @RequestBody User userDetails) {
-        Optional<User> userData = userService.findByMobileNumber(mobileNumber);
-        if (userData.isPresent()) {
-            User user = userData.get();
-            user.setNickName(userDetails.getNickName());
-            user.setLocation(userDetails.getLocation());
-            user.setMobileNumber(userDetails.getMobileNumber());
-            user = userService.updateUserByMobileNumber(user);
-            return ResponseEntity.ok(user);
-        }
-        return ResponseEntity.notFound().build();
-    }
+    // @PutMapping("/update/{mobileNumber}")
+    // public ResponseEntity<User> updateUser(@PathVariable String mobileNumber, @RequestBody User userDetails) {
+    //     Optional<User> userData = userService.findByMobileNumber(mobileNumber);
+    //     if (userData.isPresent()) {
+    //         User user = userData.get();
+    //         user.setNickName(userDetails.getNickName());
+    //         user.setLocation(userDetails.getLocation());
+    //         user.setMobileNumber(userDetails.getMobileNumber());
+    //         user = userService.updateUserByMobileNumber(user);
+    //         return ResponseEntity.ok(user);
+    //     }
+    //     return ResponseEntity.notFound().build();
+    // }
 
 
-    @DeleteMapping("/delete/{mobileNumber}")
-    public ResponseEntity<?> deleteUser(@PathVariable String mobileNumber) {
-        Optional<User> user = userService.findByMobileNumber(mobileNumber);
-        if (user.isPresent()) {
-            userService.deleteUserByMobileNumber(mobileNumber);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
+    // @DeleteMapping("/delete/{mobileNumber}")
+    // public ResponseEntity<?> deleteUser(@PathVariable String mobileNumber) {
+    //     Optional<User> user = userService.findByMobileNumber(mobileNumber);
+    //     if (user.isPresent()) {
+    //         userService.deleteUserByMobileNumber(mobileNumber);
+    //         return ResponseEntity.ok().build();
+    //     }
+    //     return ResponseEntity.notFound().build();
+    // }
 
 }

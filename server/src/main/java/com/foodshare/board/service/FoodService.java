@@ -64,6 +64,8 @@ public class FoodService {
 			long favoriteCount = favoriteRepository.countByFoodFoodId(food.getFoodId());
 			FoodDTO foodDTO = entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.orElse(null));
 			foodDTO.setLikes((int) favoriteCount);
+			boolean isFavorite = favoriteRepository.existsByFoodFoodIdAndUserUserId(food.getFoodId(), getUserIdFromAuthentication());
+			foodDTO.setIsFavorite(isFavorite);
 			return foodDTO;
 		});
 	}
@@ -79,6 +81,8 @@ public class FoodService {
 		long favoriteCount = favoriteRepository.countByFoodFoodId(food.getFoodId());
 		FoodDTO foodDTO = entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.orElse(null));
 		foodDTO.setLikes((int) favoriteCount);
+		boolean isFavorite = favoriteRepository.existsByFoodFoodIdAndUserUserId(food.getFoodId(), getUserIdFromAuthentication());
+		foodDTO.setIsFavorite(isFavorite);
 		return foodDTO;
 	}
 
@@ -100,15 +104,14 @@ public class FoodService {
 			foodImageRepository.save(foodImage);
 		}
 
-		FavoriteFood favoriteFood = entityMapper.convertToFavoriteFood(foodDTO, food);
-		favoriteRepository.save(favoriteFood);
+
 		return food;
 	}
 
 	public Food update(Long id, FoodDTO foodDTO) throws NotFoundException {
 
 		Food existingFood = foodRepository.findById(id)
-				.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+			.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
 
 		// 기존 Food 엔티티 업데이트
 		existingFood.setTitle(foodDTO.getTitle());
@@ -117,7 +120,7 @@ public class FoodService {
 
 		// Category 업데이트
 		Category category = categoryRepository.findById(existingFood.getCategory().getCategoryId())
-				.orElseThrow(() -> new NotFoundException("Category not found"));
+			.orElseThrow(() -> new NotFoundException("Category not found"));
 		category.setName(foodDTO.getCategory());
 		categoryRepository.save(category);
 		existingFood.setCategory(category);
@@ -143,7 +146,7 @@ public class FoodService {
 	public void delete(Long id) throws NotFoundException {
 		// 음식 정보를 찾기
 		Food existingFood = foodRepository.findById(id)
-				.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+			.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
 
 		// 관련된 이미지 삭제
 		List<FoodImage> images = foodImageRepository.findByFoodFoodId(existingFood.getFoodId());
@@ -165,13 +168,13 @@ public class FoodService {
 	public List<FoodDTO> searchFoodsByCategoryName(String categoryName) {
 		List<Food> foods = foodRepository.findByCategoryNameContainingIgnoreCase(categoryName);
 		return foods.stream()
-				.map(food -> {
-					List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
-					Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElse(null);
-					User user = userRepository.findById(getUserIdFromAuthentication().longValue()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-					Optional<FavoriteFood> favoriteFood = favoriteRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), user.getUserId());
-					return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.orElse(null));
-				}).collect(Collectors.toList());
+			.map(food -> {
+				List<FoodImage> foodImages = foodImageRepository.findByFoodFoodId(food.getFoodId());
+				Category category = categoryRepository.findById(food.getCategory().getCategoryId()).orElse(null);
+				User user = userRepository.findById(getUserIdFromAuthentication().longValue()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+				Optional<FavoriteFood> favoriteFood = favoriteRepository.findByFoodFoodIdAndUserUserId(food.getFoodId(), user.getUserId());
+				return entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.orElse(null));
+			}).collect(Collectors.toList());
 	}
 
 }

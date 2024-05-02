@@ -19,34 +19,34 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FavoriteController {
 
-    private final FavoriteService favoriteService;
+	private final FavoriteService favoriteService;
 
-    @PostMapping("/{foodId}")
-    public ResponseEntity<?> addFavorite(@PathVariable Long foodId) {
-        log.info("Adding favorite for foodId: {}", foodId);
-        try {
-            Long userId = getUserIdFromToken(); // 토큰에서 userId 추출
-            boolean result = favoriteService.addFavorite(foodId, userId);
-            return result ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
-        } catch (DuplicateFavoriteException e) {
-            log.error("Failed to add favorite: " + e.getMessage());
-            return ResponseEntity.badRequest().body("Failed to add favorite: " + e.getMessage());
-        }
-    }
+	@PostMapping("/{foodId}")
+	public ResponseEntity<?> addFavorite(@PathVariable Long foodId) {
+		log.info("Adding favorite for foodId: {}", foodId);
+		try {
+			Long userId = getUserIdFromToken(); // 토큰에서 userId 추출
+			boolean result = favoriteService.addFavorite(foodId, userId);
+			return result ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+		} catch (DuplicateFavoriteException e) {
+			log.error("Failed to add favorite: " + e.getMessage());
+			return ResponseEntity.badRequest().body("Failed to add favorite: " + e.getMessage());
+		}
+	}
 
-    private Long getUserIdFromToken() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-            return ((CustomUserDetails) authentication.getPrincipal()).getUserId();
-        } else {
-            throw new UsernameNotFoundException("Authentication failed - no valid user found.");
-        }
-    }
+	private Long getUserIdFromToken() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+			return ((CustomUserDetails) authentication.getPrincipal()).getUserId();
+		} else {
+			throw new UsernameNotFoundException("Authentication failed - no valid user found.");
+		}
+	}
 
-    @DeleteMapping("/{foodId}")
-    public ResponseEntity<?> removeFavorite(@PathVariable Long foodId) {
-        log.info("Removing favorite for foodId: {}", foodId);
-        boolean result = favoriteService.removeFavorite(foodId, getUserIdFromToken());
-        return result ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
-    }
+	@DeleteMapping("/{foodId}")
+	public ResponseEntity<?> removeFavorite(@PathVariable Long foodId) {
+		log.info("Removing favorite for foodId: {}", foodId);
+		boolean result = favoriteService.removeFavorite(foodId, getUserIdFromToken());
+		return result ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+	}
 }

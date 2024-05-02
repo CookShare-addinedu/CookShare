@@ -11,8 +11,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity
 @Builder
+@Entity
 @Table(name = "favorite_foods")
 public class FavoriteFood {
     @Id
@@ -37,5 +37,4 @@ public class FavoriteFood {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    // Getters and Setters
 }

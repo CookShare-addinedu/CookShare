@@ -17,12 +17,10 @@ import lombok.NoArgsConstructor;
 public class ChatRoom {
 	@Id
 	private String id; // MongoDB의 고유 식별자
-
 	private String foodId;
 	private String firstUser;
 	private String secondUser;
-	private String identifier;
-
+	private String urlIdentifier;
 	public boolean isMember(String userId) {
 		return userId.equals(firstUser) || userId.equals(secondUser);
 	}

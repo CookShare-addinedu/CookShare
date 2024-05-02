@@ -1,21 +1,16 @@
 package com.foodshare.chat.dto;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class ChatRoomCreationDto {
-	private String chatRoomId;
-	private String foodId;
+@AllArgsConstructor
+public class ChatRoomCreateRequest {
 	private String firstUserMobileNumber;
 	private String secondUserMobileNumber;
-	private String urlIdentifier;
-	private Date createdAt;
+	private String foodId;
 }

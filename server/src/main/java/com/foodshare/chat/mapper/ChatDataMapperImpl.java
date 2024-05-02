@@ -32,7 +32,7 @@ public class ChatDataMapperImpl implements ChatDataMapper {
 	public ChatRoomDto toChatRoomDto(ChatRoom room, ChatMessage lastMessage) {
 		try {
 			return ChatRoomDto.builder()
-				.chatRoomId(room.getId())
+				.chatRoomId(room.getUrlIdentifier())
 				.lastMessage(lastMessage.getContent())
 				.lastMessageTimestamp(lastMessage.getTimestamp())
 				// .profileImage(room.getProfileImage()) //
@@ -47,8 +47,13 @@ public class ChatDataMapperImpl implements ChatDataMapper {
 	public ChatRoomCreationDto toChatRoomCreationDto(ChatRoom room) {
 		try {
 			// ChatRoomCreationDto 변환 로직 구현 아직 안함
-			return null;
+			return ChatRoomCreationDto.builder()
+
+				.foodId(room.getFoodId())
+				.urlIdentifier(room.getUrlIdentifier())
+				.build();
 		} catch (Exception e) {
+
 			log.error("ChatRoomCreation DTO 변환 중 오류 발생", e);
 			throw e;
 		}
