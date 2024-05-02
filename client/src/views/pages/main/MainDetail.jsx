@@ -12,6 +12,8 @@ import {IconButton, SquareButton} from "../../../components/button/Button";
 import {faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import {useDispatch, useSelector} from "react-redux";
 import {clearFood, setFood} from "../../../redux/foodSlice";
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 export default function MainDetail() {
     const {id} = useParams();
@@ -19,6 +21,26 @@ export default function MainDetail() {
     const foodData = useSelector((state) => state.food.value);
     const [isFavorited, setIsFavorited] = useState(false);
     const [favoriteCount, setFavoriteCount] = useState(foodData.likes || 0);
+
+    function IconButton({ icon, onClick, style }) {
+        return (
+            <button className={'icon_button'} style={style} onClick={onClick}>
+                <FontAwesomeIcon icon={icon}/>
+            </button>
+        );
+    }
+
+
+    function formatTimeAgo(dateStr) {
+        console.log('Date String:', dateStr); // Check what you actually receive as input
+
+        if (!dateStr) {
+            console.error('Invalid or undefined date string');
+            return 'Date unavailable'; // Or some default/fallback value
+        }
+        const date = parseISO(dateStr);  // 서버에서 'yyyy-MM-dd' 형식의 문자열로 받은 날짜를 Date 객체로 변환
+        return formatDistanceToNow(date, { addSuffix: true, locale: ko });  // 현재 시간과의 차이를 자연스럽게 표현
+    }
 
     const toggleFavorite = async () => {
         try {
@@ -87,7 +109,7 @@ export default function MainDetail() {
                 </div>
                 <div className={'title_wrap'}>
                     <h5>{foodData.title}</h5>
-                    <p className={'date'}>{foodData.createdAt}1시간전</p>
+                    <p className={'date'}>{foodData.createdAt && <span className={'date'}>{formatTimeAgo(foodData.createdAt)}</span>}</p>
                 </div>
                 <div className={'dates_wrap'}>
                     <p><span>소비기한</span>{foodData.eatByDate}</p>
@@ -107,7 +129,11 @@ export default function MainDetail() {
                 </div>
 
                 <div className={'actions_wrap'}>
-                    <IconButton icon={faHeart}/>
+                    <IconButton
+                        icon={faHeart}
+                        onClick={toggleFavorite}
+                        style={{ color: isFavorited ? 'red' : 'grey' }}
+                    />
                     <NavLink to={'/main'}>
                         <SquareButton name={'채팅하기'}/>
                     </NavLink>

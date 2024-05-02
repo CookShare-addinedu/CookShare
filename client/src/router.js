@@ -77,10 +77,10 @@ const router = {
             footer: <Footer/>
         },
         {
-            path: '/search',
+            path: '/search/by-category',
             component: <Search/>,
             title: null,
-            header: null,
+            header: null,   
             footer: null
         },
         {
