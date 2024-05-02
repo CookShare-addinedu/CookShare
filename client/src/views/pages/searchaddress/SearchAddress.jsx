@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useDispatch} from "react-redux";
 import {setAddress} from "../../../redux/addressSlice";
 import {useNavigate} from "react-router-dom";
+import './SearchAddress.scss';
 
 export default function SearchAddress() {
     const dispatch = useDispatch();
@@ -16,7 +17,7 @@ export default function SearchAddress() {
         navigate('/main');
     }
     return (
-        <div>
+        <div className={'search_address_wrap'}>
             <Address onLocationSelect={handleLocationSelect}/>
         </div>
     )
