@@ -100,8 +100,7 @@ public class FoodService {
 			foodImageRepository.save(foodImage);
 		}
 
-		FavoriteFood favoriteFood = entityMapper.convertToFavoriteFood(foodDTO, food);
-		favoriteRepository.save(favoriteFood);
+
 		return food;
 	}
 

@@ -109,16 +109,14 @@ export default function MainDetail() {
                     <Avatar className={'avatar'} circle/>
                     <div className={'user_info'}>
                         {/*<p className={'nick_name'}>{food.giver.nickname} 닉네임 자리입니다만</p>*/}
-                        <p className={'nick_name'}>닉네임 자리입니다만</p>
                         <p className={'location'}>{food.location}</p>
-                        <p className={'nick_name'}>{food.writer} 닉네임 자리입니다만</p>
-                        <p className={'location'}>{food.location}주소자리</p>
+                        <p className={'nick_name'}>{food.nickname} 닉네임 자리입니다만</p>
                     </div>
                 </div>
                 <div className={'title_wrap'}>
                     <h5>{food.title}</h5>
                     {food.createdAt && <p className={'date'}>{formatTimeAgo(food.createdAt)}</p>}
-                    <p className={'date'}>{food.createdAt}1시간전</p>
+                    {/*<p className={'date'}>{food.createdAt}1시간전</p>*/}
                 </div>
                 <div className={'dates_wrap'}>
                     <p><span>소비기한</span>{food.eatByDate}</p>
