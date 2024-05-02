@@ -99,12 +99,12 @@ const router = {
             header: <Header4/>,
 
         },
-        {
-            path: '/chat/chatForm',
-            component: <ChatForm/>,
-            header: <Header4/>,
-
-        },
+        // {
+        //     path: '/chat/chatForm',
+        //     component: <ChatForm/>,
+        //     header: <Header4/>,
+        //
+        // },
 
         {
             path: 'notification',
