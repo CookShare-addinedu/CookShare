@@ -17,7 +17,7 @@ export const useScrollManagement = (
             if (isFirstLoaded && messageList.length > 0) {
                 container.scrollTop = container.scrollHeight;
                 setIsFirstLoaded(false);
-            } 
+            }
         };
         firstLoadedScrollDown();
     }, [messageList, isFirstLoaded, setIsFirstLoaded]);
@@ -40,7 +40,7 @@ export const useScrollManagement = (
             }
         };
         const container = messagesContainerRef.current;
-        const throttledScrollHandler = throttle(loadMoreMessagesOnScrollUp, 0);
+        const throttledScrollHandler = throttle(loadMoreMessagesOnScrollUp, 1);
         container.addEventListener('scroll', throttledScrollHandler);
         return () => {
             container.removeEventListener('scroll', throttledScrollHandler)
@@ -100,4 +100,3 @@ export const useScrollManagement = (
 
 
 };
-

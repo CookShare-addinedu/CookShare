@@ -41,8 +41,7 @@ export default function MyPage() {
                 <li><MypageButton name={'Payment'} icon={faCreditCard}/></li>
             </ul>
             <ul className={'list_wrap'}>
-                <List path={''} itemName={'받은 나눔'} iconLeft={faList}/>
-                <List path={''} itemName={'나의 나눔'} iconLeft={faList}/>
+                <List path={''} itemName={'쿡쉐어 내역'} iconLeft={faList}/>
                 <List path={''} itemName={'피드백 보내기'} iconLeft={faPaperPlane}/>
                 <List path={''} itemName={'자주하는 질문'} iconLeft={faCircleQuestion}/>
                 <List path={''} itemName={'약관 및 정책'} iconLeft={faCircleExclamation}/>

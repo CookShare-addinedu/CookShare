@@ -2,14 +2,14 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import './Chat.scss';
 import {jwtDecode} from 'jwt-decode';
 import useChatDetailList from "./useChatDetailList";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useScrollManagement} from "./useScrollManagement";
 import useWebSocketConnection from "./useWebSocketConnection";
+import axios from "axios";
 
 
 function Chat() {
     const {chatRoomId} = useParams(); // URL에서 roomId 추출 . app.js ChatRoomList
-
 
     const [newMessage, setNewMessage] = useState("");
 
@@ -20,7 +20,7 @@ function Chat() {
 
     const token = localStorage.getItem('jwt');
     const decoded = jwtDecode(token);
-    const userId = decoded.mobilenumber;
+    const userId = decoded.mobileNumber;
 
     const {messageList, isLoading, loadChatMessages, hasMore, addMessageList} = useChatDetailList(chatRoomId, userId);
 
@@ -67,7 +67,7 @@ function Chat() {
                 <div className="messagesContainer" id="messagesContainer" ref={messagesContainerRef}>
                     {messageList.map((msg, index) => (
                         <div key={index} className={`chatContent ${msg.sender === userId ? "me" : "them"}`}>
-                            {msg.sender !== userId && <img src="/images/userImage.png" alt={`${msg.sender}`}/>}
+                            {msg.sender !== userId && <img src="/img/fooding.png" alt={`${msg.sender}`}/>}
                             <div className="messageArea">
                                 <div className="messageInfo">
                                     <div className="sender">{msg.sender === userId ? "" : msg.sender}</div>
@@ -104,8 +104,3 @@ function Chat() {
 }
 
 export default Chat;
-
-
-
-
-

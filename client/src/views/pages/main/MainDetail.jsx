@@ -14,13 +14,46 @@ import {useDispatch, useSelector} from "react-redux";
 import {clearFood, setFood} from "../../../redux/foodSlice";
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import {jwtDecode} from "jwt-decode";
+
+
+
 
 export default function MainDetail() {
     const {id} = useParams();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const foodData = useSelector((state) => state.food.value);
     const [isFavorited, setIsFavorited] = useState(false);
     const [favoriteCount, setFavoriteCount] = useState(foodData.likes || 0);
+    const token = localStorage.getItem('jwt');
+    const decoded = jwtDecode(token);
+    const userId = decoded.mobileNumber;
+
+    const handleChat = () => {
+        console.log("버튼 클릭 확인, 사용자 확인:", userId, "수혜자 확인:", foodData.giver.mobileNumber);
+        if (window.confirm("사용자와 채팅하시겠습니까?")) {
+            console.log("채팅 시작 확인, 방 생성 시도");
+            axios.post('/api/chat/createRoom', {
+                firstUserMobileNumber: foodData.giver.mobileNumber,
+                secondUserMobileNumber: userId,
+                foodId: foodData.foodId
+            })
+                .then(response => {
+                    const newChatRoomId = response.data.urlIdentifier;
+                    console.log("채팅방 ID:", newChatRoomId);
+                    if (newChatRoomId) {
+                        navigate(`/chat/GetChat/${newChatRoomId}`);
+                    } else {
+                        console.error("Chat room ID is not provided in the response");
+                    }
+                })
+                .catch(error => {
+                    console.error("Failed to create chat room:", error);
+                });
+        }
+    };
+
 
     function IconButton({ icon, onClick, style }) {
         return (
@@ -67,7 +100,6 @@ export default function MainDetail() {
     };
 
 
-
     useEffect(()=>{
             const fetchFoodsData = async () => {
                 console.log('푸드 아이디:', id);
@@ -75,6 +107,8 @@ export default function MainDetail() {
                     const response = await axios.get(`/api/foods/${id}`);
                     console.log('받아온 데이터 로그에 출력:', response.data);
                     dispatch(setFood(response.data));
+                    setIsFavorited(response.data.isFavorite);
+                    setFavoriteCount(response.data.likes);
                 }catch (error){
                     dispatch(clearFood());
                     console.log('Falied to fetch data:', error);
@@ -87,8 +121,8 @@ export default function MainDetail() {
             }
     },[id, dispatch]);
 
-    if(!foodData){
-        return <div>Loading...</div>;
+    if (!foodData || !foodData.giver || !foodData.giver.mobileNumber) {
+        return <div>Loading...</div>; // 데이터가 로드되기를 기다리는 동안 로딩 표시
     }
 
     return (
@@ -134,9 +168,10 @@ export default function MainDetail() {
                         onClick={toggleFavorite}
                         style={{ color: isFavorited ? 'red' : 'grey' }}
                     />
-                    <NavLink to={'/main'}>
-                        <SquareButton name={'채팅하기'}/>
-                    </NavLink>
+                    {/*<NavLink to={'/main'}>*/}
+                    <SquareButton name={'채팅하기'} onClick={handleChat} />
+                        {/*<ChatButton foodId={foodData.foodId} giverId={foodData.giver.mobileNumber} />*/}
+                    {/*</NavLink>*/}
                 </div>
             </div>
         </section>

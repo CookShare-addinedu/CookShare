@@ -15,6 +15,8 @@ export default function Register() {
     });
 
     const [Val, setVal] = useState(initVal.current);
+    const [nicknameValid, setNicknameValid] = useState(false);
+    const [nicknameMessage, setNicknameMessage] = useState("");
     const [Error, setError] = useState({});
     const navigate = useNavigate();
     const [serverAuthNumber, setServerAuthNumber] = useState("");
@@ -28,6 +30,18 @@ export default function Register() {
     const timerRef = useRef();
 
     useEffect(() => {
+        if (Val.nickname.length > 0 && Val.nickname.length < 2) {
+            setNicknameMessage("2글자 이상 입력하세요");
+        } else if (Val.nickname.length >= 2 && !nicknameValid) {
+            setNicknameMessage("닉네임 중복 검사하세요");
+        } else if (nicknameValid) {
+            setNicknameMessage("유효한 닉네임입니다");
+        } else {
+            setNicknameMessage("");
+        }
+    }, [Val.nickname, nicknameValid]);
+
+    useEffect(() => {
         const validation = validateFields(DebounceVal);
         setFeedback(validation);
         setBtnDisabled(!isFormValid());
@@ -36,6 +50,10 @@ export default function Register() {
 
     const handleChange = (event) => {
         const { name, value } = event.target;
+
+        if (name === 'nickname') {
+            setNicknameValid(false);
+        }
 
         if (name === 'mobileNumber' || name === 'authNumber') {
             if (!value.match(/^\d*$/)) {
@@ -57,13 +75,15 @@ export default function Register() {
 
     const validateFields = (values) => {
         let feedbacks = {};
-        feedbacks.nickname = {
-            valid: values.nickname.length >= 2,
-            message: values.nickname.length >= 2 ? "닉네임이 유효합니다." : "최소 2글자 이상 입력하세요."
-        };
+        let passwordErrors = check(values);
+
+        // feedbacks.nickname = {
+        //     valid: values.nickname.length >= 2 && nicknameValid,
+        //     message: values.nickname.length >= 2 || nicknameValid ? "사용가능한 닉네임 입니다." : "닉네임 인증해주세요"
+        // };
         feedbacks.password = {
-            valid: values.password.length >= 8,
-            message: values.password.length >= 8 ? "비밀번호가 유효합니다." : "특수문자,영문,숫자 포함해서 8글자 이상 입력하세요"
+            valid: !passwordErrors.password,
+            message: passwordErrors.password || "비밀번호가 유효합니다."
         };
         feedbacks.passwordConfirm = {
             valid: values.password === values.passwordConfirm,
@@ -88,8 +108,10 @@ export default function Register() {
             const response = await axios.get('/api/user/checkNickName', {params: {nickname: Val.nickname}});
             if (response.data.isUnique) {
                 alert('사용 가능한 닉네임입니다');
+                setNicknameValid(true);
             } else {
                 alert('이미 사용중인 닉네임입니다');
+                setNicknameValid(false);
             }
 
         } catch (error) {
@@ -183,12 +205,12 @@ export default function Register() {
         const error = {};
 
         //text 인증로직
-        if (value.nickname.length < 2) {
-            error.nickname = '최소 2글자 이상 입력하세요';
-        }
-        //password 인증로직
+        // if (value.nickname.length < 2) {
+        //     error.nickname = '최소 2글자 이상 입력하세요';
+        // }
+        // 비밀번호 유효성 검사
         if (value.password.length < 8 || !txt.test(value.password) || !num.test(value.password) || !spc.test(value.password)) {
-            error.password = '특수문자,영문,숫자 포함해서 8글자 이상 입력하세요'
+            error.password = '특수문자, 영문, 숫자 포함해서 8글자 이상 입력하세요';
         }
         //password 인증로직
         if (value.password !== value.passwordConfirm) {
@@ -222,14 +244,14 @@ export default function Register() {
                         name={"nickname"}
                         value={Val.nickname}
                         onChange={handleChange}
-                        placeholder="닉네임을 입력하세요"
+                        placeholder="닉네임을 입력하세요"
                     />
                     <button type="button" onClick={handleCheckNickName}>
                         <span>중복체크</span>
                     </button>
                 </div>
-                <div className={Feedback.nickname.valid ? "success" : "error"}>
-                    {Val.nickname && Feedback.nickname.message}
+                <div className={nicknameValid ? "success" : "error"}>
+                    {nicknameMessage}
                 </div>
             </div>
 
@@ -241,7 +263,7 @@ export default function Register() {
                     name={"password"}
                     value={Val.password}
                     onChange={handleChange}
-                    placeholder="비밀번호를 입력하세요"
+                    placeholder="비밀번호를 입력하세요"
                 />
                 <div className={Feedback.password.valid ? "success" : "error"}>
                     {Val.password && Feedback.password.message}
@@ -256,7 +278,7 @@ export default function Register() {
                     name={"passwordConfirm"}
                     value={Val.passwordConfirm}
                     onChange={handleChange}
-                    placeholder="비밀번호를 확인해주세요"
+                    placeholder="비밀번호를 확인해주세요"
                 />
                 <div className={Feedback.passwordConfirm.valid ? "success" : "error"}>
                     {Val.passwordConfirm && Feedback.passwordConfirm.message}
@@ -314,7 +336,7 @@ export default function Register() {
             </div>
             <div className={'field btn_wrap'}>
                 <button disabled={BtnDisabled}>
-                    <span>회원가입</span>
+                    <span>회원가입</span>
                 </button>
             </div>
         </form>

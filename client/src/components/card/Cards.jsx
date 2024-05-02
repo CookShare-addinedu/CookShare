@@ -2,12 +2,15 @@ import {Box, Card, Flex, Text} from '@radix-ui/themes';
 import './Cards.scss';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-regular-svg-icons";
+import { faHeart as faSolidHeart } from "@fortawesome/free-solid-svg-icons";
 import Badge from "../badge/Badge";
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import {useState} from "react";
 
 export default function Cards({food}) {
 
+    const [isFavorited, setIsFavorited] = useState(food.isFavorite);
     function formatTimeAgo(dateStr) {
         console.log('Date String:', dateStr); // Check what you actually receive as input
 
@@ -47,7 +50,7 @@ export default function Cards({food}) {
                             <div className={'icon_wrap'}>
                                 <Badge food={food}/>
                                 <p className={'like'}>
-                                    <FontAwesomeIcon icon={faHeart}/>
+                                    <FontAwesomeIcon icon={isFavorited ? faSolidHeart : faHeart} color={isFavorited ? 'red' : 'grey'}/>
                                     <span>{food.likes}</span>
                                 </p>
                             </div>

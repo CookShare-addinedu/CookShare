@@ -21,13 +21,14 @@ function AddButton (){
     )
 }
 
-function SquareButton({name}) {
+function SquareButton({ name, onClick }) {
     return (
-        <button className={'square_button'}>
+        <button className={'square_button'} onClick={onClick}>
             <span>{name}</span>
         </button>
-    )
+    );
 }
+
 function IconButton({icon}){
     return (
         <button className={'icon_button'}>
