@@ -3,9 +3,7 @@ package com.foodshare.board.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.foodshare.domain.User;
 
 import lombok.AllArgsConstructor;
@@ -28,4 +26,6 @@ public class FoodDTO {
 	private String location;
 	private User giver;
 	private User receiver;
+	private Integer likes;
+	private Boolean isFavorite; // 로그인한 유저가 이 음식을 찜했는지 여부
 }

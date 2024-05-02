@@ -10,11 +10,11 @@ public class SecurityConstants {
     // JWT 토큰을 담을 HTTP 요청 헤더 이름
     public static final String TOKEN_HEADER = "Authorization";
     // 엑세스 토큰 시간
-    public static final long EXPIRATION_TIME = 30L * 60 * 10000; // 1 분
+    public static final long EXPIRATION_TIME = 300L * 60 * 10000; // 3분
     // 리프레시 토큰 담길 헤더 이름 (테스트용 , redis 저장)
     public static final String REFRESH_TOKEN_HEADER = "Refresh-Token";
     // 리프레시 토큰 만료 시간
-    public static final long REFRESH_EXPIRATION_TIME = 50L * 60 * 10000; // 5분
+    public static final long REFRESH_EXPIRATION_TIME = 500L * 60 * 10000; // 50분
 
 
 }
