@@ -64,15 +64,13 @@ export default function MainDetail() {
     }
 
 
-    function formatTimeAgo(dateStr) {
-        console.log('Date String:', dateStr); // Check what you actually receive as input
-
-        if (!dateStr) {
-            console.error('Invalid or undefined date string');
-            return 'Date unavailable'; // Or some default/fallback value
+    function formatTimeAgo(dateTimeStr) {
+        if (!dateTimeStr) {
+            console.error('Invalid or undefined datetime string');
+            return '시간 정보 없음';
         }
-        const date = parseISO(dateStr);  // 서버에서 'yyyy-MM-dd' 형식의 문자열로 받은 날짜를 Date 객체로 변환
-        return formatDistanceToNow(date, { addSuffix: true, locale: ko });  // 현재 시간과의 차이를 자연스럽게 표현
+        const dateTime = parseISO(dateTimeStr);  // ISO 문자열을 Date 객체로 변환
+        return formatDistanceToNow(dateTime, { addSuffix: true, locale: ko });  // 현재 시간과의 차이 표시
     }
 
     const toggleFavorite = async () => {
@@ -143,7 +141,7 @@ export default function MainDetail() {
                 </div>
                 <div className={'title_wrap'}>
                     <h5>{foodData.title}</h5>
-                    <p className={'date'}>{foodData.createdAt && <span className={'date'}>{formatTimeAgo(foodData.createdAt)}</span>}</p>
+                    {foodData.createdAt && <p className={'date'}>{formatTimeAgo(foodData.createdAt)}</p>}
                 </div>
                 <div className={'dates_wrap'}>
                     <p><span>소비기한</span>{foodData.eatByDate}</p>

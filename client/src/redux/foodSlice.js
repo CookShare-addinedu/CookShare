@@ -8,6 +8,7 @@ export const foodSlice = createSlice({
             location: '',
             makeByDate: '',
             eatByDate: '',
+            createdAt: '',
             category: '한식',
             images: [],
             giver:{
@@ -35,6 +36,7 @@ export const foodSlice = createSlice({
                 location: '',
                 makeByDate: '',
                 eatByDate: '',
+                createdAt: '',
                 category: '',
                 images: [],
                 giver:{

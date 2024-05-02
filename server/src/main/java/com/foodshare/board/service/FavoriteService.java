@@ -30,19 +30,6 @@ public class FavoriteService {
 	private final UserRepository userRepository;
 	private final FoodRepository foodRepository;
 
-	// private Long getUserIdFromAuthentication() {
-	// 	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	// 	log.info("인증자는 도대체 값이 어떻게 되는거야?!" + authentication);
-	// 	log.info("인증자는 도대체 값이 어떻게 되는거야?!" + authentication.getPrincipal());
-	// 	log.info("인증자는 도대체 값이 어떻게 되는거야?!" + ((CustomUserDetails)authentication.getPrincipal()));
-	// 	log.info("인증자는 도대체 값이 어떻게 되는거야?!" + ((CustomUserDetails)authentication.getPrincipal()).getUserId());
-	// 	if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-	// 		return ((CustomUserDetails) authentication.getPrincipal()).getUserId();
-	// 	} else {
-	// 		throw new UsernameNotFoundException("Authentication failed - no valid user found.");
-	// 	}
-	// }
-
 	public boolean addFavorite(Long foodId, Long userId) throws DuplicateFavoriteException {
 		boolean isExistingFavorite = favoriteRepository.existsByFoodFoodIdAndUserUserId(foodId, userId);
 		if (isExistingFavorite) {
