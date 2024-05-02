@@ -64,6 +64,8 @@ public class FoodService {
 			long favoriteCount = favoriteRepository.countByFoodFoodId(food.getFoodId());
 			FoodDTO foodDTO = entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.orElse(null));
 			foodDTO.setLikes((int) favoriteCount);
+			boolean isFavorite = favoriteRepository.existsByFoodFoodIdAndUserUserId(food.getFoodId(), getUserIdFromAuthentication());
+			foodDTO.setIsFavorite(isFavorite);
 			return foodDTO;
 		});
 	}
@@ -79,6 +81,8 @@ public class FoodService {
 		long favoriteCount = favoriteRepository.countByFoodFoodId(food.getFoodId());
 		FoodDTO foodDTO = entityMapper.convertToFoodDTO(food, foodImages, category, favoriteFood.orElse(null));
 		foodDTO.setLikes((int) favoriteCount);
+		boolean isFavorite = favoriteRepository.existsByFoodFoodIdAndUserUserId(food.getFoodId(), getUserIdFromAuthentication());
+		foodDTO.setIsFavorite(isFavorite);
 		return foodDTO;
 	}
 

@@ -2,11 +2,17 @@ import {Box, Card, Flex, Text} from '@radix-ui/themes';
 import './Cards.scss';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-regular-svg-icons";
+import { faHeart as faSolidHeart } from "@fortawesome/free-solid-svg-icons"; // 실제 하트 아이콘 추가
+
 import Badge from "../badge/Badge";
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import axios from "axios";
+import {useState} from "react";
 export default function Cards({food}) {
+
+    // isFavorite을 기반으로 isFavorited 상태 초기화
+    const [isFavorited, setIsFavorited] = useState(food.isFavorite);
     function formatTimeAgo(dateStr) {
 
         const date = parseISO(dateStr);  // 서버에서 'yyyy-MM-dd' 형식의 문자열로 받은 날짜를 Date 객체로 변환
@@ -41,7 +47,9 @@ export default function Cards({food}) {
                                 <Badge food={food}/>
                                 <p className={'like'}>
 
-                                    <FontAwesomeIcon icon={faHeart}/>
+                                    {/* isFavorited에 따라 아이콘 색상 변경 */}
+                                    <FontAwesomeIcon icon={isFavorited ? faSolidHeart : faHeart} color={isFavorited ? 'red' : 'grey'}/>
+                                    {/*<FontAwesomeIcon icon={faHeart}/>*/}
                                     <span>{food.likes}</span>
                                 </p>
                             </div>

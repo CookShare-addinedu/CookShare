@@ -28,7 +28,7 @@ const router = {
             component: <Register/>,
             title: '회원가입',
             header: <Header1/>,
-            footer: <Footer/>,
+            footer: null,
         },
         {
             path: '/main',
