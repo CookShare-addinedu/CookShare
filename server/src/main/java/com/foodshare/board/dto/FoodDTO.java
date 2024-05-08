@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
+import com.foodshare.domain.User;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,13 +13,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FoodDTO {
-	private Long foodId; // Food ID 필드 추가
+	private Long foodId;
 	private List<MultipartFile> images;
 	private List<String> imageUrls;
 	private String category;
 	private LocalDate makeByDate;
 	private LocalDate eatByDate;
+	private LocalDate createdAt;
 	private String status;
 	private String title;
 	private String description;
+	private String location;
+	private User giver;
+	private User receiver;
+	private Integer likes;
+	private Boolean isFavorite; // 로그인한 유저가 이 음식을 찜했는지 여부
 }

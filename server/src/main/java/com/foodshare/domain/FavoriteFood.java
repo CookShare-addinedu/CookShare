@@ -2,6 +2,7 @@ package com.foodshare.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "favorite_foods")
 public class FavoriteFood {
@@ -35,5 +37,4 @@ public class FavoriteFood {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    // Getters and Setters
 }

@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Data
 @Entity
-@Builder
 @Table(name = "categories")
 public class Category {
     @Id

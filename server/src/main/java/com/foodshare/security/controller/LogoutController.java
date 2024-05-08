@@ -64,22 +64,21 @@ public class LogoutController {
 
     private String extractMobileNumberFromToken(String token) throws SignatureException {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secretKeyEncoded.getBytes(StandardCharsets.UTF_8))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+            .setSigningKey(secretKeyEncoded.getBytes(StandardCharsets.UTF_8))
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
         return claims.get("mobileNumber", String.class);
     }
 
     public long getRemainingTime(String token) throws SignatureException {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secretKeyEncoded.getBytes(StandardCharsets.UTF_8))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+            .setSigningKey(secretKeyEncoded.getBytes(StandardCharsets.UTF_8))
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
         Date expiration = claims.getExpiration();
         long duration = expiration.getTime() - System.currentTimeMillis();
         return Math.max(duration / 1000, 1);
     }
 }
-

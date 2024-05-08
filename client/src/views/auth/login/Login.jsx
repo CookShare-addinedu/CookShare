@@ -1,16 +1,21 @@
 import './Login.scss'
 import axios from "axios";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleRight, faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
-import {NavLink} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {jwtDecode} from "jwt-decode";
 
 export default function Login (){
+    // const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [FormData, setFormData] = useState({
-        tel: '',
+        mobileNumber: '',
         password: ''
     });
     const [ShowPassword, setShowPassword] = useState(false);
+    const [BtnDisabled, setBtnDisabled] = useState(true);
     const [Error, setError] = useState('');
 
     function formatPhoneNumber(value) {
@@ -25,7 +30,7 @@ export default function Login (){
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        const formattedValue = name === 'tel' ? formatPhoneNumber(value) : value;
+        const formattedValue = name === 'mobileNumber' ? formatPhoneNumber(value) : value;
 
         setFormData(prevState => ({
             ...prevState,
@@ -40,9 +45,9 @@ export default function Login (){
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const {tel, password} = event.target.elements;
+        const {mobileNumber, password} = event.target.elements;
         const data = {
-            tel: tel.value,
+            mobileNumber: mobileNumber.value,
             password: password.value
         }
         try{
@@ -50,8 +55,9 @@ export default function Login (){
 
             if (response.status === 200) {
                 const token =  response.data.token;
+                console.log("로그인 성공 jwt발행 " + token);
                 localStorage.setItem('jwt', token);
-                console.log('로그인 성공, JWT저장됨')
+                navigate('/main');
             }else{
                 console.log('로그인 실패:', response.status, response.statusText);
             }
@@ -65,6 +71,7 @@ export default function Login (){
         }
     }
 
+
     return(
         <section className={'login'}>
             <div className={'logo_wrap'}>
@@ -72,12 +79,12 @@ export default function Login (){
             </div>
             <form className={'login_form'} onSubmit={handleSubmit}>
                 <div className={'field'}>
-                    <label htmlFor={'tel'} className={'a11y-hidden'}>휴대폰 번호</label>
+                    <label htmlFor={'mobileNumber'} className={'a11y-hidden'}>휴대폰 번호</label>
                     <input
-                        type={'tel'}
-                        id={'tel'}
-                        name={'tel'}
-                        value={FormData.tel}
+                        type={'mobileNumber'}
+                        id={'mobileNumber'}
+                        name={'mobileNumber'}
+                        value={FormData.mobileNumber}
                         placeholder="휴대폰 번호를 입력해주세요"
                         maxLength={13}
                         pattern={'[0-9]{3}-[0-9]{3,4}-[0-9]{4}'}
@@ -115,7 +122,7 @@ export default function Login (){
                 </div>
                 <div className={'field register_wrap'}>
                     <p>아직도 회원이 아니세요?</p>
-                    <button type="button">
+                    <button type="button" >
                         <NavLink to={'/register'}>
                             <span>회원가입</span>
                             <FontAwesomeIcon icon={faAngleRight}/>

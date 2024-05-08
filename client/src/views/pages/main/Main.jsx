@@ -30,9 +30,12 @@ export default function Main() {
         setLoading(true);
         try{
             const response = await axios.get('/api/foods', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                },
                 params: { page, size: 5 } // 현재 페이지 번호를 파라미터로 전달
             });
-            console.log('받아온 데이터 로그에 출력:', response.data.content);
+
             if(response.data.content.length === 0){
                 setHasMore(false);
             }else{
@@ -45,6 +48,7 @@ export default function Main() {
             setLoading(false);
         }
     }
+
 
     return (
         <section className={'main'}>

@@ -16,12 +16,39 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export default function Mypage() {
     const navigate = useNavigate();
+    // const handleLogout = () => {
+    //     if(window.confirm('로그아웃을 하시겠습니까?')){
+    //         localStorage.clear();
+    //         navigate('/');
+    //     }
+    // };
     const handleLogout = () => {
-        if(window.confirm('로그아웃을 하시겠습니까?')){
-            localStorage.clear();
-            navigate('/');
+        if (window.confirm('로그아웃을 하시겠습니까?')) {
+            // 서버에 로그아웃 요청을 보낸다
+            //const token = localStorage.getItem('token');
+            //if (!token) {
+            //    console.error('No token found in localStorage');
+            //    return;
+            //}
+            fetch('/api/user/logout', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                },
+                credentials: 'include' // 쿠키를 포함시키기 위해 필요
+            })
+                .then(response => response.text()) // 응답을 텍스트로 변환
+                .then(data => {
+                    console.log(data); // 서버 응답 로그 출력
+                    localStorage.clear(); // 로컬 스토리지 클리어
+                    navigate('/'); // 홈페이지로 리다이렉션
+                })
+                .catch(error => {
+                    console.error('로그아웃 실패:', error);
+                });
         }
     };
+
 
     return (
         <section className={'mypage'}>

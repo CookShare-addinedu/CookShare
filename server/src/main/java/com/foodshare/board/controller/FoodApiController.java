@@ -1,9 +1,10 @@
 package com.foodshare.board.controller;
 
+import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,34 +28,35 @@ public class FoodApiController {
 	private final FoodService foodService;
 	private final FileStorageService fileStorageService;
 
-	@GetMapping("/search")
-	public ResponseEntity<List<FoodDTO>> searchFoods(@RequestParam(name = "query") String searchQuery) {
-		List<FoodDTO> searchResults = foodService.searchFoods(searchQuery);
+	@GetMapping("/search/by-category")
+	public ResponseEntity<List<FoodDTO>> searchFoodsByCategory(@RequestParam(name = "query") String categoryName) {
+		log.info("Searching for foods with category name: {}", categoryName);
+		List<FoodDTO> searchResults = foodService.searchFoodsByCategoryName(categoryName);
 		return ResponseEntity.ok(searchResults);
 	}
 
-
 	@GetMapping("/{id}")
 	public ResponseEntity<FoodDTO> read(@PathVariable("id") Long id) {
+		log.info("Reading food with id: {}", id);
 		FoodDTO foodDTO = foodService.read(id);
 		return ResponseEntity.ok(foodDTO);
 	}
-
 	@GetMapping
-	public ResponseEntity<Page<FoodDTO>> getAllFoods(@PageableDefault(size = 20) Pageable pageable) {
+	public ResponseEntity<Page<FoodDTO>> getAllFoods(@PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+	) {
+		log.info("Retrieving all foods with pageable: {}", pageable);
 		Page<FoodDTO> foodDTOs = foodService.getAllFoods(pageable);
 		return ResponseEntity.ok(foodDTOs);
 	}
-
 	@PostMapping
-	public ResponseEntity<?> create(@ModelAttribute FoodDTO foodDTO) {
+	public ResponseEntity<?> create(@ModelAttribute(name="formData") FoodDTO foodDTO) {
+		log.info("Creating food with data: {}", foodDTO);
 		foodDTO.setImageUrls(processUploadedFiles(foodDTO.getImages()));
 		Food createdFood = foodService.create(foodDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdFood);
 	}
-
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@PathVariable("id") Long id, @ModelAttribute FoodDTO foodDTO) {
+	public ResponseEntity<?> update(@PathVariable("id") Long id, @ModelAttribute(name="formData") FoodDTO foodDTO) {
 		log.info("Updating food with id: {}", id);
 		FoodDTO existingFoodDTO = foodService.read(id);
 		if (foodDTO.getImages() != null && !foodDTO.getImages().isEmpty()) {
@@ -65,15 +67,14 @@ public class FoodApiController {
 		Food updatedFood = foodService.update(id, foodDTO);
 		return ResponseEntity.ok(updatedFood);
 	}
-
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+		log.info("Deleting food with id: {}", id);
 		foodService.delete(id);
 		return ResponseEntity.ok().build();
 	}
-
 	private List<String> processUploadedFiles(List<MultipartFile> images) {
-		List<String> fileDownloadUrls = null;
+		List<String> fileDownloadUrls = new ArrayList<>();
 		try {
 			fileDownloadUrls = fileStorageService.storeFiles(images);
 		} catch (FileStorageException e) {

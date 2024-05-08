@@ -28,7 +28,7 @@ const router = {
             component: <Register/>,
             title: '회원가입',
             header: <Header1/>,
-            footer: <Footer/>,
+            footer: null,
         },
         {
             path: '/main',
@@ -73,7 +73,7 @@ const router = {
             footer: <Footer/>
         },
         {
-            path: '/search',
+            path: 'search/by-category',
             component: <Search/>,
             title: null,
             header: null,
@@ -99,7 +99,6 @@ const router = {
 
         },
         {
-
             path: 'notification',
             component: <Notifications/>,
             header: <Header4/>,
