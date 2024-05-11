@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {useLocation, useNavigate} from "react-router-dom";
 import './MainForm.scss';
@@ -12,176 +12,111 @@ import {format} from "date-fns";
 import {SquareButton} from "../../../components/button/Button";
 import Select from "../../../components/select/Select";
 import Drawers from "../../../components/drawer/Drawers";
-import Address from "../../../components/address/Address";
-import { debounce } from 'lodash';
+import Address from "../../../components/adress/Address";
+import {useDispatch, useSelector} from "react-redux";
+import {addImage, clearFood, removeImage, setFood} from "../../../redux/foodSlice";
 
 
 const MainForm = () => {
-    const location = useLocation();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { state }  = useLocation();
     const swiperRef = useRef(null);
-    const initialData = location.state?.food;
-    const [images, setImages] = useState([]); // 이미지 파일 목록 상태 추가
-    const [foodData, setFoodData] = useState({
-        category:'한식',
-        makeByDate: '',
-        eatByDate: '',
-        status: '',
-        title: '',
-        description: '',
-        location:''
-    });
-
-    const handleRemoveImage = (index) => {
-        setImages(prevImages => {
-            const newImages = prevImages.filter((_, i) => i !== index);
-            if (swiperRef.current && swiperRef.current.swiper) {
-                swiperRef.current.swiper.update();
-            }
-            return newImages;
-        });
-    };
-
-    const handleResize = debounce(() => {
-        if (swiperRef.current && swiperRef.current.swiper) {
-            swiperRef.current.swiper.update();
-        }
-    }, 100); // 100밀리초 동안 debounce 처리
+    const foodData = useSelector(state => state.food.value)
+    const initialData = state?.foodData || foodData;
+    const images = useSelector(state => state.food.value.images || []);
+    // const [images, setImages] = useState([]);
 
     useEffect(() => {
-        const resizeObserver = new ResizeObserver(entries => {
-            handleResize();
-        });
-
-        if (swiperRef.current) {
-            resizeObserver.observe(swiperRef.current);
-        }
-
-        return () => {
-            resizeObserver.disconnect();
-        };
-    }, []);
-
-    useEffect(() => {
-        console.log(initialData);
         if (initialData) {
-            setFoodData({
-                category: initialData.category,
-                makeByDate: initialData.makeByDate,
-                eatByDate: initialData.eatByDate,
-                status: initialData.status,
-                title: initialData.title,
-                description: initialData.description,
-                location:initialData.location
-            });
-            setSelectedStatus(initialData.status); // 상태를 설정합니다.
-
-            // 이미지 URL을 이미지 미리보기 배열에 추가합니다.
-            // 가정: initialData.imageUrls는 이미지 URL 문자열 배열입니다.
-            if (initialData.imageUrls) {
-                setImages(initialData.imageUrls.map(url => ({ url })));
-            }
+            dispatch(setFood(initialData));
         }
-    }, [initialData]);
 
-    const handleChange = (e) => {
-        setFoodData({ ...foodData, [e.target.name]: e.target.value });
-    };
+        const newFoodData = {
+            ...initialData,
+            images: initialData.imageUrls ? initialData.imageUrls.map(url => ({url, file: null})) : []
+        };
 
-    const [selectedStatus, setSelectedStatus] = useState("");
+        dispatch(setFood(newFoodData));
+    },[dispatch]);
 
-    // const handleStatusChange = (statusValue) => {
-    //     setFoodData({ ...foodData, status: statusValue });
-    //     setSelectedStatus(statusValue); // 버튼의 스타일을 변경하기 위해 선택된 상태를 설정합니다.
-    // };
-    //
-    // 이미지 변경 핸들러를 수정합니다.
+    const handleChange = useCallback((e) => {
+        const {name, value} = e.target;
+        dispatch(setFood({...foodData, [name]: value}));
+    },[dispatch, foodData]);
     const handleImageChange = (e) => {
         if (e.target.files) {
-            // 로컬에서 선택된 이미지 파일들의 배열을 생성합니다.
             const fileImages = Array.from(e.target.files).map(file => ({
                 file,
-                url: URL.createObjectURL(file)
+                url: URL.createObjectURL(file),
             }));
-            // 기존 이미지와 새로운 이미지를 결합합니다.
-            setImages(prevImages => [...prevImages, ...fileImages].slice(0, 5));
+            fileImages.forEach(image =>{
+                dispatch(addImage(image));
+            });
         }
     };
-
-    const handleMakeByDateChange = (dateValue) => {
-        const formattedDate = dateValue ? format(dateValue, 'yyyy-MM-dd') : '';
-        setFoodData(prevData => ({
-            ...prevData,
-            makeByDate: formattedDate
-        }));
+    const handleRemoveImage = (index) => {
+        dispatch(removeImage(index));
+        if(swiperRef.current && swiperRef.current.swiper) {
+            swiperRef.current.swiper.update();
+        }
     };
-
-    const handleEatByDateChange = (dateValue) => {
+    const handleDateChange = (name, dateValue) => {
         const formattedDate = dateValue ? format(dateValue, 'yyyy-MM-dd') : '';
-        setFoodData(prevData => ({
-            ...prevData,
-            eatByDate: formattedDate
-        }));
+        dispatch(setFood({ ...foodData, [name]: formattedDate }));
     };
 
     const handleLocationSelect = (selectedLocation) => {
-        setFoodData(prevVal => ({
-            ...prevVal,
-            location: selectedLocation
-        }));
+        dispatch(setFood({...foodData, location: selectedLocation}));
     }
+
+    useEffect(() => {
+        console.log('Redux로부터 업데이트된 food data:', foodData);
+    }, [foodData]); // foodData가 변경될 때마다 실행
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const formData = new FormData();
-
-        formData.append('makeByDate', foodData.makeByDate);
-        formData.append('eatByDate', foodData.eatByDate);
-
-        if (images.length > 0) {
-            images.forEach(image => {
-                if (image.file) { // 'image.file'이 존재하는 경우만 추가
-                    formData.append('images', image.file);
-                }
-            });
-        }
-
-        Object.keys(foodData).forEach(key => {
-            formData.append(key, foodData[key]);
+        formData.append('title', foodData.title);
+        formData.append('description', foodData.description);
+        formData.append('makeByDate', format(foodData.makeByDate, 'yyyy-MM-dd'));
+        formData.append('eatByDate', format(foodData.eatByDate, 'yyyy-MM-dd'));
+        formData.append('category', foodData.category);
+        formData.append('location', foodData.location);
+        // 이미지 파일 체크 및 추가
+        foodData.images.forEach((image, index) => {
+            if (image.file) { // 파일이 실제로 존재하는지 확인
+                formData.append(`images[${index}]`, image.file);
+                console.log(`Image added to formData: images[${index}]`, image.file);
+            }
         });
 
+        console.log("FormData 내용 검사:");
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+        }
+
+
+
+        const method = foodData.foodId ? 'PUT' : 'POST';
+        const url = foodData.foodId ? `/api/foods/${foodData.foodId}` : '/api/foods';
+        const token = localStorage.getItem('jwt');
+
         try {
-            let response;
-            if (initialData?.foodId) {
-                // 데이터 수정 (PUT 요청)
-                console.log("수정 요청들어옴");
-                response = await axios.put(`/api/foods/${initialData.foodId}`, formData);
-            } else {
-                // 새 데이터 추가 (POST 요청)
-                console.log("추가 요청들어옴" + formData);
-                const token = localStorage.getItem('jwt');
-                response = await axios.post('/api/foods', formData, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                console.log("서버로 포스팅 요청함" + response.data);
-
-            }
-
-            if (response.status === 201) {
-                console.log("성공적으로 처리되었습니다.");
-                const token =  response.data.token;
-                console.log(token);
-                // localStorage.setItem('jwt', token);
-                navigate(`/main`); // 성공적으로 처리 후 메인 페이지로 이동
-            } else {
-                console.error('서버 처리 실패: ', response.data.message);
-            }
-
+            const response = await axios({
+                method: method,
+                url: url,
+                data: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log('서버 응답', response.data);
+            navigate('/main');
         } catch (error) {
-            console.error('Error submitting food data', error);
+            console.error('Error submitting food data:', error);
+            alert('제출 중 오류가 발생했습니다: ' + (error.response?.data?.message || error.message));
         }
     };
 
@@ -210,15 +145,11 @@ const MainForm = () => {
                         slidesPerView={'auto'}
                         spaceBetween={10}
                         centeredSlides={false}
-                        observer={true} // 슬라이더와 자식 요소의 변경을 감지
-                        observeParents={true} // 슬라이더의 부모 요소 변경을 감지
-                        updateOnWindowResize={false} // 윈도우 리사이즈 시 자동 업데이트 비활성화
                     >
-                        {images.map((image, index) => (
+                        {images && images.map((image, index) => (
                             <SwiperSlide key={index}>
                                 <div>
                                     <img src={image.url} alt={`Preview ${index}`}/>
-                                    {/* 이미지 제거 버튼을 추가합니다. */}
                                     <button className={'close'} type="button" onClick={() => handleRemoveImage(index)}>
                                         <FontAwesomeIcon icon={faCircleXmark}/>
                                     </button>
@@ -237,8 +168,10 @@ const MainForm = () => {
                             oneTap
                             name="makeByDate"
                             id="makeByDate"
+                            // value={food.makeByDate ? new Date(food.makeByDate) : null}
+                            // value={new Date(foodData.makeByDate)}
                             value={foodData.makeByDate ? new Date(foodData.makeByDate) : null}
-                            onChange={handleMakeByDateChange}
+                            onChange={value => handleDateChange('makeByDate', value)}
                         />
                     </div>
 
@@ -251,29 +184,20 @@ const MainForm = () => {
                             name="eatByDate"
                             id="eatByDate"
                             value={foodData.eatByDate ? new Date(foodData.eatByDate) : null}
-                            onChange={handleEatByDateChange}
+                            // value={new Date(foodData.eatByDate)}
+
+                            onChange={value => handleDateChange('eatByDate', value)}
                         />
                     </div>
                 </div>
-                {/*<div className="form_group status_type">*/}
-                {/*    <label>거래방식</label>*/}
-                {/*    <div className="status-buttons">*/}
-                {/*        /!* 각 버튼의 className에 선택된 상태를 기반으로 조건부 스타일을 적용합니다. *!/*/}
-                {/*        <button type="button" className={`status-button ${selectedStatus === '나눔하기' ? 'selected' : ''}`}*/}
-                {/*                onClick={() => handleStatusChange('나눔하기')}>나눔하기*/}
-                {/*        </button>*/}
-                {/*        <button type="button" className={`status-button ${selectedStatus === '교환하기' ? 'selected' : ''}`}*/}
-                {/*                onClick={() => handleStatusChange('교환하기')}>교환하기*/}
-                {/*        </button>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
+
                 <div className="form_group">
                     <label htmlFor="title" className={'a11y-hidden'}>제목</label>
                     <input
                         className={'title'}
                         name="title"
                         id="title"
-                        value={foodData.title}
+                        value={foodData.title || ''}
                         onChange={handleChange}
                         placeholder="글 제목"
                     />
@@ -284,7 +208,7 @@ const MainForm = () => {
                         className={'description'}
                         name="description"
                         id="description"
-                        value={foodData.description}
+                        value={foodData.description || ''}
                         onChange={handleChange}
                         placeholder="내용을 입력해주세요"
                     />
@@ -294,7 +218,8 @@ const MainForm = () => {
                     <Select
                         name="category"
                         id="category"
-                        value={foodData.category}
+                        value={foodData.category || ''}
+                        debounce={300}
                         onChange={(value) => {
                             handleChange({
                                 target: {

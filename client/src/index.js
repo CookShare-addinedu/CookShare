@@ -4,9 +4,9 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import {Provider} from "react-redux";
 import store from "./redux/store";
-import {isTokenValid} from "./views/Notification/utils/isTokenValid";
-import SSEComponent from "./views/Notification/SSEComponent";
 import axios from "axios";
+const rootElement = document.getElementById('root');
+const root = ReactDOM.createRoot(rootElement);
 
 // Axios 인터셉터 설정
 axios.interceptors.request.use(
@@ -25,18 +25,12 @@ axios.interceptors.request.use(
     }
 );
 
-const rootElement = document.getElementById('root');
-const root = ReactDOM.createRoot(rootElement);
-const tokenIsValid = isTokenValid();
-
 root.render(
-
+    <React.StrictMode>
         <Provider store={store}>
-            {/*React.StrictMode 지우세요*/}
             <BrowserRouter>
-                {tokenIsValid && <SSEComponent />}
                 <App />
             </BrowserRouter>
         </Provider>
-
+    </React.StrictMode>
 );

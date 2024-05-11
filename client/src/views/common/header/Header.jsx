@@ -4,8 +4,9 @@ import {faAngleLeft, faEllipsisVertical, faMagnifyingGlass, faBell} from "@forta
 import useHeaderTitle from "../../../hook/useHeaderTitle";
 import {NavLink, useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
-import useSSEConnection from "../../Notification/useSSEConnection";
-import '../../Notification/NotificationMessage.scss'
+import Menu from "../../../components/menu/Menu";
+import Drawers from "../../../components/drawer/Drawers";
+
 function Header1() {
     const navigate = useNavigate();
     const title = useHeaderTitle();
@@ -36,7 +37,7 @@ function Header2() {
         </header>
     )
 }
-function Header3() {
+function Header3({food}) {
     const navigate = useNavigate();
     const title = useHeaderTitle();
     return(
@@ -52,19 +53,22 @@ function Header3() {
                 <h2>{title}</h2>
             </div>
             <div className={'menu'}>
-                <button>
-                    <span>
-                        <FontAwesomeIcon icon={faEllipsisVertical}/>
-                    </span>
-                </button>
+                <Drawers
+                    trigger={
+                        <button>
+                            <span>
+                                <FontAwesomeIcon icon={faEllipsisVertical}/>
+                            </span>
+                        </button>
+                    }
+                    drawerContent={<Menu food={food} />}
+                    />
             </div>
         </header>
     )
 }
 function Header4(){
     const address = useSelector(state => state.address.currentAddress);
-
-    const {totalNoticeUnreadCount} = useSSEConnection();//미확인 알림
     return(
         <header className={'header4'}>
             <div className={'address_wrap'}>
@@ -80,12 +84,8 @@ function Header4(){
                         </NavLink>
                     </li>
                     <li>
-                        {/*읽지않은 알림 메시지 */}
-                        <NavLink to={'/notification'} style={{ position: "relative" }}>
-                            <FontAwesomeIcon icon={faBell} />
-                            {totalNoticeUnreadCount > 0 && (
-                                <span className="noticeUnread-count">{totalNoticeUnreadCount}</span>
-                            )}
+                        <NavLink to={'/notification'}>
+                            <FontAwesomeIcon icon={faBell}/>
                         </NavLink>
                     </li>
                 </ul>

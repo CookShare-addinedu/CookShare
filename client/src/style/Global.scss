@@ -65,3 +65,10 @@ button{
 .modal_open{
   padding-right: 0!important;
 }
+.active-link {
+  color: #ff9000;
+
+  span {
+    color: inherit;
+  }
+}

@@ -1,6 +1,6 @@
 import { Drawer } from 'rsuite';
 import {useState} from "react";
-import Address from "../address/Address";
+import Address from "../adress/Address";
 const AddressDrawer = ({title, placeholder}) => {
     const [open, setOpen] = useState(false);
     const [placement, setPlacement] = useState('bottom');

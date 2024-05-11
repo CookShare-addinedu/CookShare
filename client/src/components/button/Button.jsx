@@ -21,21 +21,19 @@ function AddButton (){
     )
 }
 
-function SquareButton({name}) {
+function SquareButton({ name, onClick }) {
     return (
-        <button className={'square_button'}>
+        <button className={'square_button'} onClick={onClick}>
             <span>{name}</span>
-        </button>
-    )
-}
-// IconButton 컴포넌트 수정
-function IconButton({ icon, onClick, style }) {
-    return (
-        <button className={'icon_button'} style={style} onClick={onClick}>
-            <FontAwesomeIcon icon={icon}/>
         </button>
     );
 }
 
-
+function IconButton({icon}){
+    return (
+        <button className={'icon_button'}>
+            <FontAwesomeIcon icon={icon} />
+        </button>
+    )
+}
 export {MypageButton, AddButton, SquareButton, IconButton};

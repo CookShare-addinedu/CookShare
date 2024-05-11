@@ -76,7 +76,7 @@ export default function Register() {
     const validateFields = (values) => {
         let feedbacks = {};
         let passwordErrors = check(values);
-        
+
         // feedbacks.nickname = {
         //     valid: values.nickname.length >= 2 && nicknameValid,
         //     message: values.nickname.length >= 2 || nicknameValid ? "사용가능한 닉네임 입니다." : "닉네임 인증해주세요"

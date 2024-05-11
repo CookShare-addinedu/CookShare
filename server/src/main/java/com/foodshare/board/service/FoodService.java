@@ -146,7 +146,14 @@ public class FoodService {
 	public void delete(Long id) throws NotFoundException {
 		// 음식 정보를 찾기
 		Food existingFood = foodRepository.findById(id)
-			.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+				.orElseThrow(() -> new NotFoundException("Food not found with id: " + id));
+
+		// favorite_foods 테이블에서 이 food_id를 사용하는 행이 있는지 확인
+		boolean hasFavorites = favoriteRepository.existsByFoodFoodId(existingFood.getFoodId());
+		if (hasFavorites) {
+			// 관련된 favorite_foods 행 삭제
+			favoriteRepository.deleteByFoodFoodId(existingFood.getFoodId());
+		}
 
 		// 관련된 이미지 삭제
 		List<FoodImage> images = foodImageRepository.findByFoodFoodId(existingFood.getFoodId());
@@ -163,6 +170,7 @@ public class FoodService {
 			categoryRepository.deleteById(existingFood.getCategory().getCategoryId());
 		}
 	}
+
 
 	@Transactional(readOnly = true)
 	public List<FoodDTO> searchFoodsByCategoryName(String categoryName) {

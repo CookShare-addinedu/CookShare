@@ -1,6 +1,7 @@
 package com.foodshare.board.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +20,7 @@ public class FoodDTO {
 	private String category;
 	private LocalDate makeByDate;
 	private LocalDate eatByDate;
-	private LocalDate createdAt;
+	private LocalDateTime createdAt;
 	private String status;
 	private String title;
 	private String description;

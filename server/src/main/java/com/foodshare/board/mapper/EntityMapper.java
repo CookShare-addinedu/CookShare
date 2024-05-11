@@ -3,6 +3,7 @@ package com.foodshare.board.mapper;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public interface EntityMapper {
 		@Mapping(target = "category", source = "category.name"),
 		@Mapping(target = "makeByDate", source = "food.makeByDate", qualifiedByName = "timestampToLocalDate"),
 		@Mapping(target = "eatByDate", source = "food.eatByDate", qualifiedByName = "timestampToLocalDate"),
-		@Mapping(target = "createdAt", source = "food.createdAt", qualifiedByName = "timestampToLocalDate"),
+		@Mapping(target = "createdAt", source = "food.createdAt", qualifiedByName = "timestampToLocalDateTime"),
 		@Mapping(target = "title", source = "food.title"),
 		@Mapping(target = "description", source = "food.description"),
 		@Mapping(target = "giver", source = "food.giver"),
@@ -62,6 +63,11 @@ public interface EntityMapper {
 	@Mapping(target = "createdAt", expression = "java(java.sql.Timestamp.from(java.time.Instant.now()))")
 	@Mapping(target = "updatedAt", expression = "java(java.sql.Timestamp.from(java.time.Instant.now()))")
 	Food convertToFood(FoodDTO foodDTO);
+
+	@Named("timestampToLocalDateTime")
+	default LocalDateTime timestampToLocalDateTime(Timestamp timestamp) {
+		return timestamp != null ? timestamp.toLocalDateTime() : null;
+	}
 	@Named("localDateToTimestamp")
 	default Timestamp localDateToTimestamp(LocalDate date) {
 		return date == null ? null : Timestamp.valueOf(date.atStartOfDay());
