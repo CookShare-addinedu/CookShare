@@ -81,8 +81,6 @@ com.cookshare
 ├── board
 │   ├── controller
 │   ├── dto
-
-
 │   ├── exception
 │   ├── mapper
 │   ├── repository
