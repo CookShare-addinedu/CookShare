@@ -127,7 +127,6 @@ com.cookshare
 ```
 
 ## Links
-- **Wiki**: [Cook-Share Wiki](https://example.com/cook-share/wiki)
-- **Home**: [Cook-Share Home](https://example.com/cook-share)
+- **Wiki**: [Cook-Share Wiki](https://github.com/CookShare-addinedu/CookShare/wiki)
 
 ---
