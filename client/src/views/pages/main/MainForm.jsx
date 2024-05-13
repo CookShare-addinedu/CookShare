@@ -12,7 +12,7 @@ import {format} from "date-fns";
 import {SquareButton} from "../../../components/button/Button";
 import Select from "../../../components/select/Select";
 import Drawers from "../../../components/drawer/Drawers";
-import Address from "../../../components/adress/Address";
+import Address from "../../../components/address/Address";
 import {useDispatch, useSelector} from "react-redux";
 import {addImage, clearFood, removeImage, setFood} from "../../../redux/foodSlice";
 

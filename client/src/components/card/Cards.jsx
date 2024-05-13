@@ -12,7 +12,7 @@ export default function Cards({food}) {
 
     const [isFavorited, setIsFavorited] = useState(food.isFavorite);
     function formatTimeAgo(dateStr) {
-        console.log('Date String:', dateStr); // Check what you actually receive as input
+        // console.log('Date String:', dateStr); // Check what you actually receive as input
 
         if (!dateStr) {
             console.error('Invalid or undefined date string');

@@ -18,19 +18,19 @@ function App() {
     }
 
     useEffect(() => {
-        const route = router.routes.find(route =>
-            matchCustomPath(route.path, location.pathname)
-        );
-        console.log('route:', route);
-        console.log('location.pathname:', location.pathname);
+        const route = router.routes.find(route => matchCustomPath(route.path, location.pathname));
         if (route) {
-            setCurrentHeader(route.header);
-            setCurrentFooter(route.footer);
-        }else{
-            console.log("No matching route found for:", location.pathname);
+            if (currentHeader !== route.header || currentFooter !== route.footer) {
+                setCurrentHeader(route.header);
+                setCurrentFooter(route.footer);
+            }
+        } else {
+            if (currentHeader !== null || currentFooter !== null) {
+                setCurrentHeader(null);
+                setCurrentFooter(null);
+            }
         }
-
-    }, [location]);
+    }, [location, currentHeader, currentFooter]);
 
 
     const isOnboarding = location.pathname === '/onBoarding';

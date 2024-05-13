@@ -16,12 +16,14 @@ export default function Main() {
         { key: '1', title: '나눔거래' },
         { key: '2', title: '나의동네' }
     ]);
+    const initialLoadComplete = useRef(false);
 
     useEffect(() => {
-        fetchFoodsData();  // 컴포넌트가 마운트될 때 초기 데이터 로드
+        if (!initialLoadComplete.current && !loading) {
+            fetchFoodsData();
+            initialLoadComplete.current = true; // 초기 로드 완료 표시
+        }
     }, []);
-
-    const loader = useRef(null);
 
     const fetchFoodsData = async () => {
         if(!hasMore || loading) return;

@@ -7,16 +7,14 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-regular-svg-icons";
 import Caution from "../../../components/caution/Caution";
 import CautionData from "../../../data/CautionData";
-import MapView from "../../../components/adress/MapView";
+import MapView from "../../../components/address/MapView";
 import {IconButton, SquareButton} from "../../../components/button/Button";
-import {faAngleRight} from "@fortawesome/free-solid-svg-icons";
+import {faAngleRight, faHeart as faSolidHeart} from "@fortawesome/free-solid-svg-icons";
 import {useDispatch, useSelector} from "react-redux";
 import {clearFood, setFood} from "../../../redux/foodSlice";
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {jwtDecode} from "jwt-decode";
-
-
 
 
 export default function MainDetail() {
@@ -53,16 +51,6 @@ export default function MainDetail() {
                 });
         }
     };
-
-
-    function IconButton({ icon, onClick, style }) {
-        return (
-            <button className={'icon_button'} style={style} onClick={onClick}>
-                <FontAwesomeIcon icon={icon}/>
-            </button>
-        );
-    }
-
 
     function formatTimeAgo(dateTimeStr) {
         if (!dateTimeStr) {
@@ -162,7 +150,7 @@ export default function MainDetail() {
 
                 <div className={'actions_wrap'}>
                     <IconButton
-                        icon={faHeart}
+                        icon={isFavorited ? faSolidHeart : faHeart}
                         onClick={toggleFavorite}
                         style={{ color: isFavorited ? 'red' : 'grey' }}
                     />
