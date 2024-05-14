@@ -44,6 +44,11 @@
             left: auto;
             right: 10px;
             top: 10px;
+
+            .rs-icon{
+              font-size: 20px;
+            }
+
           }
 
           .rs-drawer-title{
@@ -54,6 +59,10 @@
 
         .rs-drawer-body{
           padding: 20px;
+
+          &::-webkit-scrollbar {
+            display: none;
+          }
         }
 
       }
