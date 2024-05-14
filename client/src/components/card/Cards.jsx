@@ -8,9 +8,9 @@ import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {useState} from "react";
 
-export default function Cards({food}) {
+export default function Cards({item}) {
 
-    const [isFavorited, setIsFavorited] = useState(food.isFavorite);
+    const [isFavorited, setIsFavorited] = useState(item.isFavorite);
     function formatTimeAgo(dateStr) {
         // console.log('Date String:', dateStr); // Check what you actually receive as input
 
@@ -28,30 +28,30 @@ export default function Cards({food}) {
                     <Flex className={'card_layout'} gap="3" align="center">
                         <div className={'img_wrap'}>
                             <img
-                                src={food.imageUrls?.[0] || './../img/cookshare.svg'}
-                                alt={food.title}
+                                src={item.imageUrls?.[0] || './../img/cookshare.svg'}
+                                alt={item.title}
                             />
                         </div>
                         <Box className={'content'}>
                             <div className={'text_wrap'}>
                                 <div className={'title'}>
-                                    <h4>{food.title}</h4>
+                                    <h4>{item.title}</h4>
                                     <p className={'date'}>
-                                        {food.createdAt && <span className={'date'}>{formatTimeAgo(food.createdAt)}</span>}
+                                        {item.createdAt && <span className={'date'}>{formatTimeAgo(item.createdAt)}</span>}
                                     </p>
                                 </div>
                                 <div className={'description'}>
-                                    <p>{food.description}</p>
+                                    <p>{item.description}</p>
                                     <p>
-                                        <span>#피자 #나눔</span>
+                                        <span>#{item.category}</span>
                                     </p>
                                 </div>
                             </div>
                             <div className={'icon_wrap'}>
-                                <Badge food={food}/>
+                                <Badge food={item}/>
                                 <p className={'like'}>
                                     <FontAwesomeIcon icon={isFavorited ? faSolidHeart : faHeart} color={isFavorited ? 'red' : 'grey'}/>
-                                    <span>{food.likes}</span>
+                                    <span>{item.likes}</span>
                                 </p>
                             </div>
                         </Box>

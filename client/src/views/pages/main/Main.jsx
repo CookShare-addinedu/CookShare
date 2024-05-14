@@ -58,7 +58,7 @@ export default function Main() {
                             {tab.key === '1' ?
                                 foodData.map((food, index) => (
                                     <NavLink to={`foods/${food.foodId}`} key={`${food.foodId}-${index}`}>
-                                        <Cards food={food}/>
+                                        <Cards item={food}/>
                                     </NavLink>
                                 )) : '나랑 시켜먹을래?'}
                             {!hasMore && <div>No more data available.</div>}
