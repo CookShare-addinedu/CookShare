@@ -116,6 +116,9 @@ public class FoodService {
 		// 기존 Food 엔티티 업데이트
 		existingFood.setTitle(foodDTO.getTitle());
 		existingFood.setDescription(foodDTO.getDescription());
+		existingFood.setLocation(foodDTO.getLocation());
+		existingFood.setLatitude(foodDTO.getLatitude());
+		existingFood.setLongitude(foodDTO.getLongitude());
 		// 다른 필드들도 마찬가지로 업데이트
 
 		// Category 업데이트

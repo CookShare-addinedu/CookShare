@@ -33,7 +33,9 @@ public interface EntityMapper {
 		@Mapping(target = "title", source = "food.title"),
 		@Mapping(target = "description", source = "food.description"),
 		@Mapping(target = "giver", source = "food.giver"),
-		@Mapping(target = "location", source = "food.location"),  // 직접 지정 또는 자동 추출
+		@Mapping(target = "location", source = "food.location"), // 직접 지정 또는 자동 추출@Mapping()
+		@Mapping(target = "latitude", source = "food.latitude"),
+		@Mapping(target = "longitude", source = "food.longitude"),
 		@Mapping(target = "likes", source = "food.likes"),
 		@Mapping(target = "isFavorite", source = "favoriteFood.isFavorite"),
 	})
@@ -53,6 +55,8 @@ public interface EntityMapper {
 
 	@Mapping(target = "foodId", ignore = true)
 	@Mapping(target = "location", source = "foodDTO.location")
+	@Mapping(target = "latitude", source = "foodDTO.latitude")
+	@Mapping(target = "longitude", source = "foodDTO.longitude")
 	@Mapping(target = "category", ignore = true)
 	@Mapping(target = "giver", source = "foodDTO.giver")
 	@Mapping(target = "receiver", ignore = true)

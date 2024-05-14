@@ -142,7 +142,7 @@ export default function MainDetail() {
                     <Avatar className={'avatar'} circle/>
                     <div className={'user_info'}>
                         <p className={'nick_name'}>{foodData.giver?.nickName || '닉네임 자리입니다만'}</p>
-                        <p className={'location'}>{foodData.location}주소자리</p>
+                        <p className={'location'}>{foodData.location}</p>
                     </div>
                 </div>
                 <div className={'title_wrap'}>

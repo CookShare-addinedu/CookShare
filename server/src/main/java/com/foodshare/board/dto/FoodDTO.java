@@ -25,6 +25,9 @@ public class FoodDTO {
 	private String title;
 	private String description;
 	private String location;
+	// 좌표
+	private double latitude;
+	private double longitude;
 	private User giver;
 	private User receiver;
 	private Integer likes;

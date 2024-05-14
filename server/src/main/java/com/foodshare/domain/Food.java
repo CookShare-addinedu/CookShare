@@ -43,6 +43,12 @@ public class Food {
     @Column(name = "location")
     private String location;
 
+    @Column(name = "latitude")
+    private double latitude;
+
+    @Column(name = "longitude")
+    private double longitude;
+
     @Column(name = "views")
     private Integer views;
 
