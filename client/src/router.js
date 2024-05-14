@@ -12,6 +12,8 @@ import MainDetail from "./views/pages/main/MainDetail";
 import MainForm from "./views/pages/main/MainForm";
 import ChatRoomList from "./views/Chat/ChatRoomList";
 import Chat from "./views/Chat/Chat";
+import AddrTest from "./components/address/PlaceSearch";
+import PlaceSearch from "./components/address/PlaceSearch";
 
 function Notifications() {
     return null;
@@ -76,13 +78,6 @@ const router = {
             footer:<Footer/>
         },
         {
-            path: '/drawer',
-            component: <Drawers/>,
-            title: '팝업테스트중이올시다',
-            header: <Header1/>,
-            footer: <Footer/>
-        },
-        {
             path: '/search/by-category',
             component: <Search/>,
             title: null,
@@ -112,7 +107,14 @@ const router = {
             path: 'notification',
             component: <Notifications/>,
             header: <Header4/>,
+        },
+        {
+            path: '/test',
+            component: <PlaceSearch/>,
+            header: <Header4/>,
+            footer: <Footer/>
         }
+
 
 
     ]
