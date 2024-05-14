@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import useKakaoLoader from './useKakaoLoader';
 import './PlaceSearch.scss';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLocationDot, faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
+import {useDebounce} from "../../hook/useDebounce";
 const PlaceSearch = ({onLocationSelect}) => {
     const [inputText, setInputText] = useState('');
     const [places, setPlaces] = useState([]);
@@ -10,7 +11,15 @@ const PlaceSearch = ({onLocationSelect}) => {
 
     useKakaoLoader();
 
-    const searchPlaces = () => {
+    const debouncedInputText = useDebounce(inputText);
+
+
+    const searchPlaces = (query) => {
+        if (!query) {
+            setPlaces([]);
+            setTitle('');
+            return;
+        }
         if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
             const ps = new window.kakao.maps.services.Places();
             ps.keywordSearch(inputText, (data, status) => {
@@ -20,13 +29,17 @@ const PlaceSearch = ({onLocationSelect}) => {
                 } else {
                     setPlaces([]);
                     setTitle('검색 결과가 없습니다.');
-                    alert('검색 결과가 없습니다.');
+                    // alert('검색 결과가 없습니다.');
                 }
             });
         } else {
             console.error("Kakao Maps libraries are not loaded yet.");
         }
     };
+
+    useEffect(() => {
+        searchPlaces(debouncedInputText);
+    }, [debouncedInputText]);
     const handlePlaceClick = (place) => {
         const { y, x, place_name } = place;
         const locationInfo = {
