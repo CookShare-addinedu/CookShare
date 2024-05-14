@@ -6,6 +6,11 @@ export const foodSlice = createSlice({
             title: '',
             description: '',
             location: '',
+            locationDetails: {
+                name: '',
+                lat: 37.5665,
+                lng: 126.9780
+            },
             makeByDate: '',
             eatByDate: '',
             createdAt: '',
@@ -19,6 +24,9 @@ export const foodSlice = createSlice({
     reducers: {
         setFood: (state, action) => {
             state.value = action.payload;
+        },
+        setLocationDetails: (state, action) => {
+            state.value.locationDetails = action.payload;
         },
         addImage: (state, action) => {
             state.value.images.push({
@@ -34,6 +42,11 @@ export const foodSlice = createSlice({
                 title: '',
                 description: '',
                 location: '',
+                locationDetails: {
+                    name: '',
+                    lat: 37.5665,
+                    lng: 126.9780
+                },
                 makeByDate: '',
                 eatByDate: '',
                 createdAt: '',
@@ -47,6 +60,6 @@ export const foodSlice = createSlice({
     },
 });
 
-export const { setFood, clearFood, addImage, removeImage } = foodSlice.actions;
+export const { setFood, clearFood, addImage, removeImage,setLocationDetails } = foodSlice.actions;
 
 export default foodSlice.reducer;

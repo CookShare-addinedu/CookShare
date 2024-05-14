@@ -15,6 +15,7 @@ import {clearFood, setFood} from "../../../redux/foodSlice";
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {jwtDecode} from "jwt-decode";
+import PlaceSearch from "../../../components/address/PlaceSearch";
 
 
 export default function MainDetail() {
@@ -24,10 +25,18 @@ export default function MainDetail() {
     const foodData = useSelector((state) => state.food.value);
     const [isFavorited, setIsFavorited] = useState(false);
     const [favoriteCount, setFavoriteCount] = useState(foodData.likes || 0);
+    // const [selectedLocation, setSelectedLocation] = useState({ lat: 37.5665, lng: 126.9780, name: '' });
     const token = localStorage.getItem('jwt');
     const decoded = jwtDecode(token);
     const userId = decoded.mobileNumber;
+    const selectedLocation = useSelector((state) => state.food.value.locationDetails);
 
+    useEffect(() => {
+        console.log("Selected location in MainDetail:", selectedLocation);
+    }, [selectedLocation]);
+    // const handleLocationSelect = (location) => {
+    //     setSelectedLocation(location);
+    // }
     const handleChat = () => {
         console.log("버튼 클릭 확인, 사용자 확인:", userId, "수혜자 확인:", foodData.giver.mobileNumber);
         if (window.confirm("사용자와 채팅하시겠습니까?")) {
@@ -92,7 +101,16 @@ export default function MainDetail() {
                 try{
                     const response = await axios.get(`/api/foods/${id}`);
                     console.log('받아온 데이터 로그에 출력:', response.data);
-                    dispatch(setFood(response.data));
+                    const foodWithLocation = {
+                        ...response.data,
+                        locationDetails: {
+                            lat: response.data.latitude,
+                            lng: response.data.longitude,
+                            name: response.data.location
+                        }
+                    };
+                    dispatch(setFood(foodWithLocation));
+                    // dispatch(setFood(response.data));
                     setIsFavorited(response.data.isFavorite);
                     setFavoriteCount(response.data.likes);
                 }catch (error){
@@ -145,7 +163,8 @@ export default function MainDetail() {
                         <h6>나눔 희망장소</h6>
                         <FontAwesomeIcon icon={faAngleRight} />
                     </div>
-                    <MapView/>
+                    {console.log("디테일 Passing selected location to MapView:", selectedLocation)}
+                    <MapView selectedLocation={selectedLocation}/>
                 </div>
 
                 <div className={'actions_wrap'}>

@@ -14,7 +14,8 @@ import Select from "../../../components/select/Select";
 import Drawers from "../../../components/drawer/Drawers";
 import Address from "../../../components/address/Address";
 import {useDispatch, useSelector} from "react-redux";
-import {addImage, clearFood, removeImage, setFood} from "../../../redux/foodSlice";
+import {addImage, clearFood, removeImage, setFood, setLocationDetails} from "../../../redux/foodSlice";
+import PlaceSearch from "../../../components/address/PlaceSearch";
 
 
 const MainForm = () => {
@@ -26,7 +27,7 @@ const MainForm = () => {
     const initialData = state?.foodData || foodData;
     const images = useSelector(state => state.food.value.images || []);
     // const [images, setImages] = useState([]);
-
+    const [selectedLocation, setSelectedLocation] = useState(null);
     useEffect(() => {
         if (initialData) {
             dispatch(setFood(initialData));
@@ -66,9 +67,12 @@ const MainForm = () => {
         dispatch(setFood({ ...foodData, [name]: formattedDate }));
     };
 
-    const handleLocationSelect = (selectedLocation) => {
-        dispatch(setFood({...foodData, location: selectedLocation}));
-    }
+    const handleLocationSelect = (locationInfo) => {
+        console.log('MainForm에서 선택된 장소:', locationInfo);
+        dispatch(setLocationDetails(locationInfo)); // 전체 위치 정보 저장
+        dispatch(setFood({ ...foodData, location: locationInfo.name, locationDetails: locationInfo })); // 위치 이름과 위치 정보를 모두 저장
+    };
+
 
     useEffect(() => {
         console.log('Redux로부터 업데이트된 food data:', foodData);
@@ -84,6 +88,8 @@ const MainForm = () => {
         formData.append('eatByDate', format(foodData.eatByDate, 'yyyy-MM-dd'));
         formData.append('category', foodData.category);
         formData.append('location', foodData.location);
+        formData.append('latitude', foodData.locationDetails.lat);
+        formData.append('longitude', foodData.locationDetails.lng);
         // 이미지 파일 체크 및 추가
         foodData.images.forEach((image, index) => {
             if (image.file) { // 파일이 실제로 존재하는지 확인
@@ -239,7 +245,8 @@ const MainForm = () => {
                                     type="text"
                                     id={'location'}
                                     name={'location'}
-                                    value={foodData.location}
+                                    // value={foodData.location}
+                                    value={foodData.location || ''}
                                     placeholder="원하는 장소를 입력해주세요"
                                     readOnly
                                 />
@@ -247,7 +254,7 @@ const MainForm = () => {
                             </div>
 
                         }
-                        drawerContent={<Address onLocationSelect={handleLocationSelect}/>}
+                        drawerContent={<PlaceSearch onLocationSelect={handleLocationSelect}/>}
                         onLocationSelect={handleLocationSelect}
                     />
 
