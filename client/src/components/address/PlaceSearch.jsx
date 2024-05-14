@@ -5,8 +5,6 @@ import {Map, MapMarker} from "react-kakao-maps-sdk";
 const PlaceSearch = ({onLocationSelect}) => {
     const [inputText, setInputText] = useState('');
     const [places, setPlaces] = useState([]);
-    const [mapCenter, setMapCenter] = useState({ lat: 37.5665, lng: 126.9780 });
-    const [markerPosition, setMarkerPosition] = useState(null);
 
     useKakaoLoader();
 
@@ -33,8 +31,6 @@ const PlaceSearch = ({onLocationSelect}) => {
             name: place_name
         };
         console.log("플레이스서치Selected location for MapView:", locationInfo);  // 로그 출력 추가
-        setMapCenter(locationInfo);
-        setMarkerPosition(locationInfo);
         setInputText(place_name);
         onLocationSelect(locationInfo);
     };
@@ -56,17 +52,6 @@ const PlaceSearch = ({onLocationSelect}) => {
                     </li>
                 ))}
             </ul>
-            <Map
-                center={mapCenter}
-                style={{width: "100%", height: "350px"}}
-                >
-                {markerPosition && (
-                    <MapMarker
-                        position={markerPosition}
-                    />
-                )}
-
-            </Map>
         </div>
     );
 };

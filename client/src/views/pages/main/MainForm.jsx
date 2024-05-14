@@ -256,6 +256,7 @@ const MainForm = () => {
                         }
                         drawerContent={<PlaceSearch onLocationSelect={handleLocationSelect}/>}
                         onLocationSelect={handleLocationSelect}
+                        isPlaceDrawer={true}
                     />
 
                 </div>
