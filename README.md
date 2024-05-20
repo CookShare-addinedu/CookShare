@@ -53,149 +53,122 @@ Cook-Share는 1인 가구의 고충을 해결하기 위해 시작된 ${\textsf{\
     ```bash
     ./gradlew bootRun
     ```
-## 사용법
-회원가입 진행 후 로그인하여 진행해 주세요
+## Technology Stack
+![image](https://github.com/CookShare-addinedu/CookShare/assets/99055686/568db4c7-77b1-45f1-a78e-e0b018ed6e79)
 
-## System Requirements
 
-### Backend Configuration - Gradle Setup
+## Service Architecture
+![아키텍처 다이어그램 drawio (1)](https://github.com/CookShare-addinedu/CookShare/assets/99055686/a3259655-c171-4ae1-a403-9b3a9acd8e85)
 
-#### Plugins
-- `java`
-- `org.springframework.boot` version `3.2.4`
-- `io.spring.dependency-management` version `1.1.4`
-
-#### Java Settings
-Java 17을 사용합니다.
-```groovy
-java {
-    sourceCompatibility = '17'
-}
-```
-
-#### Dependencies
-- **Spring Boot**: `spring-boot-starter-web`, `spring-boot-starter-data-jpa`, `spring-boot-starter-data-mongodb`, `spring-boot-starter-websocket`, `spring-boot-starter-security`
-- **Database**: `mysql:mysql-connector-java:8.0.33`
-- **Security**: `org.springframework.security:spring-security-test`
-- **Logging**: `org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16`
-- **JWT**: `io.jsonwebtoken:jjwt-api:0.11.5`, `jjwt-impl:0.11.5`, `jjwt-jackson:0.11.5`
-- **Redis**: `org.springframework.boot:spring-boot-starter-data-redis`, `redis.clients:jedis`
-- **Additional Utilities**: Lombok, MapStruct, OAuth2.
-
-### Frontend Configuration - package.json
-
-#### Main Libraries
-- **React**: version `18.2.0`
-- **Redux**: version `5.0.1`
-- **Axios**: version `1.6.8`
-- **Font Awesome**: version `6.5.2`
-- **RSuite**: version `5.59.2`
-- **React Router**: version `6.22.3`
-- **Sass**: version `1.72.0`
-
-#### Scripts
-프로젝트의 시작, 빌드, 테스트 등을 위한 스크립트를 정의합니다.
-
-## Architecture
 <details>
-<summary>Folder Structure</summary>
+<summary><h2>Project Structure</h2></summary>
 <div markdown="1">
 
-### 백엔드 폴더구조
+## 백엔드 디렉토리 구조
 ```plaintext
-com.cookshare
-├── board
-│   ├── controller
-│   ├── dto
-│   ├── exception
-│   ├── mapper
-│   ├── repository
-│   └── service
-├── chat
-│   ├── annotation
-│   ├── aspect
-│   ├── controller
-│   ├── dto
-│   ├── exception
-│   ├── mapper
-│   ├── repository
-│   ├── service
-│   └── utils
-├── config
-│   ├── WebSecurityConfig
-│   └── WebSocketConfig
-├── domain
-│   ├── Category
-│   ├── ChatMessage
-│   ├── ChatRoom
-│   ├── FavoriteFood
-│   ├── Food
-│   ├── FoodImage
-│   ├── Notification
-│   ├── Spoon
-│   ├── TradeReview
-│   ├── User
-│   └── UserChatRoomVisibility
-├── notification
-│   ├── controller
-│   ├── dto
-│   ├── notificationutils
-│   ├── repository
-│   ├── service
-│   └── sse
-├── security
-│   ├── controller
-│   ├── dto
-│   ├── jwt
-│   ├── repository
-│   └── service
-└── CookShareApplication.java
+server
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── com
+│   │   │       └── foodshare
+│   │   │           ├── board
+│   │   │           │   ├── controller
+│   │   │           │   ├── dto
+│   │   │           │   ├── exception
+│   │   │           │   ├── mapper
+│   │   │           │   ├── repository
+│   │   │           │   └── service
+│   │   │           ├── chat
+│   │   │           │   ├── annotation
+│   │   │           │   ├── aspect
+│   │   │           │   ├── controller
+│   │   │           │   ├── dto
+│   │   │           │   ├── exception
+│   │   │           │   ├── mapper
+│   │   │           │   ├── repository
+│   │   │           │   ├── service
+│   │   │           │   └── utils
+│   │   │           ├── config
+│   │   │           │   ├── WebSecurityConfig
+│   │   │           │   └── WebSocketConfig
+│   │   │           ├── domain
+│   │   │           │   ├── Category
+│   │   │           │   ├── ChatMessage
+│   │   │           │   ├── ChatRoom
+│   │   │           │   ├── FavoriteFood
+│   │   │           │   ├── Food
+│   │   │           │   ├── FoodImage
+│   │   │           │   ├── Notification
+│   │   │           │   ├── Spoon
+│   │   │           │   ├── TradeReview
+│   │   │           │   ├── User
+│   │   │           │   └── UserChatRoomVisibility
+│   │   │           ├── notification
+│   │   │           │   ├── controller
+│   │   │           │   ├── dto
+│   │   │           │   ├── notificationutils
+│   │   │           │   ├── repository
+│   │   │           │   ├── service
+│   │   │           │   └── sse
+│   │   │           ├── security
+│   │   │           │   ├── controller
+│   │   │           │   ├── dto
+│   │   │           │   ├── jwt
+│   │   │           │   ├── repository
+│   │   │           │   └── service
+│   │   │           └── FoodShareApplication.java
+│   │   └── resources
+│   │       └── application.properties
+└── gradle
+    └── wrapper
+
 ```
-### 프론트엔드 폴더구조
+### 프론트엔드 디렉토리 구조
 ```plaintext
-client/
+client
 │
-├── node_modules/
+├── node_modules
 │
-├── public/
-│   ├── img/
+├── public
+│   ├── img
 │   ├── favicon.ico
 │   └── index.html
 │
-├── src/
-│   ├── components/
-│   │   ├── address/
-│   │   ├── badge/
-│   │   ├── button/
-│   │   ├── card/
-│   │   ├── caution/
-│   │   ├── drawer/
-│   │   ├── list/
-│   │   ├── menu/
-│   │   └── select/
+├── src
+│   ├── components
+│   │   ├── address
+│   │   ├── badge
+│   │   ├── button
+│   │   ├── card
+│   │   ├── caution
+│   │   ├── drawer
+│   │   ├── list
+│   │   ├── menu
+│   │   └── select
 │   │
-│   ├── data/
+│   ├── data
 │   │   └── CautionData.js
 │   │
-│   ├── hook/
+│   ├── hook
 │   │   ├── useDebounce.js
 │   │   └── useHeaderTitle.js
 │   │
-│   ├── redux/
+│   ├── redux
 │   │   ├── addressSlice.js
 │   │   ├── foodSlice.js
 │   │   └── store.js
 │   │
-│   ├── style/
+│   ├── style
 │   │   ├── Global.scss
 │   │   └── style.scss
 │   │
-│   ├── views/
-│   │   ├── auth/
-│   │   ├── Chat/
-│   │   ├── common/
-│   │   ├── Notification/
-│   │   └── pages/
+│   ├── views
+│   │   ├── auth
+│   │   ├── Chat
+│   │   ├── common
+│   │   ├── Notification
+│   │   └── pages
 │   │
 │   ├── App.js
 │   ├── index.js
@@ -216,7 +189,7 @@ client/
 
 
 ## Links
-- **Wiki**: [Cook-Share Wiki](https://github.com/CookShare-addinedu/CookShare/wiki)
+**Wiki**: [Cook-Share Wiki](https://github.com/CookShare-addinedu/CookShare/wiki)
 
 ## Roles
 <img width="100%" alt="image" src="https://github.com/CookShare-addinedu/CookShare/assets/83636742/c54c1927-ab78-4d0b-9fb5-537f5c8e5f55">
