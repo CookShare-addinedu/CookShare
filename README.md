@@ -32,8 +32,8 @@ Cook-Share는 1인 가구의 고충을 해결하기 위해 시작된 ${\textsf{\
     ```
 5. **환경설정**
 
-  [ https://developers.kakao.com/](https://react-kakao-maps-sdk.jaeseokim.dev/docs/intro/) 에 접속하여 API키를 발급받으세요.
-   
+   [ https://developers.kakao.com/](https://react-kakao-maps-sdk.jaeseokim.dev/docs/intro/) 에 접속하여 API키를 발급받으세요.
+
    client 루트 경로에 `.env` 파일을 생성한뒤 다음과 같이 입력합니다.
    ```
    #REACT_APP_KAKAO_KEY = 발급받은 API key를 넣어주세요 
