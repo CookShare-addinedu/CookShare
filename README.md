@@ -1,5 +1,5 @@
 <p align='center'><img src='https://github.com/CookShare-addinedu/CookShare/assets/83636742/f4d6e90a-1bfd-4bc8-98c0-8fa9bfd0798b'></p>
-<p align='center'>$\bf{\large{\color{#ff9000}Cook-Share}}$</p>
+# <p align='center'>$\bf{\large{\color{#ff9000}Cook-Share}}$</p>
 
 
 
