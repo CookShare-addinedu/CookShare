@@ -31,10 +31,12 @@ Cook-Share는 1인 가구의 고충을 해결하기 위해 시작된 ${\textsf{\
     npm start
     ```
 5. **환경설정**
+
+  [ https://developers.kakao.com/](https://react-kakao-maps-sdk.jaeseokim.dev/docs/intro/) 에 접속하여 API키를 발급받으세요.
    
    client 루트 경로에 `.env` 파일을 생성한뒤 다음과 같이 입력합니다.
    ```
-   #REACT_APP_KAKAO_KEY = 1a87736bc68ccab82a8b473b1ebeaa4f
+   #REACT_APP_KAKAO_KEY = 발급받은 API key를 넣어주세요 
    ```
 ### 백엔드 설치   
 1. **프로젝트 클론하기**(프론트엔드와 동일한 레포지토리 사용)
@@ -52,10 +54,7 @@ Cook-Share는 1인 가구의 고충을 해결하기 위해 시작된 ${\textsf{\
     ./gradlew bootRun
     ```
 ## 사용법
-1. 회원가입 진행 후 로그인하여 진행해 주세요
-2. Test ID :
-   
-   Test PW : 
+회원가입 진행 후 로그인하여 진행해 주세요
 
 ## System Requirements
 
@@ -157,62 +156,35 @@ com.cookshare
 client/
 │
 ├── node_modules/
-│   └── library root
 │
 ├── public/
 │   ├── img/
-│   │   ├── cookshare.svg
-│   │   ├── fooding.png
-│   │   ├── locationdot.svg
-│   │   ├── onboarding01.svg
-│   │   ├── onboarding02.svg
-│   │   ├── onboarding03.svg
-│   │   └── userImage.png
 │   ├── favicon.ico
 │   └── index.html
 │
 ├── src/
 │   ├── components/
 │   │   ├── address/
-│   │   │   ├── Address.jsx
-│   │   │   ├── MapView.jsx
-│   │   │   ├── MapView.scss
-│   │   │   ├── PlaceSearch.jsx
-│   │   │   ├── PlaceSearch.scss
-│   │   │   └── useKakaoLoader.js
 │   │   ├── badge/
-│   │   │   ├── Badge.jsx
-│   │   │   └── Badge.scss
 │   │   ├── button/
-│   │   │   ├── Button.jsx
-│   │   │   └── Button.scss
 │   │   ├── card/
-│   │   │   ├── Cards.jsx
-│   │   │   └── Cards.scss
 │   │   ├── caution/
-│   │   │   └── Caution.jsx
 │   │   ├── drawer/
-│   │   │   ├── AddressDrawer.jsx
-│   │   │   ├── Drawers.jsx
-│   │   │   └── Drawers.scss
 │   │   ├── list/
-│   │   │   ├── List.jsx
-│   │   │   └── List.scss
 │   │   ├── menu/
-│   │   │   ├── Menu.jsx
-│   │   │   └── Menu.scss
-│   │   ├── select/
-│   │   │   ├── Select.jsx
-│   │   │   └── Select.scss
-│   │   ├── data/
-│   │   │   └── CautionData.js
-│   │   ├── hook/
-│   │   │   ├── useDebounce.js
-│   │   │   └── useHeaderTitle.js
-│   │   └── redux/
-│   │       ├── addressSlice.js
-│   │       ├── foodSlice.js
-│   │       └── store.js
+│   │   └── select/
+│   │
+│   ├── data/
+│   │   └── CautionData.js
+│   │
+│   ├── hook/
+│   │   ├── useDebounce.js
+│   │   └── useHeaderTitle.js
+│   │
+│   ├── redux/
+│   │   ├── addressSlice.js
+│   │   ├── foodSlice.js
+│   │   └── store.js
 │   │
 │   ├── style/
 │   │   ├── Global.scss
@@ -220,52 +192,22 @@ client/
 │   │
 │   ├── views/
 │   │   ├── auth/
-│   │   │   ├── login/
-│   │   │   │   ├── Login.jsx
-│   │   │   │   ├── Login.scss
-│   │   │   │   └── Login.test.jsx
-│   │   │   ├── register/
-│   │   │   │   ├── Register.jsx
-│   │   │   │   └── Register.scss
 │   │   ├── Chat/
-│   │   │   ├── Chat.jsx
-│   │   │   ├── Chat.scss
-│   │   │   ├── ChatButton.jsx
-│   │   │   ├── ChatRoomList.jsx
-│   │   │   ├── ChatRoomList.scss
-│   │   │   ├── useChatDetailList.jsx
-│   │   │   ├── useScrollManagement.jsx
-│   │   │   └── useWebSocketConnection.jsx
-│   │   └── main/
-│   │       ├── ErrorBoundary.jsx
-│   │       ├── Main.jsx
-│   │       ├── Main.scss
-│   │       ├── MainDetail.jsx
-│   │       ├── MainDetail.scss
-│   │       └── MainForm.jsx
-│   │       └── MainForm.scss
-│   │   ├── mypage/
-│   │   │   ├── MyPage.jsx
-│   │   │   └── MyPage.scss
-│   │   ├── onboarding/
-│   │   │   ├── OnBoarding.jsx
-│   │   │   └── OnBoarding.scss
-│   │   ├── search/
-│   │   │   ├── Search.jsx
-│   │   │   └── Search.scss
-│   │   └── searchaddress/
-│   │       ├── SearchAddress.jsx
-│   │       └── SearchAddress.scss
+│   │   ├── common/
+│   │   ├── Notification/
+│   │   └── pages/
+│   │
+│   ├── App.js
+│   ├── index.js
+│   └── router.js
 │
-├── App.js
-├── index.js
-├── router.js
 ├── .env
 ├── .gitignore
 ├── config-overrides.js
 ├── package.json
 ├── package-lock.json
 └── README.md
+
 ```
 
 </div>
