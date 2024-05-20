@@ -52,7 +52,10 @@ Cook-Share는 1인 가구의 고충을 해결하기 위해 시작된 ${\textsf{\
     ./gradlew bootRun
     ```
 ## 사용법
-회원가입 후 로그인을 한뒤 실행해 주세요
+1. 회원가입 진행 후 로그인하여 진행해 주세요
+2. Test ID :
+   
+   Test PW : 
 
 ## System Requirements
 
@@ -273,4 +276,9 @@ client/
 ## Links
 - **Wiki**: [Cook-Share Wiki](https://github.com/CookShare-addinedu/CookShare/wiki)
 
----
+## Roles
+<img width="100%" alt="image" src="https://github.com/CookShare-addinedu/CookShare/assets/83636742/c54c1927-ab78-4d0b-9fb5-537f5c8e5f55">
+
+
+## License
+MIT License Copyright (c) 2024 eun-su-jeong
