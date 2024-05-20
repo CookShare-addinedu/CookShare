@@ -1,5 +1,7 @@
 ---
 # Cook-Share
+<div style='margin: 0 auto'>![image](https://github.com/CookShare-addinedu/CookShare/assets/83636742/f4d6e90a-1bfd-4bc8-98c0-8fa9bfd0798b)</div>
+
 
 ## Description
 
