@@ -12,7 +12,6 @@ export default function Cards({food}) {
 
     const [isFavorited, setIsFavorited] = useState(food.isFavorite);
     function formatTimeAgo(dateStr) {
-        console.log('Date String:', dateStr); // Check what you actually receive as input
 
         if (!dateStr) {
             console.error('Invalid or undefined date string');
@@ -42,9 +41,6 @@ export default function Cards({food}) {
                                 </div>
                                 <div className={'description'}>
                                     <p>{food.description}</p>
-                                    <p>
-                                        <span>#피자 #나눔</span>
-                                    </p>
                                 </div>
                             </div>
                             <div className={'icon_wrap'}>

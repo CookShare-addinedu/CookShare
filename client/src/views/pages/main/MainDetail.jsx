@@ -7,7 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-regular-svg-icons";
 import Caution from "../../../components/caution/Caution";
 import CautionData from "../../../data/CautionData";
-import MapView from "../../../components/adress/MapView";
+import MapView from "../../../components/address/MapView";
 import {IconButton, SquareButton} from "../../../components/button/Button";
 import {faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import {useDispatch, useSelector} from "react-redux";
@@ -54,14 +54,6 @@ export default function MainDetail() {
         }
     };
 
-
-    function IconButton({ icon, onClick, style }) {
-        return (
-            <button className={'icon_button'} style={style} onClick={onClick}>
-                <FontAwesomeIcon icon={icon}/>
-            </button>
-        );
-    }
 
 
     function formatTimeAgo(dateTimeStr) {
@@ -119,16 +111,21 @@ export default function MainDetail() {
             }
     },[id, dispatch]);
 
-    if (!foodData || !foodData.giver || !foodData.giver.mobileNumber) {
-        return <div>Loading...</div>; // 데이터가 로드되기를 기다리는 동안 로딩 표시
-    }
+    // if (!foodData || !foodData.giver || !foodData.giver.mobileNumber) {
+    //     return <div>Loading...</div>; // 데이터가 로드되기를 기다리는 동안 로딩 표시
+    // }
 
     return (
         <section className={'main_detail'}>
             <div className={'img_wrap'}>
-                {foodData.imageUrls  &&
-                    <img src={foodData.imageUrls[0]} alt={foodData.title}/>
-                }
+                {foodData.imageUrls && foodData.imageUrls.map((url, index) => (
+                    <img key={index} src={url} alt={`${foodData.title} - 이미지 ${index + 1}`} />
+                ))}
+
+                {/*{foodData.imageUrls  &&*/}
+                {/*    <img src={foodData.imageUrls[0]} alt={foodData.title}/>*/}
+                {/*    */}
+                {/*}*/}
             </div>
 
             <div className={'content_wrap'}>

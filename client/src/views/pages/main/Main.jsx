@@ -30,9 +30,9 @@ export default function Main() {
         setLoading(true);
         try{
             const response = await axios.get('/api/foods', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-                },
+                // headers: {
+                //     'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                // },
                 params: { page, size: 5 } // 현재 페이지 번호를 파라미터로 전달
             });
 

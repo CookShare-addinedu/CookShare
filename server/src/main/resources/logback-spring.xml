@@ -19,7 +19,7 @@
         <appender-ref ref="Console" />
     </root>
 
-    <logger name="com.foodshare.board" level="DEBUG" additivity="false">
+    <logger name="com.cookshare.board" level="DEBUG" additivity="false">
         <appender-ref ref="Console" />
     </logger>
 </configuration>

@@ -29,11 +29,12 @@ function SquareButton({ name, onClick }) {
     );
 }
 
-function IconButton({icon}){
+function IconButton({ icon, onClick, style }) {
     return (
-        <button className={'icon_button'}>
-            <FontAwesomeIcon icon={icon} />
+        <button className={'icon_button'} style={style} onClick={onClick}>
+            <FontAwesomeIcon icon={icon}/>
         </button>
-    )
+    );
 }
+
 export {MypageButton, AddButton, SquareButton, IconButton};

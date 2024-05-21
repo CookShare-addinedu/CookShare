@@ -17,20 +17,38 @@ function App() {
         });
     }
 
+    // useEffect(() => {
+    //     const route = router.routes.find(route =>
+    //         matchCustomPath(route.path, location.pathname)
+    //     );
+    //     console.log('route:', route);
+    //     console.log('location.pathname:', location.pathname);
+    //     if (route) {
+    //         setCurrentHeader(route.header);
+    //         setCurrentFooter(route.footer);
+    //     }else{
+    //         console.log("No matching route found for:", location.pathname);
+    //     }
+    //
+    // }, [location]);
+
     useEffect(() => {
+        console.log("App component rendered or re-rendered due to route or state changes");
+
         const route = router.routes.find(route =>
             matchCustomPath(route.path, location.pathname)
         );
-        console.log('route:', route);
-        console.log('location.pathname:', location.pathname);
+        console.log('Matching route:', route);
+        console.log('Current location:', location.pathname);
+
         if (route) {
             setCurrentHeader(route.header);
             setCurrentFooter(route.footer);
-        }else{
+        } else {
             console.log("No matching route found for:", location.pathname);
         }
+    }, [location]);  // Make sure `location` is the only dependency if it’s all that's needed
 
-    }, [location]);
 
 
     const isOnboarding = location.pathname === '/onBoarding';
