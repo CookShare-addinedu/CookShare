@@ -26,7 +26,7 @@ const MainForm = () => {
     const foodData = useSelector(state => state.food.value)
     const initialData = state?.foodData || foodData;
     const images = useSelector(state => state.food.value.images || []);
-    // const [images, setImages] = useState([]);
+    const [errors, setErrors] = useState({});
     const [selectedLocation, setSelectedLocation] = useState(null);
     useEffect(() => {
         if (initialData) {
@@ -73,6 +73,20 @@ const MainForm = () => {
         dispatch(setFood({ ...foodData, location: locationInfo.name, locationDetails: locationInfo })); // 위치 이름과 위치 정보를 모두 저장
     };
 
+    const validateForm = () => {
+        const newErrors = {};
+        if (!foodData.title) newErrors.title = '제목을 입력해주세요.';
+        if (!foodData.description) newErrors.description = '내용을 입력해주세요';
+        if (!foodData.eatByDate) newErrors.eatByDate = '소비기한을 입력해주세요';
+        if (!foodData.makeByDate) newErrors.makeByDate = '제조일날짜을 입력해주세요';
+        if (!foodData.category) newErrors.category = '카테고리를 선택해주세요';
+        if (!foodData.location) newErrors.location = '지역을 선택해주세요';
+        if (!foodData.locationDetails.lat) newErrors.locationDetails = '위치을 선택해주세요';
+        if (images.length === 0) newErrors.images = '최소 하나의 이미지를 등록해주세요';
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
+
 
     useEffect(() => {
         console.log('Redux로부터 업데이트된 food data:', foodData);
@@ -81,7 +95,30 @@ const MainForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validateForm()) {
+
+            if (errors.location) {
+                alert(errors.location);
+            }
+            if (errors.locationDetails) {
+                alert(errors.locationDetails);
+            }
+            if (errors.images) {
+                alert(errors.images);
+            }
+            return;
+        }
+
+
         const formData = new FormData();
+        if (!foodData.title) alert('제목을 입력해주세요.');
+        if (!foodData.description) alert('내용을 입력해주세요.');
+        if (!foodData.category) alert('카테고리를 선택해주세요');
+        if (!foodData.location) alert('지역을 선택해주세요');
+        if (!foodData.locationDetails.lat && !foodData.locationDetails.lng) alert('위치을 선택해세요');
+        if (images.length === 0) alert('최소 하나의 이미지를 등록해주세요');
+
         formData.append('title', foodData.title);
         formData.append('description', foodData.description);
         formData.append('makeByDate', format(foodData.makeByDate, 'yyyy-MM-dd'));
@@ -179,6 +216,7 @@ const MainForm = () => {
                             value={foodData.makeByDate ? new Date(foodData.makeByDate) : null}
                             onChange={value => handleDateChange('makeByDate', value)}
                         />
+                        {errors.makeByDate && <div className="error">{errors.makeByDate}</div>}
                     </div>
 
                     <div className={'date'}>
@@ -194,6 +232,7 @@ const MainForm = () => {
 
                             onChange={value => handleDateChange('eatByDate', value)}
                         />
+                        {errors.eatByDate && <div className="error">{errors.eatByDate}</div>}
                     </div>
                 </div>
 
@@ -207,6 +246,7 @@ const MainForm = () => {
                         onChange={handleChange}
                         placeholder="글 제목"
                     />
+                    {errors.title && <div className="error">{errors.title}</div>}
                 </div>
                 <div className="form_group">
                     <label htmlFor="description" className={'a11y-hidden'}>내용</label>
@@ -218,6 +258,7 @@ const MainForm = () => {
                         onChange={handleChange}
                         placeholder="내용을 입력해주세요"
                     />
+                    {errors.description && <div className="error">{errors.description}</div>}
                 </div>
 
                 <div className="form_group">

@@ -106,6 +106,12 @@
 
             .rs-input-group {
               border: none;
+
+              &:focus-within,
+              .rs-input-group:not(.rs-input-group-disabled).rs-input-group-focus,
+              .rs-input-group:not(.rs-input-group-disabled):hover {
+                outline: 3px solid rgb(from #ff9000 r g b/25%);
+              }
             }
 
             input {
@@ -174,6 +180,22 @@
           width: 100%;
         }
       }
+
+      .error{
+        margin-top: 8px;
+      }
     }
   }
+}
+
+.rs-calendar-table-cell-selected .rs-calendar-table-cell-content {
+  background-color: #ff9000;
+}
+.rs-picker-popup .rs-calendar .rs-calendar-table-cell:hover .rs-calendar-table-cell-content{
+  background-color: rgb(from #ff9000 r g b/20%);
+  color: #fff;
+}
+
+.rs-picker:not(.rs-picker-disabled):hover {
+  border-color: #ff9000;
 }

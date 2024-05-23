@@ -60,6 +60,6 @@ export const foodSlice = createSlice({
     },
 });
 
-export const { setFood, clearFood, addImage, removeImage,setLocationDetails } = foodSlice.actions;
+export const { setFood, clearFood, addImage, removeImage,setLocationDetails ,setImage} = foodSlice.actions;
 
 export default foodSlice.reducer;

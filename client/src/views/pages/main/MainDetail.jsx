@@ -1,6 +1,6 @@
 import './MainDetail.scss';
 import { Avatar } from "rsuite";
-import {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {NavLink, useNavigate, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -16,6 +16,8 @@ import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {jwtDecode} from "jwt-decode";
 import PlaceSearch from "../../../components/address/PlaceSearch";
+import {Swiper, SwiperSlide} from "swiper/react";
+import {faCircleXmark} from "@fortawesome/free-solid-svg-icons/faCircleXmark";
 
 
 export default function MainDetail() {
@@ -30,6 +32,8 @@ export default function MainDetail() {
     const decoded = jwtDecode(token);
     const userId = decoded.mobileNumber;
     const selectedLocation = useSelector((state) => state.food.value.locationDetails);
+    const images = useSelector(state => state.food.value.images || []);
+    const swiperRef = useRef(null);
 
     useEffect(() => {
         console.log("Selected location in MainDetail:", selectedLocation);
@@ -107,10 +111,10 @@ export default function MainDetail() {
                             lat: response.data.latitude,
                             lng: response.data.longitude,
                             name: response.data.location
-                        }
+                        },
+                        images: response.data.imageUrls ? response.data.imageUrls.map(url => ({url, file: null})) : []
                     };
                     dispatch(setFood(foodWithLocation));
-                    // dispatch(setFood(response.data));
                     setIsFavorited(response.data.isFavorite);
                     setFavoriteCount(response.data.likes);
                 }catch (error){
@@ -132,9 +136,21 @@ export default function MainDetail() {
     return (
         <section className={'main_detail'}>
             <div className={'img_wrap'}>
-                {foodData.imageUrls  &&
-                    <img src={foodData.imageUrls[0]} alt={foodData.title}/>
-                }
+                <Swiper
+                    ref={swiperRef}
+                    className="preview_swiper"
+                    slidesPerView={'auto'}
+                    spaceBetween={10}
+                    centeredSlides={false}
+                >
+                    {images && images.map((image, index) => (
+                        <SwiperSlide key={index}>
+                            <div>
+                                <img src={image.url} alt={`Preview ${index}`}/>
+                            </div>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
             </div>
 
             <div className={'content_wrap'}>
