@@ -9,13 +9,12 @@ import {faCircleXmark} from "@fortawesome/free-solid-svg-icons/faCircleXmark";
 import {DatePicker} from "rsuite";
 import {FaCalendarDay} from 'react-icons/fa';
 import {format} from "date-fns";
-import {SquareButton} from "../../../components/button/Button";
-import Select from "../../../components/select/Select";
-import Drawers from "../../../components/drawer/Drawers";
-import Address from "../../../components/address/Address";
+import {SquareButton} from "./../../../../components/button/Button";
+import Select from "./../../../../components/select/Select";
+import Drawers from "./../../../../components/drawer/Drawers";
 import {useDispatch, useSelector} from "react-redux";
-import {addImage, clearFood, removeImage, setFood, setLocationDetails} from "../../../redux/foodSlice";
-import PlaceSearch from "../../../components/address/PlaceSearch";
+import {addImage, clearFood, removeImage, removeImageUrl, setFood, setLocationDetails} from "./../../../../redux/foodSlice";
+import PlaceSearch from "./../../../../components/address/PlaceSearch";
 
 
 const MainForm = () => {
@@ -28,14 +27,22 @@ const MainForm = () => {
     const images = useSelector(state => state.food.value.images || []);
     const [errors, setErrors] = useState({});
     const [selectedLocation, setSelectedLocation] = useState(null);
+    const [allImages, setAllImages] = useState([]); // 통합 이미지 배열
+    const maxImageCount = 8;
     useEffect(() => {
         if (initialData) {
             dispatch(setFood(initialData));
         }
 
+        setAllImages([
+            ...(initialData.imageUrls || []).map((url, index) => ({ url, file: null, source: 'url', originalIndex: index })),
+            ...(initialData.images || []).map((img, index) => ({ ...img, source: 'new', originalIndex: index }))
+        ]);
         const newFoodData = {
             ...initialData,
-            images: initialData.imageUrls ? initialData.imageUrls.map(url => ({url, file: null})) : []
+            images: [], // 새 이미지 파일 데이터용 배열 초기화
+            imageUrls: initialData.imageUrls || [] // 기존 이미지 URL 데이터
+            // images: initialData.imageUrls ? initialData.imageUrls.map(url => ({url, file: null})) : []
         };
 
         dispatch(setFood(newFoodData));
@@ -45,20 +52,70 @@ const MainForm = () => {
         const {name, value} = e.target;
         dispatch(setFood({...foodData, [name]: value}));
     },[dispatch, foodData]);
+    // const handleImageChange = (e) => {
+    //     if (e.target.files) {
+    //         const fileImages = Array.from(e.target.files).map(file => ({
+    //             file,
+    //             url: URL.createObjectURL(file),
+    //         }));
+    //         fileImages.forEach(image =>{
+    //             dispatch(addImage(image));
+    //         });
+    //     }
+    // };
     const handleImageChange = (e) => {
         if (e.target.files) {
-            const fileImages = Array.from(e.target.files).map(file => ({
+            const newFiles = Array.from(e.target.files).map(file => ({
                 file,
                 url: URL.createObjectURL(file),
+                source: 'new'
             }));
-            fileImages.forEach(image =>{
+
+            // 이미지 개수 제한 검사
+            if (allImages.length + newFiles.length > maxImageCount) {
+                alert(`최대 ${maxImageCount}개의 이미지만 업로드 가능합니다.`);
+                return;
+            }
+
+            // 중복 이미지 검사 및 추가
+            const filteredFiles = newFiles.filter(newFile => {
+                return !allImages.some(image => image.url === newFile.url);
+            });
+
+            if (filteredFiles.length === 0) {
+                alert("이미 선택된 이미지입니다.");
+                return;
+            }
+
+            setAllImages(prev => [...prev, ...filteredFiles]);
+            filteredFiles.forEach(image => {
                 dispatch(addImage(image));
             });
+
+            // 입력 필드 리셋
+            e.target.value = '';
         }
     };
+
+    // const handleRemoveImage = (index) => {
+    //     dispatch(removeImage(index));
+    //     if(swiperRef.current && swiperRef.current.swiper) {
+    //         swiperRef.current.swiper.update();
+    //     }
+    // };
     const handleRemoveImage = (index) => {
-        dispatch(removeImage(index));
-        if(swiperRef.current && swiperRef.current.swiper) {
+        const imageToRemove = allImages[index];
+        setAllImages(prev => prev.filter((_, i) => i !== index));
+
+        if (imageToRemove.source === 'new') {
+            const newImagesIndex = foodData.images.findIndex(img => img.identifier === imageToRemove.identifier);
+            if (newImagesIndex !== -1) dispatch(removeImage(newImagesIndex));
+        } else if (imageToRemove.source === 'url') {
+            const imageUrlIndex = foodData.imageUrls.findIndex(url => url === imageToRemove.url);
+            if (imageUrlIndex !== -1) dispatch(removeImageUrl(imageUrlIndex));
+        }
+
+        if (swiperRef.current && swiperRef.current.swiper) {
             swiperRef.current.swiper.update();
         }
     };
@@ -82,7 +139,15 @@ const MainForm = () => {
         if (!foodData.category) newErrors.category = '카테고리를 선택해주세요';
         if (!foodData.location) newErrors.location = '지역을 선택해주세요';
         if (!foodData.locationDetails.lat) newErrors.locationDetails = '위치을 선택해주세요';
-        if (images.length === 0) newErrors.images = '최소 하나의 이미지를 등록해주세요';
+        // if (foodData.imageUrls.length === 0 && !foodData.images) newErrors.images = '최소 하나의 이미지를 등록해주세요';
+        if (allImages.length === 0 ) newErrors.images = '최소 하나의 이미지를 등록해주세요';
+
+        // allImages.forEach((image, index) => {
+        //     console.log('image.file:', image.file, 'image.url:', image.url);
+        //     console.log('image.file === null:', image.file === null);
+        //     console.log('image.url === null:', image.url === null);
+        //     if (image.file === null && image.url === null) newErrors.images = '이미지를 추가해주세요';
+        // })
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     }
@@ -91,6 +156,9 @@ const MainForm = () => {
     useEffect(() => {
         console.log('Redux로부터 업데이트된 food data:', foodData);
     }, [foodData]); // foodData가 변경될 때마다 실행
+    useEffect(() => {
+        console.log('뭐가 들어있을까용?', allImages);
+    }, [allImages]); // foodData가 변경될 때마다 실행
 
 
     const handleSubmit = async (e) => {
@@ -110,14 +178,7 @@ const MainForm = () => {
             return;
         }
 
-
         const formData = new FormData();
-        if (!foodData.title) alert('제목을 입력해주세요.');
-        if (!foodData.description) alert('내용을 입력해주세요.');
-        if (!foodData.category) alert('카테고리를 선택해주세요');
-        if (!foodData.location) alert('지역을 선택해주세요');
-        if (!foodData.locationDetails.lat && !foodData.locationDetails.lng) alert('위치을 선택해세요');
-        if (images.length === 0) alert('최소 하나의 이미지를 등록해주세요');
 
         formData.append('title', foodData.title);
         formData.append('description', foodData.description);
@@ -127,13 +188,24 @@ const MainForm = () => {
         formData.append('location', foodData.location);
         formData.append('latitude', foodData.locationDetails.lat);
         formData.append('longitude', foodData.locationDetails.lng);
-        // 이미지 파일 체크 및 추가
+        // // 이미지 파일 체크 및 추가
+        // foodData.images.forEach((image, index) => {
+        //     if (image.file) { // 파일이 실제로 존재하는지 확인
+        //         formData.append(`images[${index}]`, image.file);
+        //         console.log(`Image added to formData: images[${index}]`, image.file);
+        //     }
+        // });
+        // 새 이미지 파일 데이터 처리
         foodData.images.forEach((image, index) => {
-            if (image.file) { // 파일이 실제로 존재하는지 확인
+            if (image.file) {
                 formData.append(`images[${index}]`, image.file);
-                console.log(`Image added to formData: images[${index}]`, image.file);
             }
         });
+        // 기존 이미지 URL 데이터 처리
+        foodData.imageUrls.forEach((url, index) => {
+            formData.append(`imageUrls[${index}]`, url);
+        });
+
 
         console.log("FormData 내용 검사:");
         for (let [key, value] of formData.entries()) {
@@ -172,7 +244,7 @@ const MainForm = () => {
                             <span className="camera_icon">
                                 <FontAwesomeIcon icon={faCamera}/>
                             </span>
-                            <span className={'txt'}>이미지 ({images.length}/5)</span>
+                            <span className={'txt'}>이미지 ({allImages.length}/8)</span>
                             <input
                                 className="image_input"
                                 type="file"
@@ -189,7 +261,7 @@ const MainForm = () => {
                         spaceBetween={10}
                         centeredSlides={false}
                     >
-                        {images && images.map((image, index) => (
+                        {allImages && allImages.map((image, index) => (
                             <SwiperSlide key={index}>
                                 <div>
                                     <img src={image.url} alt={`Preview ${index}`}/>

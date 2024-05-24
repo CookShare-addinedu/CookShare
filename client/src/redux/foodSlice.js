@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+
 export const foodSlice = createSlice({
     name: 'food',
     initialState: {
@@ -16,7 +17,8 @@ export const foodSlice = createSlice({
             createdAt: '',
             category: '한식',
             images: [],
-            giver:{
+            imageUrls: [],  // URL 목록 추가
+            giver: {
                 nickName: '',
             }
         }
@@ -31,10 +33,11 @@ export const foodSlice = createSlice({
         addImage: (state, action) => {
             state.value.images.push({
                 file: action.payload.file,
-                url: action.payload.url || URL.createObjectURL(action.payload.file)
+                url: action.payload.url || URL.createObjectURL(action.payload.file),
+                isNew: true  // 새 이미지 표시
             });
         },
-        removeImage: (state, action) =>{
+        removeImage: (state, action) => {
             state.value.images = state.value.images.filter((_, index) => index !== action.payload);
         },
         clearFood: (state) => {
@@ -52,14 +55,24 @@ export const foodSlice = createSlice({
                 createdAt: '',
                 category: '',
                 images: [],
+                imageUrls: [],  // 초기화
                 giver:{
                     nickName: '',
                 }
             };
         },
+        setImageUrls: (state, action) => {
+            state.value.imageUrls = action.payload;
+        },
+        addImageUrl: (state, action) => {
+            state.value.imageUrls.push(action.payload);
+        },
+        removeImageUrl: (state, action) => {
+            state.value.imageUrls = state.value.imageUrls.filter((url, index) => index !== action.payload);
+        },
     },
 });
 
-export const { setFood, clearFood, addImage, removeImage,setLocationDetails ,setImage} = foodSlice.actions;
+export const { setFood, clearFood, addImage, removeImage, setLocationDetails, setImageUrls, addImageUrl, removeImageUrl } = foodSlice.actions;
 
 export default foodSlice.reducer;

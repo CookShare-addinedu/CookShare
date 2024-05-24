@@ -5,19 +5,18 @@ import axios from "axios";
 import {NavLink, useNavigate, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-regular-svg-icons";
-import Caution from "../../../components/caution/Caution";
-import CautionData from "../../../data/CautionData";
-import MapView from "../../../components/address/MapView";
-import {IconButton, SquareButton} from "../../../components/button/Button";
+import Caution from "./../../../../components/caution/Caution";
+import CautionData from "./../../../../data/CautionData";
+import MapView from "./../../../../components/address/MapView";
+import {IconButton, SquareButton} from "./../../../../components/button/Button";
 import {faAngleRight, faHeart as faSolidHeart} from "@fortawesome/free-solid-svg-icons";
 import {useDispatch, useSelector} from "react-redux";
-import {clearFood, setFood} from "../../../redux/foodSlice";
+import {clearFood, setFood} from "./../../../../redux/foodSlice";
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {jwtDecode} from "jwt-decode";
-import PlaceSearch from "../../../components/address/PlaceSearch";
 import {Swiper, SwiperSlide} from "swiper/react";
-import {faCircleXmark} from "@fortawesome/free-solid-svg-icons/faCircleXmark";
+
 
 
 export default function MainDetail() {
@@ -32,12 +31,16 @@ export default function MainDetail() {
     const decoded = jwtDecode(token);
     const userId = decoded.mobileNumber;
     const selectedLocation = useSelector((state) => state.food.value.locationDetails);
-    const images = useSelector(state => state.food.value.images || []);
+    // const images = useSelector(state => state.food.value.images || []);
     const swiperRef = useRef(null);
+    const [allImages, setAllImages] = useState([]);
 
     useEffect(() => {
+        if(foodData.imageUrls && foodData.imageUrls.length > 0){
+            setAllImages(foodData.imageUrls);
+        }
         console.log("Selected location in MainDetail:", selectedLocation);
-    }, [selectedLocation]);
+    }, [selectedLocation, foodData.imageUrls]);
     // const handleLocationSelect = (location) => {
     //     setSelectedLocation(location);
     // }
@@ -112,7 +115,7 @@ export default function MainDetail() {
                             lng: response.data.longitude,
                             name: response.data.location
                         },
-                        images: response.data.imageUrls ? response.data.imageUrls.map(url => ({url, file: null})) : []
+                        // images: response.data.imageUrls ? response.data.imageUrls.map(url => ({url, file: null })) : []
                     };
                     dispatch(setFood(foodWithLocation));
                     setIsFavorited(response.data.isFavorite);
@@ -143,10 +146,10 @@ export default function MainDetail() {
                     spaceBetween={10}
                     centeredSlides={false}
                 >
-                    {images && images.map((image, index) => (
+                    {allImages && allImages.map((url, index) => (
                         <SwiperSlide key={index}>
                             <div>
-                                <img src={image.url} alt={`Preview ${index}`}/>
+                                <img src={url} alt={`Preview ${index}`}/>
                             </div>
                         </SwiperSlide>
                     ))}

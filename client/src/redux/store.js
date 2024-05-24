@@ -1,11 +1,14 @@
 import {configureStore} from "@reduxjs/toolkit";
 import addressReducer from "./addressSlice";
 import foodReducer from "./foodSlice";
-
+import imageReducer from "./imageSlice";
+import shareReducer from "./shareSlice";
 export const store = configureStore({
     reducer: {
         address: addressReducer,
         food: foodReducer,
+        image: imageReducer,
+        share: shareReducer
     },
     // middleware: (getDefaultMiddleware) =>
     //     getDefaultMiddleware({
