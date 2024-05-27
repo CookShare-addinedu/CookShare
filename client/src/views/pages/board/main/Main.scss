@@ -26,6 +26,9 @@
         font-weight: bold;
         color: #ff9000;
       }
+      .rs-nav-subtle .rs-nav-item:hover{
+        color: #ff9000;
+      }
     }
 
     .rs-tabs-content{
@@ -35,6 +38,11 @@
       &::-webkit-scrollbar {
         display: none;
       }
+    }
+
+    .rs-nav-subtle .rs-nav-item:hover,
+    .rs-nav-subtle .rs-nav-item:focus{
+      color: #ff9000;
     }
   }
 }
