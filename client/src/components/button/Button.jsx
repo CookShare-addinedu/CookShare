@@ -13,10 +13,11 @@ function MypageButton({path, name, icon}) {
     )
 }
 
-function AddButton (){
+function AddButton ({className}) {
     return(
-        <button className={'add_button'}>
-            <FontAwesomeIcon icon={faPencil} />
+        <button className={`add_button ${className}`}>
+            <FontAwesomeIcon icon={faPencil}/>
+            <span className={'write'}>글쓰기</span>
         </button>
     )
 }

@@ -22,6 +22,8 @@ export default function Main() {
     ]);
     const initialLoadComplete = useRef(false);
 
+    const [isTop, setIsTop] = useState(false);
+
     useEffect(() => {
         if (!initialLoadComplete.current && !loading) {
             fetchData('/api/foods', foodData, setFoodData, foodHasMore, setFoodHasMore, foodPage, setFoodPage);
@@ -53,9 +55,27 @@ export default function Main() {
         }
     }
 
+    useEffect(() => {
+        const tabsContent = document.querySelector('.rs-tabs-content'); // CSS 선택자로 접근
+        if(tabsContent) {
+            console.log('스크롤 이벤트 리스너 등록');
+            const checkScroll = () => {
+                const isAtTop = tabsContent.scrollTop === 0;
+                setIsTop(isAtTop);
+                console.log("top", tabsContent.scrollTop);
+            }
+
+            tabsContent.addEventListener('scroll', checkScroll);
+
+            return () => {
+                console.log("스크롤 이벤트 리스너 해제");
+                tabsContent.removeEventListener('scroll', checkScroll);
+            }
+        }
+    }, []);
 
     return (
-        <section className={'main'}>
+        <section className={'main'} >
             <Tabs className={'main_tab'} defaultActiveKey="1" appearance="subtle">
                 {panel.map((tab) => (
                     <Tabs.Tab className={'tab'} eventKey={tab.key} title={tab.title} key={tab.key}>
@@ -83,7 +103,7 @@ export default function Main() {
                 ))}
             </Tabs>
             <NavLink to={'/main/add'}>
-                <AddButton/>
+                <AddButton className={isTop ? 'height' : ''}/>
             </NavLink>
         </section>
     );
