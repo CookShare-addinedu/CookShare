@@ -126,7 +126,7 @@ export default function Login (){
                         onChange={handleChange}
                         required
                     />
-                    <button onClick={handleToggle}>
+                    <button type={'button'} onClick={handleToggle}>
                         <span>
                             <FontAwesomeIcon icon={ShowPassword ?  faEye : faEyeSlash}/>
                         </span>
