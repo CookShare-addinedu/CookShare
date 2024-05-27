@@ -4,8 +4,8 @@ export const shareSlice = createSlice({
     name: 'share',
     initialState: {
         value: {
-            title: '',
-            description: '',
+            title: '나는 제목이야',
+            description: '나는 내용이다',
             location: '',
             locationDetails: {
                 name: '',
@@ -13,8 +13,8 @@ export const shareSlice = createSlice({
                 lng: 126.9780
             },
             createdAt: '',
-            price: '',
-            maxTo: '',
+            price: '백마원',
+            maxTO: '10명',
             giver: {
                 nickName: ''
             }

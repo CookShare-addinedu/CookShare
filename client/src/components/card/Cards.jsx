@@ -10,6 +10,7 @@ import {useState} from "react";
 
 export default function Cards({item}) {
 
+    const {imageUrls, title, createdAt, description, category, likes, price, maxTO} = item;
     const [isFavorited, setIsFavorited] = useState(item.isFavorite);
     function formatTimeAgo(dateStr) {
         // console.log('Date String:', dateStr); // Check what you actually receive as input
@@ -28,22 +29,22 @@ export default function Cards({item}) {
                     <Flex className={'card_layout'} gap="3" align="center">
                         <div className={'img_wrap'}>
                             <img
-                                src={item.imageUrls?.[0] || './../img/cookshare.svg'}
-                                alt={item.title}
+                                src={imageUrls?.[0] || './../img/cookshare.svg'}
+                                alt={title}
                             />
                         </div>
                         <Box className={'content'}>
                             <div className={'text_wrap'}>
                                 <div className={'title'}>
-                                    <h4>{item.title}</h4>
+                                    <h4>{title}</h4>
                                     <p className={'date'}>
-                                        {item.createdAt && <span className={'date'}>{formatTimeAgo(item.createdAt)}</span>}
+                                        {createdAt && <span className={'date'}>{formatTimeAgo(createdAt)}</span>}
                                     </p>
                                 </div>
                                 <div className={'description'}>
-                                    <p>{item.description}</p>
+                                    <p>{description}</p>
                                     <p>
-                                        <span>#{item.category}</span>
+                                        <span>#{category}</span>
                                     </p>
                                 </div>
                             </div>
@@ -51,7 +52,7 @@ export default function Cards({item}) {
                                 <Badge food={item}/>
                                 <p className={'like'}>
                                     <FontAwesomeIcon icon={isFavorited ? faSolidHeart : faHeart} color={isFavorited ? 'red' : 'grey'}/>
-                                    <span>{item.likes}</span>
+                                    <span>{likes}</span>
                                 </p>
                             </div>
                         </Box>

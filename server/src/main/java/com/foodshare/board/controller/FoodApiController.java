@@ -59,11 +59,26 @@ public class FoodApiController {
 	public ResponseEntity<?> update(@PathVariable("id") Long id, @ModelAttribute(name="formData") FoodDTO foodDTO) {
 		log.info("Updating food with id: {}", id);
 		FoodDTO existingFoodDTO = foodService.read(id);
-		if (foodDTO.getImages() != null && !foodDTO.getImages().isEmpty()) {
+
+		// 새로운 이미지만 있는 경우
+		if (foodDTO.getImageUrls() == null && foodDTO.getImages() != null) {
 			foodDTO.setImageUrls(processUploadedFiles(foodDTO.getImages()));
-		} else {
+		}
+		// 기존 이미지 + 새로운 이미지
+		else if (foodDTO.getImageUrls() != null && foodDTO.getImages() != null) {
+			for (String imageUrl : processUploadedFiles(foodDTO.getImages())) {
+				foodDTO.getImageUrls().add(imageUrl);
+			}
+		}
+		// 기존 이미지에서 수정
+		else if (foodDTO.getImages() == null && foodDTO.getImageUrls() != null) {
+			foodDTO.setImageUrls(foodDTO.getImageUrls());
+		}
+		// 둘 다 없으면 그대로
+		else if (foodDTO.getImages() == null && foodDTO.getImageUrls() == null) {
 			foodDTO.setImageUrls(existingFoodDTO.getImageUrls());
 		}
+
 		Food updatedFood = foodService.update(id, foodDTO);
 		return ResponseEntity.ok(updatedFood);
 	}

@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const foodSlice = createSlice({
     name: 'food',
     initialState: {
+        foods: [],
         value: {
             title: '',
             description: '',
