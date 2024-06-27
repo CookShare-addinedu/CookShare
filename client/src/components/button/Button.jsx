@@ -24,7 +24,7 @@ function AddButton ({className}) {
 
 function SquareButton({ name, onClick }) {
     return (
-        <button className={'square_button'} onClick={onClick}>
+        <button className={'square_button chat_button'} onClick={onClick}>
             <span>{name}</span>
         </button>
     );

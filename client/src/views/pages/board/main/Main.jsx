@@ -58,6 +58,9 @@ export default function Main() {
     useEffect(() => {
         const tabsContent = document.querySelector('.rs-tabs-content'); // CSS 선택자로 접근
         if(tabsContent) {
+
+            setIsTop(true);
+
             console.log('스크롤 이벤트 리스너 등록');
             const checkScroll = () => {
                 const isAtTop = tabsContent.scrollTop === 0;
@@ -92,11 +95,11 @@ export default function Main() {
                                     </NavLink>
                                 ))}
                             {!foodHasMore && !myTownHasMore && <div>No more data available.</div>}
-                            { tab.key === '1' && foodHasMore&& !loading && (
-                                <button className={'more'} onClick={() => fetchData('/api/foods', foodData, setFoodData, foodPage, setFoodPage, setFoodHasMore)}>더보기</button>
+                            {tab.key === '1' && foodHasMore && !loading && (
+                                <button className={'more'} onClick={() => fetchData('/api/foods', foodData, setFoodData, foodHasMore, setFoodHasMore, foodPage, setFoodPage)}>더보기</button>
                             )}
-                            { tab.key === '2' && myTownHasMore&& !loading && (
-                                <button className={'more'} onClick={() => fetchData('/api/myTowns', myTownData, setMyTownData, myTownPage, setMyTownPage, setMyTownHasMore)}>더보기</button>
+                            {tab.key === '2' && myTownHasMore && !loading && (
+                                <button className={'more'} onClick={() => fetchData('/api/myTowns', myTownData, setMyTownData, myTownHasMore, setMyTownHasMore, myTownPage, setMyTownPage)}>더보기</button>
                             )}
                         </div>
                     </Tabs.Tab>

@@ -58,9 +58,9 @@ export default function Search() {
         </div>
         {/* 검색 결과를 리스트 형태로 표시 (간단한 예시) */}
         <div className="search-results">
-            {searchResults.map(foodData => (
-                <NavLink to={`/main/foods/${foodData.foodId}`} key={`${foodData.foodId}`}>
-                    <Cards key={foodData.foodId} food={foodData}/>
+            {searchResults.map(food => (
+                <NavLink to={`/main/foods/${food.foodId}`} key={`${food.foodId}`}>
+                    <Cards item={food}/>
                 </NavLink>
             ))}
         </div>

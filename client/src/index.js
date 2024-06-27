@@ -11,12 +11,16 @@ const root = ReactDOM.createRoot(rootElement);
 // Axios 인터셉터 설정
 axios.interceptors.request.use(
     config => {
-        // 로그인 API 요청에서는 Authorization 헤더를 추가하지 않음
-        if (!config.url.endsWith('/api/user/login')) {
-            const token = localStorage.getItem('jwt');
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
+        // 회원가입과 휴대폰 인증 요청에서는 Authorization 헤더를 추가하지 않음
+        const noAuthRequired = ['/api/user/login', '/api/user/register', '/memberPhoneCheck', '/api/user/checkNickName'];
+
+        if (noAuthRequired.some(path => config.url.endsWith(path))) {
+            return config;
+        }
+
+        const token = localStorage.getItem('jwt');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
@@ -24,6 +28,7 @@ axios.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+
 
 root.render(
     <React.StrictMode>
